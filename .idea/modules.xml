@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ToWER.iml" filepath="$PROJECT_DIR$/ToWER.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tower/tower.iml" filepath="$PROJECT_DIR$/tower/tower.iml" />
       <module fileurl="file://$PROJECT_DIR$/tower-data/tower-data.iml" filepath="$PROJECT_DIR$/tower-data/tower-data.iml" />
     </modules>
   </component>

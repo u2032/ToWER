@@ -16,12 +16,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="tower" />
         <module name="tower-data" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="ToWER" target="1.5" />
-      <module name="tower-data" target="1.5" />
+      <module name="ToWER" target="1.8" />
+      <module name="tower" target="1.8" />
+      <module name="tower-data" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
