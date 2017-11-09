@@ -10,5 +10,5 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>tower</artifactId>
+    <artifactId>tower-core</artifactId>
 </project>

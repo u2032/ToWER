@@ -12,7 +12,7 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower;
+package land.tower.core;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;

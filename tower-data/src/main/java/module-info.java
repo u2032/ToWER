@@ -1,0 +1,3 @@
+module land.tower.data {
+
+}

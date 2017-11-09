@@ -12,12 +12,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>9</java.version>
     </properties>
 
     <modules>
         <module>tower-data</module>
-        <module>tower</module>
+        <module>tower-core</module>
     </modules>
 
     <build>
