@@ -1,3 +1,0 @@
-module land.tower.data {
-
-}
