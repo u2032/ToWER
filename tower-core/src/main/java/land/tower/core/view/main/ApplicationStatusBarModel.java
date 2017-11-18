@@ -14,20 +14,29 @@
 
 package land.tower.core.view.main;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javax.inject.Inject;
 
 /**
- * Created on 12/11/2017
+ * Created on 18/11/2017
  * @author Cédric Longo
  */
-public final class MainViewModule extends AbstractModule {
+final class ApplicationStatusBarModel {
 
-    @Override
-    protected void configure( ) {
-        bind( ApplicationScene.class ).in( Scopes.SINGLETON );
-        bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
+    private final StringProperty _taskInfo = new SimpleStringProperty( );
+    private final StringProperty _stateInfo = new SimpleStringProperty( );
+
+    @Inject
+    public ApplicationStatusBarModel( ) {
+
+    }
+
+    StringProperty taskInfoProperty( ) {
+        return _taskInfo;
+    }
+
+    StringProperty stateInfoProperty( ) {
+        return _stateInfo;
     }
 }

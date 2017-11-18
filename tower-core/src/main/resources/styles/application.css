@@ -2,3 +2,8 @@
 .root {
     -fx-font-family: "Noto Sans";
 }
+
+#statusBar {
+    -fx-background-color: lightgray;
+    -fx-border-color: darkgray;
+}

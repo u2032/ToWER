@@ -26,11 +26,12 @@ import javax.inject.Inject;
 public final class ApplicationScene extends Scene {
 
     @Inject
-    public ApplicationScene( final ApplicationMenuBar menu ) {
+    public ApplicationScene( final ApplicationMenuBar menu, final ApplicationStatusBar statusBar ) {
         super( new BorderPane( ), Color.ALICEBLUE );
         _borderPane = (BorderPane) getRoot( );
         _borderPane.setTop( menu );
 
+        _borderPane.setBottom( statusBar );
     }
 
     private final BorderPane _borderPane;
