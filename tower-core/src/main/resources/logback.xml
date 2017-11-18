@@ -1,0 +1,39 @@
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-25.25thread %-20logger | %-7level %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="MAIN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <file>logs/main.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>logs/main.%i.log</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{YYYY-MM-dd HH:mm:ss.SSS} %-25.25thread | %-7level %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Loggers -->
+
+    <root level="WARN">
+        <appender-ref ref="MAIN_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="ToWER.MAIN" additivity="false" level="DEBUG">
+        <appender-ref ref="MAIN_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+</configuration>

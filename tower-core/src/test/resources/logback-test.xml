@@ -1,0 +1,14 @@
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} %thread %logger | %-7level %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- Loggers -->
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

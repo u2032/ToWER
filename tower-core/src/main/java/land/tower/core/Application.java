@@ -14,9 +14,15 @@
 
 package land.tower.core;
 
-import javafx.scene.Scene;
-import javafx.scene.layout.GridPane;
+import com.google.common.collect.ImmutableList;
+import com.google.inject.Guice;
+import com.google.inject.Module;
+
+import java.util.List;
 import javafx.stage.Stage;
+import land.tower.core.ext.i18n.I18nModule;
+import land.tower.core.view.main.ApplicationScene;
+import land.tower.core.view.main.MainViewModule;
 
 /**
  * Created on 09/11/2017
@@ -33,7 +39,12 @@ public final class Application extends javafx.application.Application {
         primaryStage.setMaximized( true );
         primaryStage.setTitle( "♜ ToWER" );
 
-        primaryStage.setScene( new Scene( new GridPane( ) ) );
+        final ApplicationScene scene = Guice.createInjector( modules( ) ).getInstance( ApplicationScene.class );
+        primaryStage.setScene( scene );
         primaryStage.show( );
+    }
+
+    private static List<Module> modules( ) {
+        return ImmutableList.of( new MainViewModule( ), new I18nModule( ) );
     }
 }
