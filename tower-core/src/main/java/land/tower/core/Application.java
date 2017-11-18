@@ -14,11 +14,15 @@
 
 package land.tower.core;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
+import java.io.InputStream;
 import java.util.List;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import land.tower.core.ext.i18n.I18nModule;
 import land.tower.core.view.main.ApplicationScene;
@@ -36,12 +40,22 @@ public final class Application extends javafx.application.Application {
 
     @Override
     public void start( final Stage primaryStage ) throws Exception {
-        primaryStage.setMaximized( true );
-        primaryStage.setTitle( "♜ ToWER" );
+        loadFont( "fonts/NotoSans-Regular.ttf" );
 
         final ApplicationScene scene = Guice.createInjector( modules( ) ).getInstance( ApplicationScene.class );
+        scene.getStylesheets( )
+             .add( getClass( ).getClassLoader( ).getResource( "styles/application.css" ).toExternalForm( ) );
+
+        primaryStage.setMaximized( true );
+        primaryStage.setTitle( "♜ ToWER" );
         primaryStage.setScene( scene );
         primaryStage.show( );
+    }
+
+    private void loadFont( final String name ) {
+        final InputStream fontStream = getClass( ).getClassLoader( )
+                                                  .getResourceAsStream( name );
+        Font.loadFont( checkNotNull( fontStream, "Font %s not found", name ), -1 );
     }
 
     private static List<Module> modules( ) {
