@@ -12,30 +12,19 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.main;
+package land.tower.core.view.home;
 
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
-import javax.inject.Inject;
-import land.tower.core.view.home.HomepageView;
+import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 
 /**
- * Created on 12/11/2017
+ * Created on 18/11/2017
  * @author Cédric Longo
  */
-public final class ApplicationScene extends Scene {
+public final class HomepageViewModule extends AbstractModule {
 
-    @Inject
-    public ApplicationScene( final ApplicationMenuBar menu, final ApplicationStatusBar statusBar,
-                             final HomepageView homepage ) {
-        super( new BorderPane( ), Color.ALICEBLUE );
-
-        final BorderPane root = (BorderPane) getRoot( );
-        root.setPrefSize( 900, 600 );
-        root.setTop( menu );
-        root.setCenter( homepage );
-        root.setBottom( statusBar );
+    @Override
+    protected void configure( ) {
+        bind( HomepageViewModel.class ).in( Scopes.SINGLETON );
     }
-
 }

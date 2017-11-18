@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.util.List;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import land.tower.core.ext.event.EventModule;
 import land.tower.core.ext.i18n.I18nModule;
+import land.tower.core.view.home.HomepageViewModule;
 import land.tower.core.view.main.ApplicationScene;
 import land.tower.core.view.main.MainViewModule;
 
@@ -41,6 +43,9 @@ public final class Application extends javafx.application.Application {
     @Override
     public void start( final Stage primaryStage ) throws Exception {
         loadFont( "fonts/NotoSans-Regular.ttf" );
+        loadFont( "fonts/NotoSans-Italic.ttf" );
+        loadFont( "fonts/NotoSans-Bold.ttf" );
+        loadFont( "fonts/NotoSans-BoldItalic.ttf" );
 
         final ApplicationScene scene = Guice.createInjector( modules( ) ).getInstance( ApplicationScene.class );
         scene.getStylesheets( )
@@ -59,6 +64,9 @@ public final class Application extends javafx.application.Application {
     }
 
     private static List<Module> modules( ) {
-        return ImmutableList.of( new MainViewModule( ), new I18nModule( ) );
+        return ImmutableList.of( new MainViewModule( ),
+                                 new HomepageViewModule( ),
+                                 new EventModule( ),
+                                 new I18nModule( ) );
     }
 }
