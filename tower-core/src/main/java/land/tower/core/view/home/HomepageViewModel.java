@@ -15,11 +15,14 @@
 package land.tower.core.view.home;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.ext.i18n.I18nTranslatorEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.event.SceneRequestedEvent.SceneType;
 
@@ -32,12 +35,19 @@ final class HomepageViewModel {
     @Inject
     HomepageViewModel( final EventBus eventBus, final I18nTranslator i18n ) {
         _eventBus = eventBus;
-        _i18n = i18n;
+        _eventBus.register( this );
 
+        defineTexts( i18n );
+    }
+
+    private void defineTexts( final I18nTranslator i18n ) {
         _playerManagementTitle.setValue( i18n.get( "homepage.player.management.title" ) );
         _tournamentManagementTitle.setValue( i18n.get( "homepage.tournament.management.title" ) );
+    }
 
-        _eventBus.register( this );
+    @Subscribe
+    public void i18nTranslatorEvent( final I18nTranslatorEvent event ) {
+        Platform.runLater( ( ) -> defineTexts( event.getTranslator( ) ) );
     }
 
     public StringProperty playerManagementTitle( ) {
@@ -53,7 +63,6 @@ final class HomepageViewModel {
     }
 
     private final EventBus _eventBus;
-    private final I18nTranslator _i18n;
 
     private final StringProperty _playerManagementTitle = new SimpleStringProperty( );
     private final StringProperty _tournamentManagementTitle = new SimpleStringProperty( );

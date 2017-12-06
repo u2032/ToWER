@@ -14,25 +14,20 @@
 
 package land.tower.core.ext.i18n;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
-import com.google.inject.multibindings.Multibinder;
-
-import land.tower.core.ext.service.IService;
-
 /**
- * Created on 12/11/2017
+ * Created on 06/12/2017
  * @author Cédric Longo
  */
-public final class I18nModule extends AbstractModule {
+public final class I18nTranslatorEvent {
 
-    @Override
-    protected void configure( ) {
-        bind( I18nService.class ).in( Scopes.SINGLETON );
-        bind( I18nTranslator.class ).toProvider( I18nService.class );
-
-        Multibinder.newSetBinder( binder( ), IService.class )
-                   .addBinding( ).to( I18nService.class );
+    public I18nTranslatorEvent( final I18nTranslator translator ) {
+        _translator = translator;
     }
+
+    public I18nTranslator getTranslator( ) {
+        return _translator;
+    }
+
+    private final I18nTranslator _translator;
 
 }
