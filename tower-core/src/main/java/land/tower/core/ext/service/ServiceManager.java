@@ -35,7 +35,7 @@ public final class ServiceManager {
     public void startAll( ) {
         _services.forEach( service -> {
             _logger.info( "Starting service: " + service.getName( ) );
-            service.getName( );
+            service.start( );
         } );
     }
 
