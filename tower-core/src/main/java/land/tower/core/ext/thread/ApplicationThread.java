@@ -12,23 +12,22 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.main;
+package land.tower.core.ext.thread;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.BindingAnnotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Created on 12/11/2017
+ * Created on 04/12/2017
  * @author Cédric Longo
  */
-public final class MainViewModule extends AbstractModule {
+@BindingAnnotation
+@Retention( RetentionPolicy.RUNTIME )
+@Target( { ElementType.METHOD, ElementType.PARAMETER } )
+public @interface ApplicationThread {
 
-    @Override
-    protected void configure( ) {
-        bind( ApplicationScene.class ).in( Scopes.SINGLETON );
-        bind( ApplicationSceneModel.class ).in( Scopes.SINGLETON );
-        bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
-    }
 }

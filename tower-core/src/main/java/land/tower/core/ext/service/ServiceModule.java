@@ -12,23 +12,22 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.main;
+package land.tower.core.ext.service;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.google.inject.multibindings.Multibinder;
 
 /**
- * Created on 12/11/2017
+ * Created on 06/12/2017
  * @author Cédric Longo
  */
-public final class MainViewModule extends AbstractModule {
+public final class ServiceModule extends AbstractModule {
 
     @Override
     protected void configure( ) {
-        bind( ApplicationScene.class ).in( Scopes.SINGLETON );
-        bind( ApplicationSceneModel.class ).in( Scopes.SINGLETON );
-        bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
+        bind( ServiceManager.class ).in( Scopes.SINGLETON );
+
+        Multibinder.newSetBinder( binder(), IService.class );
     }
 }

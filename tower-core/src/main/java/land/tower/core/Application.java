@@ -18,6 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 
 import java.io.InputStream;
@@ -26,6 +27,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import land.tower.core.ext.event.EventModule;
 import land.tower.core.ext.i18n.I18nModule;
+import land.tower.core.ext.service.ServiceManager;
+import land.tower.core.ext.service.ServiceModule;
+import land.tower.core.ext.thread.ThreadingModule;
 import land.tower.core.view.home.HomepageViewModule;
 import land.tower.core.view.main.ApplicationScene;
 import land.tower.core.view.main.MainViewModule;
@@ -47,7 +51,13 @@ public final class Application extends javafx.application.Application {
         loadFont( "fonts/NotoSans-Bold.ttf" );
         loadFont( "fonts/NotoSans-BoldItalic.ttf" );
 
-        final ApplicationScene scene = Guice.createInjector( modules( ) ).getInstance( ApplicationScene.class );
+        final Injector injector = Guice.createInjector( modules( ) );
+
+        final ServiceManager serviceManager = injector.getInstance( ServiceManager.class );
+        serviceManager.startAll( );
+        primaryStage.setOnCloseRequest( value -> serviceManager.stopAll( ) );
+
+        final ApplicationScene scene = injector.getInstance( ApplicationScene.class );
         scene.getStylesheets( )
              .add( getClass( ).getClassLoader( ).getResource( "styles/application.css" ).toExternalForm( ) );
 
@@ -66,6 +76,8 @@ public final class Application extends javafx.application.Application {
     private static List<Module> modules( ) {
         return ImmutableList.of( new MainViewModule( ),
                                  new HomepageViewModule( ),
+                                 new ThreadingModule( ),
+                                 new ServiceModule( ),
                                  new EventModule( ),
                                  new I18nModule( ) );
     }

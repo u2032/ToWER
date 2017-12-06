@@ -40,6 +40,7 @@ public final class HomepageView extends HBox {
         setSpacing( 50 );
 
         final VBox pblock = generateBlock( model.playerManagementTitle( ), "img/home-players.png" );
+        pblock.setOnMouseClicked( event -> model.firePlayerViewRequested());
         getChildren( ).add( pblock );
 
         final VBox tblock = generateBlock( model.tournamentManagementTitle( ), "img/home-tournaments.png" );

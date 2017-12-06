@@ -20,6 +20,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.view.event.SceneRequestedEvent;
+import land.tower.core.view.event.SceneRequestedEvent.SceneType;
 
 /**
  * Created on 18/11/2017
@@ -34,6 +36,8 @@ final class HomepageViewModel {
 
         _playerManagementTitle.setValue( i18n.get( "homepage.player.management.title" ) );
         _tournamentManagementTitle.setValue( i18n.get( "homepage.tournament.management.title" ) );
+
+        _eventBus.register( this );
     }
 
     public StringProperty playerManagementTitle( ) {
@@ -42,6 +46,10 @@ final class HomepageViewModel {
 
     public StringProperty tournamentManagementTitle( ) {
         return _tournamentManagementTitle;
+    }
+
+    public void firePlayerViewRequested( ) {
+        _eventBus.post( new SceneRequestedEvent( SceneType.PLAYER_MANAGEMENT ) );
     }
 
     private final EventBus _eventBus;

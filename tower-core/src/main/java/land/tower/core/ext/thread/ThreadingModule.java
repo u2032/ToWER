@@ -12,23 +12,28 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.main;
+package land.tower.core.ext.thread;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.multibindings.Multibinder;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import land.tower.core.ext.service.IService;
 
 /**
- * Created on 12/11/2017
+ * Created on 04/12/2017
  * @author Cédric Longo
  */
-public final class MainViewModule extends AbstractModule {
+public final class ThreadingModule extends AbstractModule {
 
     @Override
     protected void configure( ) {
-        bind( ApplicationScene.class ).in( Scopes.SINGLETON );
-        bind( ApplicationSceneModel.class ).in( Scopes.SINGLETON );
-        bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
+        bind( ExecutorService.class ).annotatedWith( ApplicationThread.class )
+                                     .toInstance( Executors.newFixedThreadPool(
+                                         Runtime.getRuntime( ).availableProcessors( ) * 2 ) );
+
+        Multibinder.newSetBinder( binder( ), IService.class )
+                   .addBinding( ).to( ThreadingService.class );
     }
 }

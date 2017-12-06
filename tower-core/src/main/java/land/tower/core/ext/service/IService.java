@@ -12,23 +12,19 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.main;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+package land.tower.core.ext.service;
 
 /**
- * Created on 12/11/2017
+ * Created on 06/12/2017
  * @author Cédric Longo
  */
-public final class MainViewModule extends AbstractModule {
+public interface IService {
 
-    @Override
-    protected void configure( ) {
-        bind( ApplicationScene.class ).in( Scopes.SINGLETON );
-        bind( ApplicationSceneModel.class ).in( Scopes.SINGLETON );
-        bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
-    }
+    void start( );
+
+    void stop( );
+
+    default String getName( ) {
+        return getClass().getSimpleName();
+    };
 }

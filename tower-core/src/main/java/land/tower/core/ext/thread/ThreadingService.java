@@ -12,23 +12,32 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.main;
+package land.tower.core.ext.thread;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import java.util.concurrent.ExecutorService;
+import javax.inject.Inject;
+import land.tower.core.ext.service.IService;
 
 /**
- * Created on 12/11/2017
+ * Created on 06/12/2017
  * @author Cédric Longo
  */
-public final class MainViewModule extends AbstractModule {
+final class ThreadingService implements IService {
+
+    @Inject
+    ThreadingService( final @ApplicationThread ExecutorService executorService ) {
+        _executorService = executorService;
+    }
 
     @Override
-    protected void configure( ) {
-        bind( ApplicationScene.class ).in( Scopes.SINGLETON );
-        bind( ApplicationSceneModel.class ).in( Scopes.SINGLETON );
-        bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
+    public void start( ) {
+        // Nothing to do
     }
+
+    @Override
+    public void stop( ) {
+        _executorService.shutdown( );
+    }
+
+    private final ExecutorService _executorService;
 }

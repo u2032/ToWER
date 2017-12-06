@@ -14,9 +14,14 @@
 
 package land.tower.core.ext.event;
 
+import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+
+import java.util.concurrent.ExecutorService;
+import land.tower.core.ext.thread.ApplicationThread;
 
 /**
  * Created on 18/11/2017
@@ -26,7 +31,12 @@ public final class EventModule extends AbstractModule {
 
     @Override
     protected void configure( ) {
-        bind( EventBus.class ).in( Scopes.SINGLETON );
+    }
+
+    @Provides
+    @Singleton
+    EventBus eventBus( final @ApplicationThread ExecutorService executor ) {
+        return new AsyncEventBus( "default", executor );
     }
 
 }

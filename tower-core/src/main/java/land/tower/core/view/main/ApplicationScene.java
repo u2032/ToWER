@@ -18,7 +18,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javax.inject.Inject;
-import land.tower.core.view.home.HomepageView;
 
 /**
  * Created on 12/11/2017
@@ -27,15 +26,19 @@ import land.tower.core.view.home.HomepageView;
 public final class ApplicationScene extends Scene {
 
     @Inject
-    public ApplicationScene( final ApplicationMenuBar menu, final ApplicationStatusBar statusBar,
-                             final HomepageView homepage ) {
+    public ApplicationScene( final ApplicationMenuBar menu,
+                             final ApplicationStatusBar statusBar,
+                             final ApplicationSceneModel model ) {
         super( new BorderPane( ), Color.ALICEBLUE );
 
         final BorderPane root = (BorderPane) getRoot( );
         root.setPrefSize( 900, 600 );
         root.setTop( menu );
-        root.setCenter( homepage );
         root.setBottom( statusBar );
-    }
 
+        root.setCenter( model.currentPaneProperty( ).getValue( ) );
+        model.currentPaneProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+            root.setCenter( newValue );
+        } );
+    }
 }

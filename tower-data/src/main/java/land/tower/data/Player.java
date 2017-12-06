@@ -12,23 +12,26 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.main;
+package land.tower.data;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * Created on 12/11/2017
+ * Created on 25/11/2017
  * @author Cédric Longo
  */
-public final class MainViewModule extends AbstractModule {
+public final class Player {
 
-    @Override
-    protected void configure( ) {
-        bind( ApplicationScene.class ).in( Scopes.SINGLETON );
-        bind( ApplicationSceneModel.class ).in( Scopes.SINGLETON );
-        bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
-    }
+    @SerializedName( "numero" )
+    private long _numero;
+
+    @SerializedName( "firstname" )
+    private String _firstname;
+
+    @SerializedName( "lastname" )
+    private String _lastname;
+
+    @SerializedName( "birthday" )
+    private String _birthday;
+
 }

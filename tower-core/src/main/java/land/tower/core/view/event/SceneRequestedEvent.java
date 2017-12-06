@@ -12,23 +12,28 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.main;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+package land.tower.core.view.event;
 
 /**
- * Created on 12/11/2017
+ * Created on 04/12/2017
  * @author Cédric Longo
  */
-public final class MainViewModule extends AbstractModule {
+public final class SceneRequestedEvent {
 
-    @Override
-    protected void configure( ) {
-        bind( ApplicationScene.class ).in( Scopes.SINGLETON );
-        bind( ApplicationSceneModel.class ).in( Scopes.SINGLETON );
-        bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
-        bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
+    public SceneRequestedEvent( final SceneType type ) {
+        _type = type;
     }
+
+    public enum SceneType {
+        HOMEPAGE,
+        PLAYER_MANAGEMENT,
+        TOURNAMENT_MANAGEMENT
+    }
+
+    public SceneType getType( ) {
+        return _type;
+    }
+
+    private final SceneType _type;
+
 }
