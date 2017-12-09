@@ -30,9 +30,11 @@ import land.tower.core.ext.i18n.I18nModule;
 import land.tower.core.ext.service.ServiceManager;
 import land.tower.core.ext.service.ServiceModule;
 import land.tower.core.ext.thread.ThreadingModule;
+import land.tower.core.model.player.PlayerModule;
 import land.tower.core.view.home.HomepageViewModule;
 import land.tower.core.view.main.ApplicationScene;
 import land.tower.core.view.main.MainViewModule;
+import land.tower.core.view.player.PlayerViewModule;
 
 /**
  * Created on 09/11/2017
@@ -79,6 +81,8 @@ public final class Application extends javafx.application.Application {
                                  new ThreadingModule( ),
                                  new ServiceModule( ),
                                  new EventModule( ),
-                                 new I18nModule( ) );
+                                 new I18nModule( ),
+                                 new PlayerModule( ),
+                                 new PlayerViewModule( ) );
     }
 }

@@ -14,7 +14,6 @@
 
 package land.tower.core.view.main;
 
-import com.google.common.eventbus.DeadEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -33,24 +32,15 @@ import land.tower.core.view.home.HomepageView;
 final class ApplicationSceneModel {
 
     @Inject
-    public ApplicationSceneModel( final EventBus eventBus, final HomepageView homepageView ) {
-        _eventBus = eventBus;
-        _eventBus.register( this );
-
-        _homepageView = homepageView;
-        _current.setValue( _homepageView );
+    public ApplicationSceneModel( final EventBus eventBus,
+                                  final HomepageView homepageView ) {
+        eventBus.register( this );
+        _current.setValue( homepageView );
     }
 
     @Subscribe
     void sceneRequested( final SceneRequestedEvent event ) {
-        switch ( event.getType( ) ) {
-            case HOMEPAGE:
-                Platform.runLater( ( ) -> _current.setValue( _homepageView ) );
-                break;
-            case PLAYER_MANAGEMENT:
-                Platform.runLater( ( ) -> _current.setValue( null ) );
-                break;
-        }
+        Platform.runLater( ( ) -> _current.setValue( event.getView( ) ) );
     }
 
     public Property<Pane> currentPaneProperty( ) {
@@ -59,6 +49,4 @@ final class ApplicationSceneModel {
 
     private final Property<Pane> _current = new SimpleObjectProperty<>( );
 
-    private final EventBus _eventBus;
-    private final HomepageView _homepageView;
 }

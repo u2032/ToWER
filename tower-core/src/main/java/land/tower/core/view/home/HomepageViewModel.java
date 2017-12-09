@@ -21,10 +21,11 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.i18n.I18nTranslatorEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
-import land.tower.core.view.event.SceneRequestedEvent.SceneType;
+import land.tower.core.view.player.PlayerManagementView;
 
 /**
  * Created on 18/11/2017
@@ -33,8 +34,10 @@ import land.tower.core.view.event.SceneRequestedEvent.SceneType;
 final class HomepageViewModel {
 
     @Inject
-    HomepageViewModel( final EventBus eventBus, final I18nTranslator i18n ) {
+    HomepageViewModel( final EventBus eventBus, final I18nTranslator i18n,
+                       final Provider<PlayerManagementView> playerManagementViewProvider ) {
         _eventBus = eventBus;
+        _playerManagementViewProvider = playerManagementViewProvider;
         _eventBus.register( this );
 
         defineTexts( i18n );
@@ -59,10 +62,11 @@ final class HomepageViewModel {
     }
 
     public void firePlayerViewRequested( ) {
-        _eventBus.post( new SceneRequestedEvent( SceneType.PLAYER_MANAGEMENT ) );
+        _eventBus.post( new SceneRequestedEvent( _playerManagementViewProvider.get( ) ) );
     }
 
     private final EventBus _eventBus;
+    private final Provider<PlayerManagementView> _playerManagementViewProvider;
 
     private final StringProperty _playerManagementTitle = new SimpleStringProperty( );
     private final StringProperty _tournamentManagementTitle = new SimpleStringProperty( );

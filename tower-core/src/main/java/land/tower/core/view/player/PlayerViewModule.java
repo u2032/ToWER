@@ -12,24 +12,19 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.event;
+package land.tower.core.view.player;
 
-import javafx.scene.layout.Pane;
+import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 
 /**
- * Created on 04/12/2017
+ * Created on 09/12/2017
  * @author Cédric Longo
  */
-public final class SceneRequestedEvent {
+public final class PlayerViewModule extends AbstractModule {
 
-    public SceneRequestedEvent( final Pane view ) {
-        _view = view;
+    @Override
+    protected void configure( ) {
+        bind( PlayerManagementViewModel.class ).in( Scopes.SINGLETON );
     }
-
-    public Pane getView( ) {
-        return _view;
-    }
-
-    private final Pane _view;
-
 }

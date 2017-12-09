@@ -34,4 +34,29 @@ public final class Player {
     @SerializedName( "birthday" )
     private String _birthday;
 
+    public Player( ) {
+    }
+
+    public Player( final long numero, final String firstname, final String lastname, final String birthday ) {
+        _numero = numero;
+        _firstname = firstname;
+        _lastname = lastname;
+        _birthday = birthday;
+    }
+
+    public long getNumero( ) {
+        return _numero;
+    }
+
+    public String getFirstname( ) {
+        return _firstname;
+    }
+
+    public String getLastname( ) {
+        return _lastname;
+    }
+
+    public String getBirthday( ) {
+        return _birthday;
+    }
 }

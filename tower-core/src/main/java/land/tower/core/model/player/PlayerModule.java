@@ -12,24 +12,25 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.event;
+package land.tower.core.model.player;
 
-import javafx.scene.layout.Pane;
+import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
+import com.google.inject.multibindings.Multibinder;
+
+import land.tower.core.ext.service.IService;
 
 /**
- * Created on 04/12/2017
+ * Created on 06/12/2017
  * @author Cédric Longo
  */
-public final class SceneRequestedEvent {
+public final class PlayerModule extends AbstractModule {
 
-    public SceneRequestedEvent( final Pane view ) {
-        _view = view;
+    @Override
+    protected void configure( ) {
+        bind( PlayerRepository.class ).in( Scopes.SINGLETON );
+
+        Multibinder.newSetBinder( binder( ), IService.class )
+                   .addBinding( ).to( PlayerRepository.class );
     }
-
-    public Pane getView( ) {
-        return _view;
-    }
-
-    private final Pane _view;
-
 }
