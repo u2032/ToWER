@@ -13,6 +13,10 @@
     -fx-border-color: darkgray;
 }
 
+#statusBar #taskInformation {
+    -fx-font-style: italic;
+}
+
 .table-column {
     -fx-alignment: center;
 }

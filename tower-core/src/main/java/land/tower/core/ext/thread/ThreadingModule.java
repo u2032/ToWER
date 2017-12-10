@@ -19,6 +19,7 @@ import com.google.inject.multibindings.Multibinder;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import land.tower.core.ext.service.IService;
 
 /**
@@ -32,6 +33,10 @@ public final class ThreadingModule extends AbstractModule {
         bind( ExecutorService.class ).annotatedWith( ApplicationThread.class )
                                      .toInstance( Executors.newFixedThreadPool(
                                          Runtime.getRuntime( ).availableProcessors( ) * 2 ) );
+
+        bind( ScheduledExecutorService.class ).annotatedWith( ApplicationThread.class )
+                                              .toInstance( Executors.newScheduledThreadPool(
+                                                  Runtime.getRuntime( ).availableProcessors( ) ) );
 
         Multibinder.newSetBinder( binder( ), IService.class )
                    .addBinding( ).to( ThreadingService.class );

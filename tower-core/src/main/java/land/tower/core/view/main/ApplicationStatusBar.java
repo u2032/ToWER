@@ -38,6 +38,7 @@ final class ApplicationStatusBar extends HBox {
         setPadding( new Insets( 5, 10, 5, 10 ) );
 
         final Label taskInfo = new Label( );
+        taskInfo.setId( "taskInformation" );
         _animation = prepareAnimation( taskInfo );
         taskInfo.textProperty( ).bind( model.taskInfoProperty( ) );
         taskInfo.textProperty( ).addListener( text -> {
@@ -50,6 +51,7 @@ final class ApplicationStatusBar extends HBox {
         getChildren( ).add( spacing );
 
         final Label stateInfo = new Label( );
+        stateInfo.setId( "stateInformation" );
         stateInfo.textProperty( ).bind( model.stateInfoProperty( ) );
         getChildren( ).add( stateInfo );
     }

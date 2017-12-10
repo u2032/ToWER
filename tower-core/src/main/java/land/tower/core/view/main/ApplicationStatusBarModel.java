@@ -14,9 +14,14 @@
 
 package land.tower.core.view.main;
 
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
+
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javax.inject.Inject;
+import land.tower.core.view.event.InformationEvent;
 
 /**
  * Created on 18/11/2017
@@ -28,8 +33,13 @@ final class ApplicationStatusBarModel {
     private final StringProperty _stateInfo = new SimpleStringProperty( );
 
     @Inject
-    public ApplicationStatusBarModel( ) {
+    public ApplicationStatusBarModel( final EventBus eventBus ) {
+        eventBus.register( this );
+    }
 
+    @Subscribe
+    public void informationEvent( final InformationEvent event ) {
+        Platform.runLater( ( ) -> taskInfoProperty( ).setValue( event.getText( ) ) );
     }
 
     StringProperty taskInfoProperty( ) {

@@ -15,6 +15,7 @@
 package land.tower.core.ext.thread;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import javax.inject.Inject;
 import land.tower.core.ext.service.IService;
 
@@ -25,8 +26,10 @@ import land.tower.core.ext.service.IService;
 final class ThreadingService implements IService {
 
     @Inject
-    ThreadingService( final @ApplicationThread ExecutorService executorService ) {
+    ThreadingService( final @ApplicationThread ExecutorService executorService,
+                      final @ApplicationThread ScheduledExecutorService scheduledExecutorService ) {
         _executorService = executorService;
+        _scheduledExecutorService = scheduledExecutorService;
     }
 
     @Override
@@ -37,7 +40,9 @@ final class ThreadingService implements IService {
     @Override
     public void stop( ) {
         _executorService.shutdown( );
+        _scheduledExecutorService.shutdown( );
     }
 
     private final ExecutorService _executorService;
+    private final ScheduledExecutorService _scheduledExecutorService;
 }
