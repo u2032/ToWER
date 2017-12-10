@@ -14,13 +14,29 @@
 
 package land.tower.core.model.player;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
+import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.IService;
+import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.data.Player;
 
 /**
@@ -29,12 +45,19 @@ import land.tower.data.Player;
  */
 public final class PlayerRepository implements IService {
 
+    @Inject
+    public PlayerRepository( final @ApplicationThread ScheduledExecutorService scheduledExecutorService ) {
+        _scheduledExecutorService = scheduledExecutorService;
+    }
+
     public void registerPlayer( Player player ) {
         _players.add( player );
+        scheduleStorageUpdate( );
     }
 
     public void removePlayer( Player player ) {
         _players.removeIf( p -> p.getNumero( ) == player.getNumero( ) );
+        scheduleStorageUpdate( );
     }
 
     public List<Player> getPlayersList( ) {
@@ -43,8 +66,19 @@ public final class PlayerRepository implements IService {
 
     @Override
     public void start( ) {
-        // TODO Load from disk
-        final Path storage = Paths.get( "./data/players.json" );
+        if ( !Files.exists( PLAYER_STORAGE ) ) {
+            return;
+        }
+        try {
+            try ( final FileReader fileReader = new FileReader( PLAYER_STORAGE.toFile( ) ) ) {
+                final List<Player> list = new GsonBuilder( ).create( )
+                                                            .fromJson( fileReader, new TypeToken<List<Player>>( ) {
+                                                            }.getType( ) );
+                _players.addAll( list );
+            }
+        } catch ( IOException e ) {
+            _logger.error( "Error loading player storage", e );
+        }
     }
 
     @Override
@@ -58,5 +92,36 @@ public final class PlayerRepository implements IService {
                        .findAny( );
     }
 
+    private void scheduleStorageUpdate( ) {
+        _scheduledExecutorService.schedule( ( ) -> {
+            final String json = new GsonBuilder( ).create( ).toJson( _players );
+
+            try {
+                Files.createDirectories( PLAYER_STORAGE.getParent( ) );
+            } catch ( IOException e ) {
+                _logger.error( "Error caught during creating directory: " + PLAYER_STORAGE.toString( ), e );
+            }
+
+            try ( final BufferedWriter out = Files.newBufferedWriter( PLAYER_STORAGE_TMP, StandardCharsets.UTF_8 ) ) {
+                out.write( json );
+            } catch ( IOException e ) {
+                _logger.error( "Error caught during saving storage", e );
+            }
+
+            try {
+                Files.move( PLAYER_STORAGE_TMP, PLAYER_STORAGE );
+            } catch ( IOException e ) {
+                _logger.error( "Error caught during saving storage", e );
+            }
+
+        }, 2, TimeUnit.SECONDS );
+    }
+
     private final List<Player> _players = Collections.synchronizedList( new ArrayList<>( ) );
+    private final ScheduledExecutorService _scheduledExecutorService;
+
+    private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
+
+    private static final Path PLAYER_STORAGE = Paths.get( "data", "players.json" );
+    private static final Path PLAYER_STORAGE_TMP = Paths.get( "data", "players.json.tmp" );
 }
