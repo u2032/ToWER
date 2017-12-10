@@ -21,7 +21,10 @@ import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import javax.inject.Inject;
+import land.tower.core.view.event.CloseRequestEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
 
@@ -41,6 +44,14 @@ final class ApplicationSceneModel {
     @Subscribe
     void sceneRequested( final SceneRequestedEvent event ) {
         Platform.runLater( ( ) -> _current.setValue( event.getView( ) ) );
+    }
+
+    @Subscribe
+    void closeRequested( final CloseRequestEvent event ) {
+        Platform.runLater( ( ) -> {
+            final Window window = _current.getValue( ).getScene( ).getWindow( );
+            window.fireEvent( new WindowEvent( window, WindowEvent.WINDOW_CLOSE_REQUEST ) );
+        } );
     }
 
     public Property<Pane> currentPaneProperty( ) {

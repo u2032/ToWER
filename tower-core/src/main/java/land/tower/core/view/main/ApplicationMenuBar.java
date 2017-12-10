@@ -14,12 +14,15 @@
 
 package land.tower.core.view.main;
 
+import com.google.common.eventbus.EventBus;
+
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.view.event.CloseRequestEvent;
 
 /**
  * Created on 12/11/2017
@@ -28,7 +31,8 @@ import land.tower.core.ext.i18n.I18nTranslator;
 final class ApplicationMenuBar extends MenuBar {
 
     @Inject
-    public ApplicationMenuBar( final I18nTranslator translator ) {
+    public ApplicationMenuBar( final EventBus eventBus, final I18nTranslator translator ) {
+        _eventBus = eventBus;
         _i18n = translator;
         getMenus( ).add( fileMenu( ) );
     }
@@ -38,12 +42,12 @@ final class ApplicationMenuBar extends MenuBar {
         fileMenu.getItems( ).add( new SeparatorMenuItem( ) );
 
         final MenuItem exitMenu = new MenuItem( _i18n.get( "menu.file.exit" ) );
-        // FIXME MUST CLOSE PROPERLY
-        exitMenu.setOnAction( event -> System.exit( 0 ) );
+        exitMenu.setOnAction( event -> _eventBus.post( new CloseRequestEvent( ) ) );
         fileMenu.getItems( ).add( exitMenu );
 
         return fileMenu;
     }
 
+    private final EventBus _eventBus;
     private final I18nTranslator _i18n;
 }
