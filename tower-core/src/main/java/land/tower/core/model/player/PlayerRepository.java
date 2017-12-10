@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import land.tower.core.ext.service.IService;
 import land.tower.data.Player;
 
@@ -26,7 +27,7 @@ import land.tower.data.Player;
  * Created on 06/12/2017
  * @author Cédric Longo
  */
-final class PlayerRepository implements IService {
+public final class PlayerRepository implements IService {
 
     public void registerPlayer( Player player ) {
         _players.add( player );
@@ -49,6 +50,12 @@ final class PlayerRepository implements IService {
     @Override
     public void stop( ) {
 
+    }
+
+    public Optional<Player> getPlayer( final long numero ) {
+        return _players.stream( )
+                       .filter( p -> p.getNumero( ) == numero )
+                       .findAny( );
     }
 
     private final List<Player> _players = Collections.synchronizedList( new ArrayList<>( ) );

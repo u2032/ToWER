@@ -18,7 +18,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.KeyCombination;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 
@@ -39,6 +38,7 @@ final class ApplicationMenuBar extends MenuBar {
         fileMenu.getItems( ).add( new SeparatorMenuItem( ) );
 
         final MenuItem exitMenu = new MenuItem( _i18n.get( "menu.file.exit" ) );
+        // FIXME MUST CLOSE PROPERLY
         exitMenu.setOnAction( event -> System.exit( 0 ) );
         fileMenu.getItems( ).add( exitMenu );
 

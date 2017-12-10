@@ -28,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javax.inject.Inject;
+import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
 
 /**
@@ -43,6 +44,18 @@ public final class PlayerManagementView extends BorderPane {
         final Button homeButton = new Button( FontAwesome.HOME );
         homeButton.setOnMouseClicked( e -> model.fireHomeButton( ) );
         homeButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+        homeButton.getStyleClass( ).add( "rich-button" );
+
+        final Button addButton = new Button( );
+        addButton.textProperty( ).bind( model.i18nAddPlayerActionProperty( ) );
+        addButton.setOnMouseClicked( e -> {
+            new AddPlayerDialog( model.newAddPlayerDialogModel( ) )
+                .showAndWait( )
+                .ifPresent( _model::firePlayerCreated );
+        } );
+        addButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+        addButton.getStyleClass( ).add( "rich-button" );
+        addButton.getStyleClass( ).add( "action-button" );
 
         final HBox spacing = new HBox( );
         setHgrow( spacing, Priority.ALWAYS );
@@ -53,8 +66,9 @@ public final class PlayerManagementView extends BorderPane {
         title.getStyleClass( ).add( "large" );
         title.getStyleClass( ).add( "important" );
         title.textProperty( ).bind( model.i18nPlayerManagementTitleProperty( ) );
+        title.setEffect( Effects.dropShadow( ) );
 
-        final HBox header = new HBox( homeButton, spacing, title );
+        final HBox header = new HBox( homeButton, addButton, spacing, title );
         header.setPadding( new Insets( 10, 20, 10, 10 ) );
         header.setSpacing( 10 );
         header.setAlignment( Pos.CENTER_LEFT );

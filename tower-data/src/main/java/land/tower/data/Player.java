@@ -59,4 +59,14 @@ public final class Player {
     public String getBirthday( ) {
         return _birthday;
     }
+
+    @Override
+    public String toString( ) {
+        return "Player{" +
+               "numero=" + _numero +
+               ", firstname='" + _firstname + '\'' +
+               ", lastname='" + _lastname + '\'' +
+               ", birthday='" + _birthday + '\'' +
+               '}';
+    }
 }

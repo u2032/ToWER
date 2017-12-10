@@ -24,8 +24,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.i18n.I18nTranslatorEvent;
+import land.tower.core.model.player.PlayerRepository;
+import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
 import land.tower.data.Player;
@@ -38,11 +41,16 @@ final class PlayerManagementViewModel {
 
     @Inject
     public PlayerManagementViewModel( final EventBus eventBus, final I18nTranslator translator,
-                                      final Provider<HomepageView> homepageViewProvider ) {
+                                      final Provider<HomepageView> homepageViewProvider,
+                                      final Provider<AddPlayerDialogModel> addPlayerDialogModelProvider,
+                                      final PlayerRepository playerRepository ) {
         _eventBus = eventBus;
         _homepageViewProvider = homepageViewProvider;
-        eventBus.register( this );
+        _addPlayerDialogModelProvider = addPlayerDialogModelProvider;
+        _playerRepository = playerRepository;
+        _translator = translator;
         defineTexts( translator );
+        eventBus.register( this );
     }
 
     @Subscribe
@@ -57,49 +65,30 @@ final class PlayerManagementViewModel {
         _i18nPlayerLastname.setValue( translator.get( "player.lastname" ) );
         _i18nPlayerBirthday.setValue( translator.get( "player.birthday" ) );
         _i18nPlayerManagementTitle.setValue( translator.get( "player.management.title" ) );
+        _i18nAddPlayerAction.setValue( FontAwesome.PLUS + " " + translator.get( "player.add.action" ).toUpperCase( ) );
     }
 
-    public String getI18nPlaceholder( ) {
-        return _i18nPlaceholder.get( );
-    }
-
-    public SimpleStringProperty i18nPlaceholderProperty( ) {
+    SimpleStringProperty i18nPlaceholderProperty( ) {
         return _i18nPlaceholder;
     }
 
-    public String getI18nPlayerNumero( ) {
-        return _i18nPlayerNumero.get( );
-    }
-
-    public SimpleStringProperty i18nPlayerNumeroProperty( ) {
+    SimpleStringProperty i18nPlayerNumeroProperty( ) {
         return _i18nPlayerNumero;
     }
 
-    public String getI18nPlayerLastname( ) {
-        return _i18nPlayerLastname.get( );
-    }
-
-    public SimpleStringProperty i18nPlayerLastnameProperty( ) {
+    SimpleStringProperty i18nPlayerLastnameProperty( ) {
         return _i18nPlayerLastname;
     }
 
-    public String getI18nPlayerFirst( ) {
-        return _i18nPlayerFirst.get( );
-    }
-
-    public SimpleStringProperty i18nPlayerFirstProperty( ) {
+    SimpleStringProperty i18nPlayerFirstProperty( ) {
         return _i18nPlayerFirst;
     }
 
-    public String getI18nPlayerBirthday( ) {
-        return _i18nPlayerBirthday.get( );
-    }
-
-    public SimpleStringProperty i18nPlayerBirthdayProperty( ) {
+    SimpleStringProperty i18nPlayerBirthdayProperty( ) {
         return _i18nPlayerBirthday;
     }
 
-    public ObservableValue<ObservableList<ObservablePlayer>> playerListProperty( ) {
+    ObservableValue<ObservableList<ObservablePlayer>> playerListProperty( ) {
         return new SimpleListProperty<>( FXCollections.observableArrayList(
             new ObservablePlayer( new Player( 123, "John", "DOE",
                                               "1985-08-29" ) ),
@@ -107,12 +96,25 @@ final class PlayerManagementViewModel {
                                               "1996-03-25" ) ) ) );
     }
 
-    public void fireHomeButton( ) {
+    void fireHomeButton( ) {
         _eventBus.post( new SceneRequestedEvent( _homepageViewProvider.get( ) ) );
     }
 
-    public SimpleStringProperty i18nPlayerManagementTitleProperty( ) {
+    SimpleStringProperty i18nPlayerManagementTitleProperty( ) {
         return _i18nPlayerManagementTitle;
+    }
+
+    SimpleStringProperty i18nAddPlayerActionProperty( ) {
+        return _i18nAddPlayerAction;
+    }
+
+    public AddPlayerDialogModel newAddPlayerDialogModel( ) {
+        return _addPlayerDialogModelProvider.get( );
+    }
+
+    public void firePlayerCreated( final Player player ) {
+        _playerRepository.registerPlayer( player );
+        _eventBus.post( new InformationEvent( _translator.get( "player.created" ) ) );
     }
 
     private final SimpleStringProperty _i18nPlaceholder = new SimpleStringProperty( );
@@ -121,7 +123,12 @@ final class PlayerManagementViewModel {
     private final SimpleStringProperty _i18nPlayerFirst = new SimpleStringProperty( );
     private final SimpleStringProperty _i18nPlayerBirthday = new SimpleStringProperty( );
     private final SimpleStringProperty _i18nPlayerManagementTitle = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nAddPlayerAction = new SimpleStringProperty( );
 
     private final EventBus _eventBus;
     private final Provider<HomepageView> _homepageViewProvider;
+    private final Provider<AddPlayerDialogModel> _addPlayerDialogModelProvider;
+
+    private final PlayerRepository _playerRepository;
+    private final I18nTranslator _translator;
 }

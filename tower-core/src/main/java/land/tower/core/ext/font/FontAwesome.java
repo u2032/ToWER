@@ -20,10 +20,10 @@ package land.tower.core.ext.font;
  */
 public final class FontAwesome {
 
-    public static String FA_STYLE_NAME = "fa";
+    public static final String FA_STYLE_NAME = "fa";
 
     // Icons
 
-    public static String HOME = "\uf015";
-
+    public static final String HOME = "\uf015";
+    public static final String PLUS = "\uf0fe";
 }
