@@ -53,8 +53,8 @@ final class HomepageViewModel {
     }
 
     private void defineTexts( final I18nTranslator i18n ) {
-        _playerManagementTitle.setValue( i18n.get( "homepage.player.management.title" ) );
-        _tournamentManagementTitle.setValue( i18n.get( "homepage.tournament.management.title" ) );
+        _playerManagementTitle.setValue( i18n.get( "player.management.title" ) );
+        _tournamentManagementTitle.setValue( i18n.get( "tournament.management.title" ) );
     }
 
     @Subscribe

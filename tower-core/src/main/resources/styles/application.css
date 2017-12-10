@@ -8,6 +8,14 @@
     -fx-font-family: "Font Awesome 5 Free";
 }
 
+.large {
+    -fx-font-size: 2em;
+}
+
+.important {
+    -fx-font-weight: bold;
+}
+
 #statusBar {
     -fx-background-color: lightgray;
     -fx-border-color: darkgray;
@@ -19,4 +27,8 @@
 
 .table-column {
     -fx-alignment: center;
+}
+
+.title {
+    -fx-font-style: italic;
 }

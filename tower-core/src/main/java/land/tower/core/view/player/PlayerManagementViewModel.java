@@ -23,8 +23,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.i18n.I18nTranslatorEvent;
+import land.tower.core.view.event.SceneRequestedEvent;
+import land.tower.core.view.home.HomepageView;
 import land.tower.data.Player;
 
 /**
@@ -34,7 +37,10 @@ import land.tower.data.Player;
 final class PlayerManagementViewModel {
 
     @Inject
-    public PlayerManagementViewModel( final EventBus eventBus, final I18nTranslator translator ) {
+    public PlayerManagementViewModel( final EventBus eventBus, final I18nTranslator translator,
+                                      final Provider<HomepageView> homepageViewProvider ) {
+        _eventBus = eventBus;
+        _homepageViewProvider = homepageViewProvider;
         eventBus.register( this );
         defineTexts( translator );
     }
@@ -45,51 +51,52 @@ final class PlayerManagementViewModel {
     }
 
     private void defineTexts( final I18nTranslator translator ) {
-        _i18nPlaceholderProperty.setValue( translator.get( "player.management.no.player" ) );
-        _i18nPlayerNumeroProperty.setValue( translator.get( "player.numero" ) );
-        _i18nPlayerFirstProperty.setValue( translator.get( "player.firstname" ) );
-        _i18nPlayerLastnameProperty.setValue( translator.get( "player.lastname" ) );
-        _i18nPlayerBirthdayProperty.setValue( translator.get( "player.birthday" ) );
+        _i18nPlaceholder.setValue( translator.get( "player.management.no.player" ) );
+        _i18nPlayerNumero.setValue( translator.get( "player.numero" ) );
+        _i18nPlayerFirst.setValue( translator.get( "player.firstname" ) );
+        _i18nPlayerLastname.setValue( translator.get( "player.lastname" ) );
+        _i18nPlayerBirthday.setValue( translator.get( "player.birthday" ) );
+        _i18nPlayerManagementTitle.setValue( translator.get( "player.management.title" ) );
     }
 
-    public String getI18nPlaceholderProperty( ) {
-        return _i18nPlaceholderProperty.get( );
+    public String getI18nPlaceholder( ) {
+        return _i18nPlaceholder.get( );
     }
 
-    public SimpleStringProperty i18nPlaceholderPropertyProperty( ) {
-        return _i18nPlaceholderProperty;
+    public SimpleStringProperty i18nPlaceholderProperty( ) {
+        return _i18nPlaceholder;
     }
 
-    public String getI18nPlayerNumeroProperty( ) {
-        return _i18nPlayerNumeroProperty.get( );
+    public String getI18nPlayerNumero( ) {
+        return _i18nPlayerNumero.get( );
     }
 
-    public SimpleStringProperty i18nPlayerNumeroPropertyProperty( ) {
-        return _i18nPlayerNumeroProperty;
+    public SimpleStringProperty i18nPlayerNumeroProperty( ) {
+        return _i18nPlayerNumero;
     }
 
-    public String getI18nPlayerLastnameProperty( ) {
-        return _i18nPlayerLastnameProperty.get( );
+    public String getI18nPlayerLastname( ) {
+        return _i18nPlayerLastname.get( );
     }
 
-    public SimpleStringProperty i18nPlayerLastnamePropertyProperty( ) {
-        return _i18nPlayerLastnameProperty;
+    public SimpleStringProperty i18nPlayerLastnameProperty( ) {
+        return _i18nPlayerLastname;
     }
 
-    public String getI18nPlayerFirstProperty( ) {
-        return _i18nPlayerFirstProperty.get( );
+    public String getI18nPlayerFirst( ) {
+        return _i18nPlayerFirst.get( );
     }
 
-    public SimpleStringProperty i18nPlayerFirstPropertyProperty( ) {
-        return _i18nPlayerFirstProperty;
+    public SimpleStringProperty i18nPlayerFirstProperty( ) {
+        return _i18nPlayerFirst;
     }
 
-    public String getI18nPlayerBirthdayProperty( ) {
-        return _i18nPlayerBirthdayProperty.get( );
+    public String getI18nPlayerBirthday( ) {
+        return _i18nPlayerBirthday.get( );
     }
 
-    public SimpleStringProperty i18nPlayerBirthdayPropertyProperty( ) {
-        return _i18nPlayerBirthdayProperty;
+    public SimpleStringProperty i18nPlayerBirthdayProperty( ) {
+        return _i18nPlayerBirthday;
     }
 
     public ObservableValue<ObservableList<ObservablePlayer>> playerListProperty( ) {
@@ -100,9 +107,21 @@ final class PlayerManagementViewModel {
                                               "1996-03-25" ) ) ) );
     }
 
-    private final SimpleStringProperty _i18nPlaceholderProperty = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerNumeroProperty = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerLastnameProperty = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerFirstProperty = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerBirthdayProperty = new SimpleStringProperty( );
+    public void fireHomeButton( ) {
+        _eventBus.post( new SceneRequestedEvent( _homepageViewProvider.get( ) ) );
+    }
+
+    public SimpleStringProperty i18nPlayerManagementTitleProperty( ) {
+        return _i18nPlayerManagementTitle;
+    }
+
+    private final SimpleStringProperty _i18nPlaceholder = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nPlayerNumero = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nPlayerLastname = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nPlayerFirst = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nPlayerBirthday = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nPlayerManagementTitle = new SimpleStringProperty( );
+
+    private final EventBus _eventBus;
+    private final Provider<HomepageView> _homepageViewProvider;
 }
