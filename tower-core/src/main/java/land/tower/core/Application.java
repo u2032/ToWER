@@ -52,6 +52,8 @@ public final class Application extends javafx.application.Application {
         loadFont( "fonts/NotoSans-Italic.ttf" );
         loadFont( "fonts/NotoSans-Bold.ttf" );
         loadFont( "fonts/NotoSans-BoldItalic.ttf" );
+        loadFont( "fonts/fa-regular-400.ttf" );
+        loadFont( "fonts/fa-solid-900.ttf" );
 
         final Injector injector = Guice.createInjector( modules( ) );
 

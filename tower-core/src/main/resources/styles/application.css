@@ -4,6 +4,10 @@
     -fx-font-smoothing-type: lcd;
 }
 
+.fa {
+    -fx-font-family: "Font Awesome 5 Free";
+}
+
 #statusBar {
     -fx-background-color: lightgray;
     -fx-border-color: darkgray;
