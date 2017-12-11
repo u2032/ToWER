@@ -65,6 +65,10 @@ public final class ObservablePlayer {
         return _birthday;
     }
 
+    public Player getPlayer( ) {
+        return _player;
+    }
+
     private final Player _player;
 
     private final SimpleStringProperty _numero;

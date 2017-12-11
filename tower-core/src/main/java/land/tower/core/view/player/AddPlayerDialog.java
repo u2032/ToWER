@@ -45,8 +45,6 @@ final class AddPlayerDialog extends Dialog<Player> {
         getDialogPane( ).getButtonTypes( ).addAll( saveButtonType, cancelButtonType );
 
         final Button saveButton = (Button) getDialogPane( ).lookupButton( saveButtonType );
-        saveButton.getStyleClass( ).add( "rich-button" );
-        saveButton.getStyleClass( ).add( "action-button" );
         saveButton.disableProperty( ).bind( Bindings.not( model.isValidProperty( ) ) );
         saveButton.setDefaultButton( true );
 

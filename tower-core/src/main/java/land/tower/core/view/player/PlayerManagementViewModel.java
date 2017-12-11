@@ -66,6 +66,10 @@ final class PlayerManagementViewModel {
         _i18nPlayerBirthday.setValue( translator.get( "player.birthday" ) );
         _i18nPlayerManagementTitle.setValue( translator.get( "player.management.title" ) );
         _i18nAddPlayerAction.setValue( FontAwesome.PLUS + " " + translator.get( "player.add.action" ).toUpperCase( ) );
+        _i18nDeleteAction.setValue( translator.get( "action.delete" ).toUpperCase( ) );
+        _i18nCancelAction.setValue( translator.get( "action.cancel" ).toUpperCase( ) );
+        _i18nDeletePlayerTitle.setValue( translator.get( "player.delete.title" ) );
+        _i18nDeletePlayerMessage.setValue( translator.get( "player.delete.message" ) );
     }
 
     SimpleStringProperty i18nPlaceholderProperty( ) {
@@ -108,6 +112,38 @@ final class PlayerManagementViewModel {
         return _i18nAddPlayerAction;
     }
 
+    public String getI18nDeleteAction( ) {
+        return _i18nDeleteAction.get( );
+    }
+
+    public SimpleStringProperty i18nDeleteActionProperty( ) {
+        return _i18nDeleteAction;
+    }
+
+    public String getI18nCancelAction( ) {
+        return _i18nCancelAction.get( );
+    }
+
+    public SimpleStringProperty i18nCancelActionProperty( ) {
+        return _i18nCancelAction;
+    }
+
+    public String getI18nDeletePlayerTitle( ) {
+        return _i18nDeletePlayerTitle.get( );
+    }
+
+    public SimpleStringProperty i18nDeletePlayerTitleProperty( ) {
+        return _i18nDeletePlayerTitle;
+    }
+
+    public String getI18nDeletePlayerMessage( ) {
+        return _i18nDeletePlayerMessage.get( );
+    }
+
+    public SimpleStringProperty i18nDeletePlayerMessageProperty( ) {
+        return _i18nDeletePlayerMessage;
+    }
+
     public AddPlayerDialogModel newAddPlayerDialogModel( ) {
         return _addPlayerDialogModelProvider.get( );
     }
@@ -117,6 +153,11 @@ final class PlayerManagementViewModel {
         _eventBus.post( new InformationEvent( _translator.get( "player.created" ) ) );
     }
 
+    public void firePlayerDeleted( final Player player ) {
+        _playerRepository.removePlayer( player );
+        _eventBus.post( new InformationEvent( _translator.get( "player.deleted" ) ) );
+    }
+
     private final SimpleStringProperty _i18nPlaceholder = new SimpleStringProperty( );
     private final SimpleStringProperty _i18nPlayerNumero = new SimpleStringProperty( );
     private final SimpleStringProperty _i18nPlayerLastname = new SimpleStringProperty( );
@@ -124,6 +165,10 @@ final class PlayerManagementViewModel {
     private final SimpleStringProperty _i18nPlayerBirthday = new SimpleStringProperty( );
     private final SimpleStringProperty _i18nPlayerManagementTitle = new SimpleStringProperty( );
     private final SimpleStringProperty _i18nAddPlayerAction = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nDeleteAction = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nCancelAction = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nDeletePlayerTitle = new SimpleStringProperty( );
+    private final SimpleStringProperty _i18nDeletePlayerMessage = new SimpleStringProperty( );
 
     private final EventBus _eventBus;
     private final Provider<HomepageView> _homepageViewProvider;

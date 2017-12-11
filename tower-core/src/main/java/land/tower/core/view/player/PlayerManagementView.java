@@ -17,10 +17,17 @@ package land.tower.core.view.player;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 
+import java.util.Optional;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,6 +37,7 @@ import javafx.scene.layout.Priority;
 import javax.inject.Inject;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
+import land.tower.data.Player;
 
 /**
  * Created on 09/12/2017
@@ -97,6 +105,13 @@ public final class PlayerManagementView extends BorderPane {
         birthdayCol.setCellValueFactory( new PropertyValueFactory<>( "birthday" ) );
         tableView.getColumns( ).add( birthdayCol );
 
+        final TableColumn<ObservablePlayer, Void> actionColumn = new TableColumn<>( );
+        actionColumn.setMaxWidth( 50 );
+        actionColumn.setMinWidth( 50 );
+        actionColumn.setResizable( false );
+        actionColumn.setCellFactory( param -> new DeletePlayerCell( ) );
+        tableView.getColumns( ).add( actionColumn );
+
         final Label emptyLabel = new Label( );
         emptyLabel.textProperty( ).bind( model.i18nPlaceholderProperty( ) );
         tableView.setPlaceholder( emptyLabel );
@@ -107,4 +122,48 @@ public final class PlayerManagementView extends BorderPane {
     }
 
     private final PlayerManagementViewModel _model;
+
+    private class DeletePlayerCell extends TableCell<ObservablePlayer, Void> {
+
+        final Button _button = new Button( FontAwesome.DELETE );
+
+        DeletePlayerCell( ) {
+            _button.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+            _button.getStyleClass( ).add( "rich-button" );
+            _button.getStyleClass( ).add( "dangerous-button" );
+            _button.setCursor( Cursor.HAND );
+            _button.setOnAction( t -> {
+                final Player player = getTableView( ).getItems( ).get( getIndex( ) ).getPlayer( );
+
+                final Alert alert = new Alert( AlertType.WARNING );
+                alert.headerTextProperty( ).bind( _model.i18nDeletePlayerTitleProperty( ) );
+                alert.contentTextProperty( ).bind( _model.i18nDeletePlayerMessageProperty( ) );
+
+                final ButtonType deleteButtonType = new ButtonType( _model.getI18nDeleteAction( ),
+                                                                    ButtonData.APPLY );
+                final ButtonType cancelButtonType = new ButtonType( _model.getI18nCancelAction( ),
+                                                                    ButtonData.CANCEL_CLOSE );
+                alert.getDialogPane( ).getButtonTypes( ).setAll( deleteButtonType, cancelButtonType );
+
+                final Button cancelButton = (Button) alert.getDialogPane( ).lookupButton( cancelButtonType );
+                cancelButton.setDefaultButton( true );
+
+                final Button deleteButton = (Button) alert.getDialogPane( ).lookupButton( deleteButtonType );
+                deleteButton.setDefaultButton( false );
+
+                final Optional<ButtonType> clicked = alert.showAndWait( );
+                if ( clicked.isPresent( ) && clicked.get( ) == deleteButtonType ) {
+                    _model.firePlayerDeleted( player );
+                }
+            } );
+        }
+
+        @Override
+        protected void updateItem( Void t, boolean empty ) {
+            super.updateItem( t, empty );
+            if ( !empty ) {
+                setGraphic( _button );
+            }
+        }
+    }
 }

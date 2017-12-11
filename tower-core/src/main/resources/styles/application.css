@@ -51,3 +51,11 @@
     linear-gradient(#395cab, #223768);
     -fx-text-fill: white;
 }
+
+.dangerous-button {
+    -fx-background-color: linear-gradient(#ffd65b, #e68400),
+    linear-gradient(#ffef84, #f2ba44),
+    linear-gradient(#ffea6a, #efaa22),
+    linear-gradient(#ffe657 0%, #f8c202 50%, #eea10b 100%);
+    -fx-text-fill: black;
+}
