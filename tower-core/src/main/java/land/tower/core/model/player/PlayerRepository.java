@@ -14,6 +14,9 @@
 
 package land.tower.core.model.player;
 
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
@@ -98,19 +101,19 @@ public final class PlayerRepository implements IService {
 
             try {
                 Files.createDirectories( PLAYER_STORAGE.getParent( ) );
-            } catch ( IOException e ) {
+            } catch ( final IOException e ) {
                 _logger.error( "Error caught during creating directory: " + PLAYER_STORAGE.toString( ), e );
             }
 
             try ( final BufferedWriter out = Files.newBufferedWriter( PLAYER_STORAGE_TMP, StandardCharsets.UTF_8 ) ) {
                 out.write( json );
-            } catch ( IOException e ) {
+            } catch ( final IOException e ) {
                 _logger.error( "Error caught during saving storage", e );
             }
 
             try {
-                Files.move( PLAYER_STORAGE_TMP, PLAYER_STORAGE );
-            } catch ( IOException e ) {
+                Files.move( PLAYER_STORAGE_TMP, PLAYER_STORAGE, REPLACE_EXISTING, ATOMIC_MOVE );
+            } catch ( final IOException e ) {
                 _logger.error( "Error caught during saving storage", e );
             }
 
