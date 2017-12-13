@@ -16,7 +16,7 @@ package land.tower.core.model.player;
 
 import java.util.OptionalLong;
 import javax.inject.Inject;
-import land.tower.data.Player;
+import land.tower.core.view.player.ObservablePlayer;
 
 /**
  * Created on 10/12/2017
@@ -40,7 +40,7 @@ public final class PlayerNumeroValidator {
     public OptionalLong generate( ) {
         final OptionalLong max = _playerRepository.getPlayersList( )
                                                   .stream( )
-                                                  .mapToLong( Player::getNumero )
+                                                  .mapToLong( ObservablePlayer::getNumero )
                                                   .map( l -> l + 1 )
                                                   .max( );
         return max.isPresent( ) ? max : OptionalLong.of( 1 );

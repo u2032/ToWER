@@ -16,6 +16,8 @@ package land.tower.core.model.player;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static javafx.collections.FXCollections.observableArrayList;
+import static javafx.collections.FXCollections.synchronizedObservableList;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -30,16 +32,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import javafx.collections.ObservableList;
 import javax.inject.Inject;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.IService;
 import land.tower.core.ext.thread.ApplicationThread;
+import land.tower.core.view.player.ObservablePlayer;
 import land.tower.data.Player;
 
 /**
@@ -54,7 +57,7 @@ public final class PlayerRepository implements IService {
     }
 
     public void registerPlayer( Player player ) {
-        _players.add( player );
+        _players.add( new ObservablePlayer( player ) );
         scheduleStorageUpdate( );
     }
 
@@ -63,7 +66,7 @@ public final class PlayerRepository implements IService {
         scheduleStorageUpdate( );
     }
 
-    public List<Player> getPlayersList( ) {
+    public ObservableList<ObservablePlayer> getPlayersList( ) {
         return _players;
     }
 
@@ -77,7 +80,9 @@ public final class PlayerRepository implements IService {
                 final List<Player> list = new GsonBuilder( ).create( )
                                                             .fromJson( fileReader, new TypeToken<List<Player>>( ) {
                                                             }.getType( ) );
-                _players.addAll( list );
+                _players.addAll( list.stream( )
+                                     .map( ObservablePlayer::new )
+                                     .collect( Collectors.toList( ) ) );
             }
         } catch ( IOException e ) {
             _logger.error( "Error loading player storage", e );
@@ -89,7 +94,7 @@ public final class PlayerRepository implements IService {
 
     }
 
-    public Optional<Player> getPlayer( final long numero ) {
+    public Optional<ObservablePlayer> getPlayer( final long numero ) {
         return _players.stream( )
                        .filter( p -> p.getNumero( ) == numero )
                        .findAny( );
@@ -97,7 +102,10 @@ public final class PlayerRepository implements IService {
 
     private void scheduleStorageUpdate( ) {
         _scheduledExecutorService.schedule( ( ) -> {
-            final String json = new GsonBuilder( ).create( ).toJson( _players );
+            final String json = new GsonBuilder( ).create( )
+                                                  .toJson( _players.stream( )
+                                                                   .map( ObservablePlayer::getPlayer )
+                                                                   .collect( Collectors.toList( ) ) );
 
             try {
                 Files.createDirectories( PLAYER_STORAGE.getParent( ) );
@@ -120,7 +128,7 @@ public final class PlayerRepository implements IService {
         }, 2, TimeUnit.SECONDS );
     }
 
-    private final List<Player> _players = Collections.synchronizedList( new ArrayList<>( ) );
+    private final ObservableList<ObservablePlayer> _players = synchronizedObservableList( observableArrayList( ) );
     private final ScheduledExecutorService _scheduledExecutorService;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );

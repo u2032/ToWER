@@ -20,7 +20,6 @@ import com.google.common.eventbus.Subscribe;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -93,11 +92,7 @@ final class PlayerManagementViewModel {
     }
 
     ObservableValue<ObservableList<ObservablePlayer>> playerListProperty( ) {
-        return new SimpleListProperty<>( FXCollections.observableArrayList(
-            new ObservablePlayer( new Player( 123, "John", "DOE",
-                                              "1985-08-29" ) ),
-            new ObservablePlayer( new Player( 456, "James", "BOND",
-                                              "1996-03-25" ) ) ) );
+        return new SimpleListProperty<>( _playerRepository.getPlayersList( ) );
     }
 
     void fireHomeButton( ) {

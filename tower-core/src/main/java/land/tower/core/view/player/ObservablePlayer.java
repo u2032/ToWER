@@ -14,7 +14,9 @@
 
 package land.tower.core.view.player;
 
+import javafx.beans.property.ReadOnlyLongWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import land.tower.data.Player;
 
@@ -27,17 +29,17 @@ public final class ObservablePlayer {
     public ObservablePlayer( final Player player ) {
         _player = player;
 
-        _numero = new ReadOnlyStringWrapper( player.getNumero( ) + "" );
+        _numero = new ReadOnlyLongWrapper( player.getNumero( ) );
         _firstname = new ReadOnlyStringWrapper( player.getFirstname( ) );
         _lastname = new ReadOnlyStringWrapper( player.getLastname( ) );
         _birthday = new ReadOnlyStringWrapper( player.getBirthday( ) );
     }
 
-    public String getNumero( ) {
+    public long getNumero( ) {
         return _numero.get( );
     }
 
-    public SimpleStringProperty numeroProperty( ) {
+    public SimpleLongProperty numeroProperty( ) {
         return _numero;
     }
 
@@ -71,7 +73,7 @@ public final class ObservablePlayer {
 
     private final Player _player;
 
-    private final SimpleStringProperty _numero;
+    private final SimpleLongProperty _numero;
     private final SimpleStringProperty _firstname;
     private final SimpleStringProperty _lastname;
     private final SimpleStringProperty _birthday;
