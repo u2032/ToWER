@@ -163,6 +163,8 @@ public final class PlayerManagementView extends BorderPane {
             super.updateItem( t, empty );
             if ( !empty ) {
                 setGraphic( _button );
+            } else {
+                setGraphic( null );
             }
         }
     }
