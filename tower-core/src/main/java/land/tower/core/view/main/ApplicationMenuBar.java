@@ -38,10 +38,12 @@ final class ApplicationMenuBar extends MenuBar {
     }
 
     private Menu fileMenu( ) {
-        final Menu fileMenu = new Menu( _i18n.get( "menu.file" ) );
+        final Menu fileMenu = new Menu( );
+        fileMenu.textProperty( ).bind( _i18n.get( "menu.file" ) );
         fileMenu.getItems( ).add( new SeparatorMenuItem( ) );
 
-        final MenuItem exitMenu = new MenuItem( _i18n.get( "menu.file.exit" ) );
+        final MenuItem exitMenu = new MenuItem( );
+        exitMenu.textProperty( ).bind( _i18n.get( "menu.file.exit" ) );
         exitMenu.setOnAction( event -> _eventBus.post( new CloseRequestEvent( ) ) );
         fileMenu.getItems( ).add( exitMenu );
 

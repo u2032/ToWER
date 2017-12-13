@@ -15,17 +15,13 @@
 package land.tower.core.view.player;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
 import javax.inject.Provider;
-import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.ext.i18n.I18nTranslatorEvent;
 import land.tower.core.model.player.PlayerRepository;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
@@ -39,7 +35,7 @@ import land.tower.data.Player;
 final class PlayerManagementViewModel {
 
     @Inject
-    public PlayerManagementViewModel( final EventBus eventBus, final I18nTranslator translator,
+    public PlayerManagementViewModel( final EventBus eventBus, final I18nTranslator i18n,
                                       final Provider<HomepageView> homepageViewProvider,
                                       final Provider<AddPlayerDialogModel> addPlayerDialogModelProvider,
                                       final PlayerRepository playerRepository ) {
@@ -47,48 +43,8 @@ final class PlayerManagementViewModel {
         _homepageViewProvider = homepageViewProvider;
         _addPlayerDialogModelProvider = addPlayerDialogModelProvider;
         _playerRepository = playerRepository;
-        _translator = translator;
-        defineTexts( translator );
+        _i18n = i18n;
         eventBus.register( this );
-    }
-
-    @Subscribe
-    public void i18nTranslatorEvent( final I18nTranslatorEvent event ) {
-        defineTexts( event.getTranslator( ) );
-    }
-
-    private void defineTexts( final I18nTranslator translator ) {
-        _i18nPlaceholder.setValue( translator.get( "player.management.no.player" ) );
-        _i18nPlayerNumero.setValue( translator.get( "player.numero" ) );
-        _i18nPlayerFirst.setValue( translator.get( "player.firstname" ) );
-        _i18nPlayerLastname.setValue( translator.get( "player.lastname" ) );
-        _i18nPlayerBirthday.setValue( translator.get( "player.birthday" ) );
-        _i18nPlayerManagementTitle.setValue( translator.get( "player.management.title" ) );
-        _i18nAddPlayerAction.setValue( FontAwesome.PLUS + " " + translator.get( "player.add.action" ).toUpperCase( ) );
-        _i18nDeleteAction.setValue( translator.get( "action.delete" ).toUpperCase( ) );
-        _i18nCancelAction.setValue( translator.get( "action.cancel" ).toUpperCase( ) );
-        _i18nDeletePlayerTitle.setValue( translator.get( "player.delete.title" ) );
-        _i18nDeletePlayerMessage.setValue( translator.get( "player.delete.message" ) );
-    }
-
-    SimpleStringProperty i18nPlaceholderProperty( ) {
-        return _i18nPlaceholder;
-    }
-
-    SimpleStringProperty i18nPlayerNumeroProperty( ) {
-        return _i18nPlayerNumero;
-    }
-
-    SimpleStringProperty i18nPlayerLastnameProperty( ) {
-        return _i18nPlayerLastname;
-    }
-
-    SimpleStringProperty i18nPlayerFirstProperty( ) {
-        return _i18nPlayerFirst;
-    }
-
-    SimpleStringProperty i18nPlayerBirthdayProperty( ) {
-        return _i18nPlayerBirthday;
     }
 
     ObservableValue<ObservableList<ObservablePlayer>> playerListProperty( ) {
@@ -99,76 +55,28 @@ final class PlayerManagementViewModel {
         _eventBus.post( new SceneRequestedEvent( _homepageViewProvider.get( ) ) );
     }
 
-    SimpleStringProperty i18nPlayerManagementTitleProperty( ) {
-        return _i18nPlayerManagementTitle;
-    }
-
-    SimpleStringProperty i18nAddPlayerActionProperty( ) {
-        return _i18nAddPlayerAction;
-    }
-
-    public String getI18nDeleteAction( ) {
-        return _i18nDeleteAction.get( );
-    }
-
-    public SimpleStringProperty i18nDeleteActionProperty( ) {
-        return _i18nDeleteAction;
-    }
-
-    public String getI18nCancelAction( ) {
-        return _i18nCancelAction.get( );
-    }
-
-    public SimpleStringProperty i18nCancelActionProperty( ) {
-        return _i18nCancelAction;
-    }
-
-    public String getI18nDeletePlayerTitle( ) {
-        return _i18nDeletePlayerTitle.get( );
-    }
-
-    public SimpleStringProperty i18nDeletePlayerTitleProperty( ) {
-        return _i18nDeletePlayerTitle;
-    }
-
-    public String getI18nDeletePlayerMessage( ) {
-        return _i18nDeletePlayerMessage.get( );
-    }
-
-    public SimpleStringProperty i18nDeletePlayerMessageProperty( ) {
-        return _i18nDeletePlayerMessage;
-    }
-
     public AddPlayerDialogModel newAddPlayerDialogModel( ) {
         return _addPlayerDialogModelProvider.get( );
     }
 
+    public I18nTranslator getI18n( ) {
+        return _i18n;
+    }
+
     public void firePlayerCreated( final Player player ) {
         _playerRepository.registerPlayer( player );
-        _eventBus.post( new InformationEvent( _translator.get( "player.created" ) ) );
+        _eventBus.post( new InformationEvent( _i18n.get( "player.created" ) ) );
     }
 
     public void firePlayerDeleted( final Player player ) {
         _playerRepository.removePlayer( player );
-        _eventBus.post( new InformationEvent( _translator.get( "player.deleted" ) ) );
+        _eventBus.post( new InformationEvent( _i18n.get( "player.deleted" ) ) );
     }
-
-    private final SimpleStringProperty _i18nPlaceholder = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerNumero = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerLastname = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerFirst = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerBirthday = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerManagementTitle = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nAddPlayerAction = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nDeleteAction = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nCancelAction = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nDeletePlayerTitle = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nDeletePlayerMessage = new SimpleStringProperty( );
 
     private final EventBus _eventBus;
     private final Provider<HomepageView> _homepageViewProvider;
     private final Provider<AddPlayerDialogModel> _addPlayerDialogModelProvider;
 
     private final PlayerRepository _playerRepository;
-    private final I18nTranslator _translator;
+    private final I18nTranslator _i18n;
 }

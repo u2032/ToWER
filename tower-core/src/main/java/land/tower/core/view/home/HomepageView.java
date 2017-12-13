@@ -39,11 +39,12 @@ public final class HomepageView extends HBox {
         setPadding( new Insets( 50, 50, 50, 50 ) );
         setSpacing( 50 );
 
-        final VBox pblock = generateBlock( model.playerManagementTitle( ), "img/home-players.png" );
-        pblock.setOnMouseClicked( event -> model.firePlayerViewRequested());
+        final VBox pblock = generateBlock( model.getI18n( ).get( "player.management.title" ), "img/home-players.png" );
+        pblock.setOnMouseClicked( event -> model.firePlayerViewRequested( ) );
         getChildren( ).add( pblock );
 
-        final VBox tblock = generateBlock( model.tournamentManagementTitle( ), "img/home-tournaments.png" );
+        final VBox tblock = generateBlock( model.getI18n( ).get( "tournament.management.title" ),
+                                           "img/home-tournaments.png" );
         getChildren( ).add( tblock );
     }
 

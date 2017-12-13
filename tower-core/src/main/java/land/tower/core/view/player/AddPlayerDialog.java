@@ -37,11 +37,13 @@ final class AddPlayerDialog extends Dialog<Player> {
 
     public AddPlayerDialog( final AddPlayerDialogModel model ) {
         _model = model;
-        titleProperty( ).bind( model.i18nTitleProperty( ) );
-        headerTextProperty( ).bind( model.i18nHeaderProperty( ) );
+        titleProperty( ).bind( model.getI18n( ).get( "player.add.title" ) );
+        headerTextProperty( ).bind( model.getI18n( ).get( "player.information" ) );
 
-        final ButtonType saveButtonType = new ButtonType( model.getI18nSave( ), ButtonData.OK_DONE );
-        final ButtonType cancelButtonType = new ButtonType( model.getI18nCancel( ), ButtonData.CANCEL_CLOSE );
+        final ButtonType saveButtonType =
+            new ButtonType( model.getI18n( ).get( "action.save" ).get( ).toUpperCase( ), ButtonData.OK_DONE );
+        final ButtonType cancelButtonType =
+            new ButtonType( model.getI18n( ).get( "action.cancel" ).get( ).toUpperCase( ), ButtonData.CANCEL_CLOSE );
         getDialogPane( ).getButtonTypes( ).addAll( saveButtonType, cancelButtonType );
 
         final Button saveButton = (Button) getDialogPane( ).lookupButton( saveButtonType );
@@ -55,7 +57,7 @@ final class AddPlayerDialog extends Dialog<Player> {
 
         final TextField numeroText = new TextField( );
         numeroText.textProperty( ).bindBidirectional( model.playerNumeroProperty( ) );
-        numeroText.promptTextProperty( ).bind( model.i18nPlayerNumeroProperty( ) );
+        numeroText.promptTextProperty( ).bind( model.getI18n( ).get( "player.numero" ) );
         numeroText.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
             if ( !newValue.matches( "[\\d ]*" ) ) {
                 numeroText.setText( newValue.replaceAll( "[^\\d ]", "" ) );
@@ -78,23 +80,23 @@ final class AddPlayerDialog extends Dialog<Player> {
         }
 
         final Label numeroLabel = new Label( );
-        numeroLabel.textProperty( ).bind( model.i18nPlayerNumeroProperty( ) );
+        numeroLabel.textProperty( ).bind( model.getI18n( ).get( "player.numero" ) );
         numeroLabel.setLabelFor( numeroText );
 
         final TextField firstnameText = new TextField( );
         firstnameText.textProperty( ).bindBidirectional( model.playerFirstnameProperty( ) );
-        firstnameText.promptTextProperty( ).bind( model.i18nPlayerFirstnameProperty( ) );
+        firstnameText.promptTextProperty( ).bind( model.getI18n( ).get( "player.firstname" ) );
 
         final Label firstnameLabel = new Label( );
-        firstnameLabel.textProperty( ).bind( model.i18nPlayerFirstnameProperty( ) );
+        firstnameLabel.textProperty( ).bind( model.getI18n( ).get( "player.firstname" ) );
         firstnameLabel.setLabelFor( firstnameText );
 
         final TextField lastnameText = new TextField( );
         lastnameText.textProperty( ).bindBidirectional( model.playerLastnameProperty( ) );
-        lastnameText.promptTextProperty( ).bind( model.i18nPlayerLastnameProperty( ) );
+        lastnameText.promptTextProperty( ).bind( model.getI18n( ).get( "player.lastname" ) );
 
         final Label lastnameLabel = new Label( );
-        lastnameLabel.textProperty( ).bind( model.i18nPlayerLastnameProperty( ) );
+        lastnameLabel.textProperty( ).bind( model.getI18n( ).get( "player.lastname" ) );
         lastnameLabel.setLabelFor( lastnameText );
 
         final DatePicker birthdayDatePicker = new DatePicker( );
@@ -119,7 +121,7 @@ final class AddPlayerDialog extends Dialog<Player> {
         birthdayDatePicker.setEditable( false );
 
         final Label birthdayLabel = new Label( );
-        birthdayLabel.textProperty( ).bind( model.i18nPlayerBirthdayProperty( ) );
+        birthdayLabel.textProperty( ).bind( model.getI18n( ).get( "player.birthday" ) );
         birthdayLabel.setLabelFor( birthdayDatePicker );
 
         grid.add( numeroLabel, 0, 0 );

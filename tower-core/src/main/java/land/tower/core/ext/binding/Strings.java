@@ -12,22 +12,21 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.ext.i18n;
+package land.tower.core.ext.binding;
+
+import static javafx.beans.binding.Bindings.createStringBinding;
+
+import javafx.beans.binding.StringBinding;
+import javafx.beans.value.ObservableValue;
 
 /**
- * Created on 06/12/2017
+ * Created on 13/12/2017
  * @author Cédric Longo
  */
-public final class I18nTranslatorEvent {
+public final class Strings {
 
-    public I18nTranslatorEvent( final I18nTranslator translator ) {
-        _translator = translator;
+    public static StringBinding toUpperCase( ObservableValue<String> text ) {
+        return createStringBinding( ( ) -> text.getValue( ) == null ? "" : text.getValue( ).toUpperCase( ), text );
     }
-
-    public I18nTranslator getTranslator( ) {
-        return _translator;
-    }
-
-    private final I18nTranslator _translator;
 
 }

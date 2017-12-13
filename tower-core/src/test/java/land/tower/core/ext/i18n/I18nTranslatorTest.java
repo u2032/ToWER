@@ -15,7 +15,6 @@
 package land.tower.core.ext.i18n;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +42,7 @@ class I18nTranslatorTest {
         properties.setProperty( "key2", "value2" );
         _i18nTranslator.registerEntries( properties );
         // Exercice
-        final String value = _i18nTranslator.get( "key1" );
+        final String value = _i18nTranslator.get( "key1" ).getValue( );
         // Verify
         assertThat(value).isEqualTo( "value1" );
     }
@@ -58,7 +57,7 @@ class I18nTranslatorTest {
         properties.setProperty( "key2", "value2" );
         _i18nTranslator.registerEntries( properties );
         // Exercice
-        final String value = _i18nTranslator.get( "key3" );
+        final String value = _i18nTranslator.get( "key3" ).getValue( );
         // Verify
         assertThat(value).isEqualTo( "key3" );
     }

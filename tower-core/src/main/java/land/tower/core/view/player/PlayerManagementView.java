@@ -18,6 +18,7 @@ import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 
 import java.util.Optional;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -35,6 +36,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javax.inject.Inject;
+import land.tower.core.ext.binding.Strings;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.data.Player;
@@ -55,7 +57,8 @@ public final class PlayerManagementView extends BorderPane {
         homeButton.getStyleClass( ).add( "rich-button" );
 
         final Button addButton = new Button( );
-        addButton.textProperty( ).bind( model.i18nAddPlayerActionProperty( ) );
+        addButton.textProperty( ).bind( Bindings.concat( FontAwesome.PLUS, " ", Strings.toUpperCase(
+            model.getI18n( ).get( "player.add.action" ) ) ) );
         addButton.setOnMouseClicked( e -> {
             new AddPlayerDialog( model.newAddPlayerDialogModel( ) )
                 .showAndWait( )
@@ -73,7 +76,7 @@ public final class PlayerManagementView extends BorderPane {
         title.getStyleClass( ).add( "title" );
         title.getStyleClass( ).add( "large" );
         title.getStyleClass( ).add( "important" );
-        title.textProperty( ).bind( model.i18nPlayerManagementTitleProperty( ) );
+        title.textProperty( ).bind( model.getI18n( ).get( "player.management.title" ) );
         title.setEffect( Effects.dropShadow( ) );
 
         final HBox header = new HBox( homeButton, addButton, spacing, title );
@@ -86,22 +89,22 @@ public final class PlayerManagementView extends BorderPane {
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
 
         final TableColumn<ObservablePlayer, String> numeroCol = new TableColumn<>( );
-        numeroCol.textProperty( ).bind( model.i18nPlayerNumeroProperty( ) );
+        numeroCol.textProperty( ).bind( model.getI18n( ).get( "player.numero" ) );
         numeroCol.setCellValueFactory( new PropertyValueFactory<>( "numero" ) );
         tableView.getColumns( ).add( numeroCol );
 
         final TableColumn<ObservablePlayer, String> firstNameCol = new TableColumn<>( "Firstname" );
-        firstNameCol.textProperty( ).bind( model.i18nPlayerFirstProperty( ) );
+        firstNameCol.textProperty( ).bind( model.getI18n( ).get( "player.firstname" ) );
         firstNameCol.setCellValueFactory( new PropertyValueFactory<>( "firstname" ) );
         tableView.getColumns( ).add( firstNameCol );
 
         final TableColumn<ObservablePlayer, String> lastNameCol = new TableColumn<>( "Lastname" );
-        lastNameCol.textProperty( ).bind( model.i18nPlayerLastnameProperty( ) );
+        lastNameCol.textProperty( ).bind( model.getI18n( ).get( "player.lastname" ) );
         lastNameCol.setCellValueFactory( new PropertyValueFactory<>( "lastname" ) );
         tableView.getColumns( ).add( lastNameCol );
 
         final TableColumn<ObservablePlayer, String> birthdayCol = new TableColumn<>( "Birthday" );
-        birthdayCol.textProperty( ).bind( model.i18nPlayerBirthdayProperty( ) );
+        birthdayCol.textProperty( ).bind( model.getI18n( ).get( "player.birthday" ) );
         birthdayCol.setCellValueFactory( new PropertyValueFactory<>( "birthday" ) );
         tableView.getColumns( ).add( birthdayCol );
 
@@ -113,7 +116,7 @@ public final class PlayerManagementView extends BorderPane {
         tableView.getColumns( ).add( actionColumn );
 
         final Label emptyLabel = new Label( );
-        emptyLabel.textProperty( ).bind( model.i18nPlaceholderProperty( ) );
+        emptyLabel.textProperty( ).bind( model.getI18n( ).get( "player.management.no.player" ) );
         tableView.setPlaceholder( emptyLabel );
 
         tableView.itemsProperty( ).bind( _model.playerListProperty( ) );
@@ -136,13 +139,15 @@ public final class PlayerManagementView extends BorderPane {
                 final Player player = getTableView( ).getItems( ).get( getIndex( ) ).getPlayer( );
 
                 final Alert alert = new Alert( AlertType.WARNING );
-                alert.headerTextProperty( ).bind( _model.i18nDeletePlayerTitleProperty( ) );
-                alert.contentTextProperty( ).bind( _model.i18nDeletePlayerMessageProperty( ) );
+                alert.headerTextProperty( ).bind( _model.getI18n( ).get( "player.delete.title" ) );
+                alert.contentTextProperty( ).bind( _model.getI18n( ).get( "player.delete.message" ) );
 
-                final ButtonType deleteButtonType = new ButtonType( _model.getI18nDeleteAction( ),
-                                                                    ButtonData.APPLY );
-                final ButtonType cancelButtonType = new ButtonType( _model.getI18nCancelAction( ),
-                                                                    ButtonData.CANCEL_CLOSE );
+                final ButtonType deleteButtonType =
+                    new ButtonType( _model.getI18n( ).get( "action.delete" ).get( ).toUpperCase( ),
+                                    ButtonData.APPLY );
+                final ButtonType cancelButtonType =
+                    new ButtonType( _model.getI18n( ).get( "action.cancel" ).get( ).toUpperCase( ),
+                                    ButtonData.CANCEL_CLOSE );
                 alert.getDialogPane( ).getButtonTypes( ).setAll( deleteButtonType, cancelButtonType );
 
                 final Button cancelButton = (Button) alert.getDialogPane( ).lookupButton( cancelButtonType );

@@ -15,17 +15,12 @@
 package land.tower.core.view.home;
 
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.ext.i18n.I18nTranslatorEvent;
 import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
@@ -42,41 +37,24 @@ final class HomepageViewModel {
                        final Provider<PlayerManagementView> playerManagementViewProvider,
                        @ApplicationThread final ScheduledExecutorService scheduler ) {
         _eventBus = eventBus;
+        _i18n = i18n;
         _playerManagementViewProvider = playerManagementViewProvider;
         _eventBus.register( this );
-
-        defineTexts( i18n );
 
         scheduler.schedule( ( ) -> {
             eventBus.post( new InformationEvent( i18n.get( "information.welcome" ) ) );
         }, 1, TimeUnit.SECONDS );
     }
 
-    private void defineTexts( final I18nTranslator i18n ) {
-        _playerManagementTitle.setValue( i18n.get( "player.management.title" ) );
-        _tournamentManagementTitle.setValue( i18n.get( "tournament.management.title" ) );
-    }
-
-    @Subscribe
-    public void i18nTranslatorEvent( final I18nTranslatorEvent event ) {
-        Platform.runLater( ( ) -> defineTexts( event.getTranslator( ) ) );
-    }
-
-    public StringProperty playerManagementTitle( ) {
-        return _playerManagementTitle;
-    }
-
-    public StringProperty tournamentManagementTitle( ) {
-        return _tournamentManagementTitle;
-    }
-
     public void firePlayerViewRequested( ) {
         _eventBus.post( new SceneRequestedEvent( _playerManagementViewProvider.get( ) ) );
     }
 
-    private final EventBus _eventBus;
-    private final Provider<PlayerManagementView> _playerManagementViewProvider;
+    public I18nTranslator getI18n( ) {
+        return _i18n;
+    }
 
-    private final StringProperty _playerManagementTitle = new SimpleStringProperty( );
-    private final StringProperty _tournamentManagementTitle = new SimpleStringProperty( );
+    private final EventBus _eventBus;
+    private final I18nTranslator _i18n;
+    private final Provider<PlayerManagementView> _playerManagementViewProvider;
 }

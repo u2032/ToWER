@@ -16,8 +16,11 @@ package land.tower.core.ext.i18n;
 
 import com.google.common.collect.Maps;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  * Created on 12/11/2017
@@ -25,14 +28,17 @@ import java.util.Properties;
  */
 public final class I18nTranslator {
 
-    public String get( final String key ) {
-        return _texts.getOrDefault( key, key );
+    public StringProperty get( final String key ) {
+        return _texts.computeIfAbsent( key, SimpleStringProperty::new );
     }
 
     void registerEntries( final Properties entries ) {
         entries.stringPropertyNames( )
-               .forEach( key -> _texts.put( key, entries.getProperty( key ) ) );
+               .forEach( key -> {
+                   _texts.computeIfAbsent( key, SimpleStringProperty::new )
+                         .setValue( entries.getProperty( key ) );
+               } );
     }
 
-    private final Map<String, String> _texts = Maps.newHashMap( );
+    private final Map<String, StringProperty> _texts = Collections.synchronizedMap( Maps.newHashMap( ) );
 }

@@ -34,14 +34,7 @@ final class AddPlayerDialogModel {
     public AddPlayerDialogModel( final I18nTranslator translator,
                                  final PlayerNumeroValidator playerNumeroValidator ) {
         _playerNumeroValidator = playerNumeroValidator;
-        _i18nTitle.setValue( translator.get( "player.add.title" ) );
-        _i18nHeader.setValue( translator.get( "player.information" ) );
-        _i18nSave.setValue( translator.get( "action.save" ).toUpperCase( ) );
-        _i18nCancel.setValue( translator.get( "action.cancel" ).toUpperCase( ) );
-        _i18nPlayerNumero.setValue( translator.get( "player.numero" ) );
-        _i18nPlayerLastname.setValue( translator.get( "player.lastname" ) );
-        _i18nPlayerFirstname.setValue( translator.get( "player.firstname" ) );
-        _i18nPlayerBirthday.setValue( translator.get( "player.birthday" ) );
+        _i18n = translator;
 
         _playerNumero.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
         _playerLastname.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
@@ -91,70 +84,6 @@ final class AddPlayerDialogModel {
         _isValid.set( true );
     }
 
-    public SimpleStringProperty i18nTitleProperty( ) {
-        return _i18nTitle;
-    }
-
-    public SimpleStringProperty i18nHeaderProperty( ) {
-        return _i18nHeader;
-    }
-
-    public String getI18nSave( ) {
-        return _i18nSave.get( );
-    }
-
-    public SimpleStringProperty i18nSaveProperty( ) {
-        return _i18nSave;
-    }
-
-    public void setI18nSave( final String i18nSave ) {
-        this._i18nSave.set( i18nSave );
-    }
-
-    public String getI18nCancel( ) {
-        return _i18nCancel.get( );
-    }
-
-    public SimpleStringProperty i18nCancelProperty( ) {
-        return _i18nCancel;
-    }
-
-    public void setI18nCancel( final String i18nCancel ) {
-        this._i18nCancel.set( i18nCancel );
-    }
-
-    public String getI18nPlayerNumero( ) {
-        return _i18nPlayerNumero.get( );
-    }
-
-    public SimpleStringProperty i18nPlayerNumeroProperty( ) {
-        return _i18nPlayerNumero;
-    }
-
-    public String getI18nPlayerLastname( ) {
-        return _i18nPlayerLastname.get( );
-    }
-
-    public SimpleStringProperty i18nPlayerLastnameProperty( ) {
-        return _i18nPlayerLastname;
-    }
-
-    public String getI18nPlayerFirstname( ) {
-        return _i18nPlayerFirstname.get( );
-    }
-
-    public SimpleStringProperty i18nPlayerFirstnameProperty( ) {
-        return _i18nPlayerFirstname;
-    }
-
-    public String getI18nPlayerBirthday( ) {
-        return _i18nPlayerBirthday.get( );
-    }
-
-    public SimpleStringProperty i18nPlayerBirthdayProperty( ) {
-        return _i18nPlayerBirthday;
-    }
-
     public SimpleBooleanProperty isValidProperty( ) {
         return _isValid;
     }
@@ -199,14 +128,9 @@ final class AddPlayerDialogModel {
         return _playerNumeroValidity;
     }
 
-    private final SimpleStringProperty _i18nTitle = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nHeader = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nSave = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nCancel = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerNumero = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerLastname = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerFirstname = new SimpleStringProperty( );
-    private final SimpleStringProperty _i18nPlayerBirthday = new SimpleStringProperty( );
+    public I18nTranslator getI18n( ) {
+        return _i18n;
+    }
 
     private final SimpleBooleanProperty _isValid = new SimpleBooleanProperty( );
 
@@ -218,4 +142,5 @@ final class AddPlayerDialogModel {
     private final SimpleBooleanProperty _playerNumeroValidity = new SimpleBooleanProperty( );
 
     private final PlayerNumeroValidator _playerNumeroValidator;
+    private final I18nTranslator _i18n;
 }

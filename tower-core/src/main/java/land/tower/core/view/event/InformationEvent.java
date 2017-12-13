@@ -14,6 +14,8 @@
 
 package land.tower.core.view.event;
 
+import javafx.beans.property.StringProperty;
+
 /**
  * Created on 10/12/2017
  * @author Cédric Longo
@@ -22,6 +24,10 @@ public final class InformationEvent {
 
     public InformationEvent( final String text ) {
         _text = text;
+    }
+
+    public InformationEvent( final StringProperty text ) {
+        _text = text.get( );
     }
 
     public String getText( ) {

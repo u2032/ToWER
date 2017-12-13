@@ -37,7 +37,6 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
 
     @Inject
     public I18nService( final EventBus eventBus ) {
-        _eventBus = eventBus;
     }
 
     @Override
@@ -53,8 +52,6 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
 
         load( "i18n/i18n_" + defaultLocale.getLanguage( ) + "_" + defaultLocale.getCountry( ) + ".properties" )
             .ifPresent( _i18nTranslator::registerEntries );
-
-        _eventBus.post( new I18nTranslatorEvent( _i18nTranslator ) );
     }
 
     @Override
@@ -84,7 +81,6 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
     }
 
     private final I18nTranslator _i18nTranslator = new I18nTranslator( );
-    private final EventBus _eventBus;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }
