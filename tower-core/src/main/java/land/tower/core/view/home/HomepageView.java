@@ -14,7 +14,6 @@
 
 package land.tower.core.view.home;
 
-import java.io.InputStream;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 
 /**
  * Created on 18/11/2017
@@ -34,29 +34,28 @@ import javax.inject.Inject;
 public final class HomepageView extends HBox {
 
     @Inject
-    public HomepageView( final HomepageViewModel model ) {
+    public HomepageView( final HomepageViewModel model, final Configuration configuration ) {
         setAlignment( Pos.CENTER );
         setPadding( new Insets( 50, 50, 50, 50 ) );
         setSpacing( 50 );
 
-        final VBox pblock = generateBlock( model.getI18n( ).get( "player.management.title" ), "img/home-players.png" );
+        final VBox pblock = generateBlock( model.getI18n( ).get( "player.management.title" ),
+                                           configuration.getHomePlayerButton( ) );
         pblock.setOnMouseClicked( event -> model.firePlayerViewRequested( ) );
         getChildren( ).add( pblock );
 
         final VBox tblock = generateBlock( model.getI18n( ).get( "tournament.management.title" ),
-                                           "img/home-tournaments.png" );
+                                           configuration.getHomeTournamentButton( ) );
         getChildren( ).add( tblock );
     }
 
-    private VBox generateBlock( final StringProperty text, final String imageName ) {
+    private VBox generateBlock( final StringProperty text, final Image image ) {
         final VBox block = new VBox( );
         block.setPrefSize( 200, 450 );
         block.setMinSize( USE_PREF_SIZE, USE_PREF_SIZE );
         block.setMaxSize( USE_PREF_SIZE, USE_PREF_SIZE );
         block.setCursor( Cursor.HAND );
 
-        final InputStream imStream = getClass( ).getClassLoader( ).getResourceAsStream( imageName );
-        final Image image = new Image( imStream, 200, 400, true, true );
         final ImageView view = new ImageView( image );
         block.getChildren( ).add( view );
 

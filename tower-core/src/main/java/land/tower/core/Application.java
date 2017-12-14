@@ -21,17 +21,20 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -40,9 +43,12 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import land.tower.core.ext.config.Configuration;
+import land.tower.core.ext.config.ConfigurationModule;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.event.EventModule;
 import land.tower.core.ext.i18n.I18nModule;
+import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.ServiceManager;
 import land.tower.core.ext.service.ServiceModule;
 import land.tower.core.ext.thread.ThreadingModule;
@@ -64,51 +70,66 @@ public final class Application extends javafx.application.Application {
 
     @Override
     public void start( final Stage primaryStage ) throws Exception {
-        /* Display a splashscreen */
-        final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( );
-        final Pane splashScreen = displaySplashScreen( primaryStage );
-        executor.scheduleWithFixedDelay( ( ) -> Platform.runLater( ( ) -> {
-            if ( _injector.get( ) == null ) {
-                return;
-            }
-            displayApplicationScene( _injector.get( ).getInstance( ApplicationScene.class ),
-                                     _injector.get( ).getInstance( ServiceManager.class ) );
+        try {
+            final Injector injector = Guice.createInjector( modules( ) );
+            final Configuration configuration = injector.getInstance( Configuration.class );
 
-            splashScreen.setEffect( null );
+            /* Display a splashscreen */
+            final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( );
+            final Pane splashScreen = displaySplashScreen( primaryStage, configuration );
+            executor.scheduleWithFixedDelay( ( ) -> Platform.runLater( ( ) -> {
+                if ( !_ready.get( ) ) {
+                    return;
+                }
+                displayApplicationScene( injector.getInstance( ApplicationScene.class ),
+                                         injector.getInstance( ServiceManager.class ),
+                                         configuration );
 
-            final FadeTransition fadeSplash = new FadeTransition( Duration.seconds( 1 ), splashScreen );
-            fadeSplash.setFromValue( 1.0 );
-            fadeSplash.setToValue( 0.0 );
-            fadeSplash.setOnFinished( actionEvent -> {
-                primaryStage.close( );
+                splashScreen.setEffect( null );
+
+                final FadeTransition fadeSplash = new FadeTransition( Duration.seconds( 1 ), splashScreen );
+                fadeSplash.setFromValue( 1.0 );
+                fadeSplash.setToValue( 0.0 );
+                fadeSplash.setOnFinished( actionEvent -> {
+                    primaryStage.close( );
+                } );
+                fadeSplash.play( );
+
+                executor.shutdown( );
+            } ), 4, 2, TimeUnit.SECONDS );
+
+            /* Start loading app */
+            CompletableFuture.runAsync( ( ) -> {
+                try {
+                    loadFont( "fonts/NotoSans-Regular.ttf" );
+                    loadFont( "fonts/NotoSans-Italic.ttf" );
+                    loadFont( "fonts/NotoSans-Bold.ttf" );
+                    loadFont( "fonts/NotoSans-BoldItalic.ttf" );
+                    loadFont( "fonts/fa-regular-400.ttf" );
+                    loadFont( "fonts/fa-solid-900.ttf" );
+
+                    final ServiceManager serviceManager = injector.getInstance( ServiceManager.class );
+                    serviceManager.startAll( );
+
+                    _ready.set( true );
+
+                } catch ( final Exception e ) {
+                    _logger.error( "Exception caught during startup", e );
+                    System.exit( 1 );
+                }
             } );
-            fadeSplash.play( );
 
-            executor.shutdown( );
-        } ), 4, 2, TimeUnit.SECONDS );
-
-
-        /* Start loading app */
-        loadFont( "fonts/NotoSans-Regular.ttf" );
-        loadFont( "fonts/NotoSans-Italic.ttf" );
-        loadFont( "fonts/NotoSans-Bold.ttf" );
-        loadFont( "fonts/NotoSans-BoldItalic.ttf" );
-        loadFont( "fonts/fa-regular-400.ttf" );
-        loadFont( "fonts/fa-solid-900.ttf" );
-
-        final Injector injector = Guice.createInjector( modules( ) );
-
-        final ServiceManager serviceManager = injector.getInstance( ServiceManager.class );
-        serviceManager.startAll( );
-
-        _injector.set( injector );
+        } catch ( final Exception e ) {
+            _logger.error( "Exception caught during startup", e );
+            System.exit( 1 );
+        }
     }
 
     private void displayApplicationScene( final ApplicationScene scene,
-                                          final ServiceManager serviceManager ) {
+                                          final ServiceManager serviceManager,
+                                          final Configuration configuration ) {
         final Stage stage = new Stage( );
-        scene.getStylesheets( )
-             .add( getClass( ).getClassLoader( ).getResource( "styles/application.css" ).toExternalForm( ) );
+        scene.getStylesheets( ).add( configuration.getApplicationStyle( ) );
 
         stage.setMaximized( true );
         stage.setTitle( "♜ ToWER" );
@@ -118,18 +139,15 @@ public final class Application extends javafx.application.Application {
         stage.show( );
     }
 
-    private Pane displaySplashScreen( final Stage stage ) {
+    private Pane displaySplashScreen( final Stage stage, final Configuration configuration ) {
         stage.setTitle( "♜ ToWER" );
         stage.setResizable( false );
         stage.initStyle( StageStyle.TRANSPARENT );
         stage.setAlwaysOnTop( true );
 
-        final InputStream imStream = getClass( ).getClassLoader( ).getResourceAsStream( "img/splashscreen.png" );
-        final Image image = new Image( imStream, 600, 400, false, true );
-
         final BorderPane pane = new BorderPane( );
         pane.setPadding( new Insets( 10, 10, 10, 10 ) );
-        pane.setCenter( new ImageView( image ) );
+        pane.setCenter( new ImageView( configuration.getSplashscreen( ) ) );
         pane.setEffect( Effects.dropShadow( ) );
 
         stage.setScene( new Scene( pane, Color.TRANSPARENT ) );
@@ -145,7 +163,8 @@ public final class Application extends javafx.application.Application {
     }
 
     private static List<Module> modules( ) {
-        return ImmutableList.of( new MainViewModule( ),
+        return ImmutableList.of( new ConfigurationModule( "config.properties" ),
+                                 new MainViewModule( ),
                                  new HomepageViewModule( ),
                                  new ThreadingModule( ),
                                  new ServiceModule( ),
@@ -155,5 +174,6 @@ public final class Application extends javafx.application.Application {
                                  new PlayerViewModule( ) );
     }
 
-    private AtomicReference<Injector> _injector = new AtomicReference<>( );
+    private final AtomicBoolean _ready = new AtomicBoolean( );
+    private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }
