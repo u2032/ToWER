@@ -23,8 +23,24 @@ import com.google.inject.Module;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import javafx.animation.FadeTransition;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
+import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.event.EventModule;
 import land.tower.core.ext.i18n.I18nModule;
 import land.tower.core.ext.service.ServiceManager;
@@ -48,6 +64,31 @@ public final class Application extends javafx.application.Application {
 
     @Override
     public void start( final Stage primaryStage ) throws Exception {
+        /* Display a splashscreen */
+        final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( );
+        final Pane splashScreen = displaySplashScreen( primaryStage );
+        executor.scheduleWithFixedDelay( ( ) -> Platform.runLater( ( ) -> {
+            if ( _injector.get( ) == null ) {
+                return;
+            }
+            displayApplicationScene( _injector.get( ).getInstance( ApplicationScene.class ),
+                                     _injector.get( ).getInstance( ServiceManager.class ) );
+
+            splashScreen.setEffect( null );
+
+            final FadeTransition fadeSplash = new FadeTransition( Duration.seconds( 1 ), splashScreen );
+            fadeSplash.setFromValue( 1.0 );
+            fadeSplash.setToValue( 0.0 );
+            fadeSplash.setOnFinished( actionEvent -> {
+                primaryStage.close( );
+            } );
+            fadeSplash.play( );
+
+            executor.shutdown( );
+        } ), 4, 2, TimeUnit.SECONDS );
+
+
+        /* Start loading app */
         loadFont( "fonts/NotoSans-Regular.ttf" );
         loadFont( "fonts/NotoSans-Italic.ttf" );
         loadFont( "fonts/NotoSans-Bold.ttf" );
@@ -59,16 +100,42 @@ public final class Application extends javafx.application.Application {
 
         final ServiceManager serviceManager = injector.getInstance( ServiceManager.class );
         serviceManager.startAll( );
-        primaryStage.setOnCloseRequest( value -> serviceManager.stopAll( ) );
 
-        final ApplicationScene scene = injector.getInstance( ApplicationScene.class );
+        _injector.set( injector );
+    }
+
+    private void displayApplicationScene( final ApplicationScene scene,
+                                          final ServiceManager serviceManager ) {
+        final Stage stage = new Stage( );
         scene.getStylesheets( )
              .add( getClass( ).getClassLoader( ).getResource( "styles/application.css" ).toExternalForm( ) );
 
-        primaryStage.setMaximized( true );
-        primaryStage.setTitle( "♜ ToWER" );
-        primaryStage.setScene( scene );
-        primaryStage.show( );
+        stage.setMaximized( true );
+        stage.setTitle( "♜ ToWER" );
+        stage.setScene( scene );
+        stage.setOnCloseRequest( value -> serviceManager.stopAll( ) );
+
+        stage.show( );
+    }
+
+    private Pane displaySplashScreen( final Stage stage ) {
+        stage.setTitle( "♜ ToWER" );
+        stage.setResizable( false );
+        stage.initStyle( StageStyle.TRANSPARENT );
+        stage.setAlwaysOnTop( true );
+
+        final InputStream imStream = getClass( ).getClassLoader( ).getResourceAsStream( "img/splashscreen.png" );
+        final Image image = new Image( imStream, 600, 400, false, true );
+
+        final BorderPane pane = new BorderPane( );
+        pane.setPadding( new Insets( 10, 10, 10, 10 ) );
+        pane.setCenter( new ImageView( image ) );
+        pane.setEffect( Effects.dropShadow( ) );
+
+        stage.setScene( new Scene( pane, Color.TRANSPARENT ) );
+        stage.show( );
+
+        return pane;
     }
 
     private void loadFont( final String name ) {
@@ -87,4 +154,6 @@ public final class Application extends javafx.application.Application {
                                  new PlayerModule( ),
                                  new PlayerViewModule( ) );
     }
+
+    private AtomicReference<Injector> _injector = new AtomicReference<>( );
 }
