@@ -15,3 +15,6 @@ Before all, make sure you have **Java Runtime 8+** installed on your system. Thi
   * For example on linux: `JAVA=/etc/java/jre8`
   * For example on windows: `set "JAVA=C:\Progam Files\java\jre8"`
 * Execute the script to launch the application
+
+### Want to talk about the project?
+Feel free to join us on slack: https://tower-app-slack-invite.herokuapp.com

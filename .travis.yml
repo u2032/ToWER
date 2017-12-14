@@ -1,1 +1,7 @@
 language: java
+notifications:
+    slack:
+        rooms:
+            - tower-app:tJ3Y31nQmpX8UidoGKGDerrc#activity
+        on_success: change
+        on_failure: always
