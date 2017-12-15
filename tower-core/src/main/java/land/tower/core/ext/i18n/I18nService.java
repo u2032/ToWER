@@ -14,8 +14,6 @@
 
 package land.tower.core.ext.i18n;
 
-import com.google.common.eventbus.EventBus;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +34,7 @@ import land.tower.core.ext.service.IService;
 public final class I18nService implements IService, Provider<I18nTranslator> {
 
     @Inject
-    public I18nService( final EventBus eventBus ) {
+    public I18nService( ) {
     }
 
     @Override

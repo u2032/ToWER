@@ -16,16 +16,13 @@ package land.tower.core;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -48,6 +45,7 @@ import land.tower.core.ext.config.ConfigurationModule;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.event.EventModule;
 import land.tower.core.ext.i18n.I18nModule;
+import land.tower.core.ext.inject.ModuleResolver;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.ServiceManager;
 import land.tower.core.ext.service.ServiceModule;
@@ -71,7 +69,7 @@ public final class Application extends javafx.application.Application {
     @Override
     public void start( final Stage primaryStage ) throws Exception {
         try {
-            final Injector injector = Guice.createInjector( modules( ) );
+            final Injector injector = Guice.createInjector( modules( ).getModules( ) );
             final Configuration configuration = injector.getInstance( Configuration.class );
 
             /* Display a splashscreen */
@@ -162,16 +160,16 @@ public final class Application extends javafx.application.Application {
         Font.loadFont( checkNotNull( fontStream, "Font %s not found", name ), -1 );
     }
 
-    private static List<Module> modules( ) {
-        return ImmutableList.of( new ConfigurationModule( "config.properties" ),
-                                 new MainViewModule( ),
-                                 new HomepageViewModule( ),
-                                 new ThreadingModule( ),
-                                 new ServiceModule( ),
-                                 new EventModule( ),
-                                 new I18nModule( ),
-                                 new PlayerModule( ),
-                                 new PlayerViewModule( ) );
+    private static ModuleResolver modules( ) {
+        return ModuleResolver.withModules( new ConfigurationModule( "config.properties" ),
+                                           new MainViewModule( ),
+                                           new HomepageViewModule( ),
+                                           new ThreadingModule( ),
+                                           new ServiceModule( ),
+                                           new EventModule( ),
+                                           new I18nModule( ),
+                                           new PlayerModule( ),
+                                           new PlayerViewModule( ) );
     }
 
     private final AtomicBoolean _ready = new AtomicBoolean( );

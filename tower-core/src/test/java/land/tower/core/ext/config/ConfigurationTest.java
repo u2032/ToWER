@@ -12,22 +12,27 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.ext.service;
+package land.tower.core.ext.config;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
-import com.google.inject.multibindings.Multibinder;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 /**
- * Created on 06/12/2017
+ * Created on 15/12/2017
  * @author Cédric Longo
  */
-public final class ServiceModule extends AbstractModule {
+class ConfigurationTest {
 
-    @Override
-    protected void configure( ) {
-        bind( ServiceManager.class ).in( Scopes.SINGLETON );
-
-        Multibinder.newSetBinder( binder( ), IService.class );
+    @Test
+    @DisplayName( "Configuration loads key-value pair from file" )
+    void configurationTest( ) throws Exception {
+        // Setup
+        final Configuration config = new Configuration( "config.properties" );
+        // Exercice
+        final String splashscreen = config.get( "splashcreen" );
+        // Verify
+        assertThat( splashscreen ).isEqualTo( "img/splashscreen.png" );
     }
 }
