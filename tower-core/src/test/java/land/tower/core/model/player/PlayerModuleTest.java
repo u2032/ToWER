@@ -48,6 +48,20 @@ class PlayerModuleTest {
     }
 
     @Test
+    @DisplayName( "IPlayerStorage can be injected as singleton" )
+    void can_inject_IPlayerStorage( ) throws Exception {
+        // Setup
+        final Injector injector = Guice.createInjector( new PlayerModule( ), new ThreadingModule( ) );
+        // Exercice
+        final IPlayerStorage instance = injector.getInstance( IPlayerStorage.class );
+        final IPlayerStorage instance2 = injector.getInstance( IPlayerStorage.class );
+        // Verify
+        assertThat( instance ).isNotNull( );
+        assertThat( instance ).isInstanceOf( PlayerStorage.class );
+        assertThat( instance ).isSameAs( instance2 );
+    }
+
+    @Test
     @DisplayName( "PlayerRepository is registered as Service" )
     void PlayerRepository_is_registered( ) throws Exception {
         // Setup

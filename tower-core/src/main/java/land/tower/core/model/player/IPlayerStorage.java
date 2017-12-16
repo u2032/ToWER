@@ -14,24 +14,16 @@
 
 package land.tower.core.model.player;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
-import com.google.inject.multibindings.Multibinder;
-
-import land.tower.core.ext.service.IService;
+import java.util.List;
+import land.tower.data.Player;
 
 /**
- * Created on 06/12/2017
+ * Created on 16/12/2017
  * @author Cédric Longo
  */
-public final class PlayerModule extends AbstractModule {
+interface IPlayerStorage {
 
-    @Override
-    protected void configure( ) {
-        bind( IPlayerStorage.class ).to( PlayerStorage.class ).in( Scopes.SINGLETON );
-        bind( PlayerRepository.class ).in( Scopes.SINGLETON );
+    List<Player> loadPlayers( );
 
-        Multibinder.newSetBinder( binder( ), IService.class )
-                   .addBinding( ).to( PlayerRepository.class );
-    }
+    void savePlayers( List<Player> players );
 }

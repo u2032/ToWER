@@ -14,24 +14,20 @@
 
 package land.tower.core.model.player;
 
+import static org.mockito.Mockito.mock;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
-import com.google.inject.multibindings.Multibinder;
-
-import land.tower.core.ext.service.IService;
 
 /**
- * Created on 06/12/2017
+ * Created on 16/12/2017
  * @author Cédric Longo
  */
-public final class PlayerModule extends AbstractModule {
+final class TestPlayerModule extends AbstractModule {
 
     @Override
     protected void configure( ) {
-        bind( IPlayerStorage.class ).to( PlayerStorage.class ).in( Scopes.SINGLETON );
+        bind( IPlayerStorage.class ).toInstance( mock( IPlayerStorage.class ) );
         bind( PlayerRepository.class ).in( Scopes.SINGLETON );
-
-        Multibinder.newSetBinder( binder( ), IService.class )
-                   .addBinding( ).to( PlayerRepository.class );
     }
 }
