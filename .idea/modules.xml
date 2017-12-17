@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/ToWER.iml" filepath="$PROJECT_DIR$/ToWER.iml" />
       <module fileurl="file://$PROJECT_DIR$/tower-core/tower-core.iml" filepath="$PROJECT_DIR$/tower-core/tower-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/tower-data/tower-data.iml" filepath="$PROJECT_DIR$/tower-data/tower-data.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tower-deployment/tower-deployment.iml" filepath="$PROJECT_DIR$/tower-deployment/tower-deployment.iml" />
     </modules>
   </component>
 </project>

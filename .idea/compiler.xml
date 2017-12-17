@@ -25,6 +25,7 @@
       <module name="tower" target="1.8" />
       <module name="tower-core" target="1.8" />
       <module name="tower-data" target="1.8" />
+      <module name="tower-deployment" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

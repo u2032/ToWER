@@ -18,6 +18,7 @@
     <modules>
         <module>tower-data</module>
         <module>tower-core</module>
+        <module>tower-deployment</module>
     </modules>
 
     <build>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>land.tower</groupId>
+        <artifactId>tower-parent</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tower-deployment</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <deploy.groupId>${project.groupId}</deploy.groupId>
+        <deploy.artefactId>tower-core</deploy.artefactId>
+        <deploy.version>${project.version}</deploy.version>
+        <deploy.mainClass>land.tower.core.Application</deploy.mainClass>
+        <deploy.name>Tower</deploy.name>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>windows</id>
+            <properties>
+                <bundle.executable>${env.JAVA_HOME}/bin/javapackager.exe</bundle.executable>
+                <bundle.native>exe</bundle.native>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>package</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-project</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${deploy.groupId}</groupId>
+                                            <artifactId>${deploy.artefactId}</artifactId>
+                                            <version>${deploy.version}</version>
+                                            <type>zip</type>
+                                            <outputDirectory>${project.build.directory}/deployment</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${bundle.executable}</executable>
+                                    <arguments>
+                                        <argument>-deploy</argument>
+                                        <argument>-native</argument>
+                                        <argument>${bundle.native}</argument>
+                                        <argument>-outdir</argument>
+                                        <argument>${project.build.directory}/package</argument>
+                                        <argument>-outfile</argument>
+                                        <argument>${deploy.name}</argument>
+                                        <argument>-srcdir</argument>
+                                        <argument>
+                                            ${project.build.directory}/deployment/${deploy.artefactId}-${deploy.version}
+                                        </argument>
+                                        <argument>-appclass</argument>
+                                        <argument>${deploy.mainClass}</argument>
+                                        <argument>-name</argument>
+                                        <argument>${deploy.name}</argument>
+                                        <argument>-title</argument>
+                                        <argument>${deploy.name}</argument>
+                                        <argument>-description</argument>
+                                        <argument>Tournament management app</argument>
+                                        <argument>-Bruntime=${env.JAVA_HOME}\jre</argument>
+                                        <argument>-BappVersion=${deploy.version}</argument>
+                                        <argument>-Bidentifier=land.tower.${deploy.name}</argument>
+                                        <argument>-BmenuHint=true</argument>
+                                        <argument>-BshortcutHint=true</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
