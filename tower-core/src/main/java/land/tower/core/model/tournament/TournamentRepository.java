@@ -32,7 +32,7 @@ import land.tower.core.ext.service.IService;
 public final class TournamentRepository implements IService {
 
     @Inject
-    public TournamentRepository( final TournamentStorage storage ) {
+    public TournamentRepository( final ITournamentStorage storage ) {
         _storage = storage;
     }
 
@@ -57,7 +57,7 @@ public final class TournamentRepository implements IService {
     private final ObservableList<ObservableTournament> _tournaments =
         synchronizedObservableList( observableArrayList( ) );
 
-    private final TournamentStorage _storage;
+    private final ITournamentStorage _storage;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }

@@ -22,6 +22,8 @@ import com.google.inject.Injector;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import land.tower.core.ext.thread.ThreadingModule;
+
 /**
  * Created on 17/12/2017
  * @author Cédric Longo
@@ -32,7 +34,7 @@ class TournamentModuleTest {
     @DisplayName( "TournamentRepository can be injected as singleton" )
     void can_inject_TournamentRepository( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new TournamentModule( ) );
+        final Injector injector = Guice.createInjector( new TournamentModule( ), new ThreadingModule( ) );
         // Exercice
         final TournamentRepository instance = injector.getInstance( TournamentRepository.class );
         final TournamentRepository instance2 = injector.getInstance( TournamentRepository.class );
@@ -45,7 +47,7 @@ class TournamentModuleTest {
     @DisplayName( "TournamentStorage can be injected as singleton" )
     void can_inject_TournamentStorage( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new TournamentModule( ) );
+        final Injector injector = Guice.createInjector( new TournamentModule( ), new ThreadingModule( ) );
         // Exercice
         final ITournamentStorage instance = injector.getInstance( ITournamentStorage.class );
         final ITournamentStorage instance2 = injector.getInstance( ITournamentStorage.class );
