@@ -58,11 +58,9 @@ final class PlayerStorage implements IPlayerStorage {
         }
         try {
             try ( final FileReader fileReader = new FileReader( PLAYER_STORAGE.toFile( ) ) ) {
-                final List<Player> players = new GsonBuilder( ).create( )
-                                                               .fromJson( fileReader, new TypeToken<List<Player>>( ) {
-                                                               }.getType( ) );
-                _logger.info( "{} players loaded from storage", players.size( ) );
-                return players;
+                return new GsonBuilder( ).create( )
+                                         .fromJson( fileReader, new TypeToken<List<Player>>( ) {
+                                         }.getType( ) );
             }
         } catch ( final IOException e ) {
             _logger.error( "Error loading player storage", e );

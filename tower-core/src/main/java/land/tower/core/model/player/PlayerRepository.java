@@ -17,11 +17,15 @@ package land.tower.core.model.player;
 import static javafx.collections.FXCollections.observableArrayList;
 import static javafx.collections.FXCollections.synchronizedObservableList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
+import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.IService;
 import land.tower.core.view.player.ObservablePlayer;
 import land.tower.data.Player;
@@ -57,6 +61,7 @@ public final class PlayerRepository implements IService {
                 .stream( )
                 .map( ObservablePlayer::new )
                 .forEach( _players::add );
+        _logger.info( "{} players loaded from storage", _players.size( ) );
     }
 
     @Override
@@ -79,4 +84,6 @@ public final class PlayerRepository implements IService {
 
     private final ObservableList<ObservablePlayer> _players = synchronizedObservableList( observableArrayList( ) );
     private final IPlayerStorage _storage;
+
+    private Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }
