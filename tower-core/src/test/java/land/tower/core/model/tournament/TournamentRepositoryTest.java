@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import javax.inject.Inject;
-import land.tower.data.Tournament;
 
 /**
  * Created on 17/12/2017
@@ -51,8 +50,8 @@ class TournamentRepositoryTest {
         // Setup
         when( _storage.loadTournaments( ) )
             .thenReturn( Arrays.asList(
-                new Tournament( ),
-                new Tournament( )
+                _repository.create( ),
+                _repository.create( )
             ) );
         // Exercice
         _repository.start( );

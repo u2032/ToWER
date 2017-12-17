@@ -20,10 +20,17 @@ import static javafx.collections.FXCollections.synchronizedObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.IService;
+import land.tower.data.PairingMode;
+import land.tower.data.Tournament;
+import land.tower.data.TournamentHeader;
+import land.tower.data.TournamentStatus;
 
 /**
  * Created on 16/12/2017
@@ -48,6 +55,21 @@ public final class TournamentRepository implements IService {
     @Override
     public void stop( ) {
 
+    }
+
+    public Tournament create( ) {
+        final Tournament tournament = new Tournament( );
+        tournament.setId( UUID.randomUUID( ) );
+        tournament.setKey( UUID.randomUUID( ) );
+
+        final TournamentHeader header = new TournamentHeader( );
+        header.setTitle( "" );
+        header.setDate( LocalDateTime.now( ).truncatedTo( ChronoUnit.HOURS ).toString( ) );
+        header.setStatus( TournamentStatus.PLANNED );
+        header.setPairingMode( PairingMode.SWISS );
+        tournament.setHeader( header );
+
+        return tournament;
     }
 
     public ObservableList<ObservableTournament> getTournamentList( ) {
