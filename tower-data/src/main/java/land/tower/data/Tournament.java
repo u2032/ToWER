@@ -52,4 +52,16 @@ public final class Tournament {
     public TournamentHeader getHeader( ) {
         return _header;
     }
+
+    public void setId( final UUID id ) {
+        _id = id;
+    }
+
+    public void setKey( final UUID key ) {
+        _key = key;
+    }
+
+    public void setHeader( final TournamentHeader header ) {
+        _header = header;
+    }
 }

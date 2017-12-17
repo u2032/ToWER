@@ -12,29 +12,19 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.model.tournament;
+package land.tower.core.view.tournament.management;
 
-import land.tower.data.Tournament;
+import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 
 /**
- * Created on 16/12/2017
+ * Created on 17/12/2017
  * @author Cédric Longo
  */
-public final class ObservableTournament {
+public final class TournamentManagementViewModule extends AbstractModule {
 
-    public ObservableTournament( final Tournament tournament ) {
-        _tournament = tournament;
-        _header = new ObservableTournamentHeader( tournament.getHeader( ) );
+    @Override
+    protected void configure( ) {
+        bind( TournamentManagementView.class ).in( Scopes.SINGLETON );
     }
-
-    public Tournament getTournament( ) {
-        return _tournament;
-    }
-
-    public ObservableTournamentHeader getHeader( ) {
-        return _header;
-    }
-
-    private final Tournament _tournament;
-    private final ObservableTournamentHeader _header;
 }

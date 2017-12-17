@@ -56,6 +56,7 @@ import land.tower.core.view.home.HomepageViewModule;
 import land.tower.core.view.main.ApplicationScene;
 import land.tower.core.view.main.MainViewModule;
 import land.tower.core.view.player.PlayerViewModule;
+import land.tower.core.view.tournament.management.TournamentManagementViewModule;
 
 /**
  * Created on 09/11/2017
@@ -171,7 +172,8 @@ public final class Application extends javafx.application.Application {
                                            new I18nModule( ),
                                            new PlayerModule( ),
                                            new PlayerViewModule( ),
-                                           new TournamentModule( ) );
+                                           new TournamentModule( ),
+                                           new TournamentManagementViewModule( ) );
     }
 
     private final AtomicBoolean _ready = new AtomicBoolean( );

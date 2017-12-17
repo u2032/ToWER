@@ -26,6 +26,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
+import land.tower.core.ext.effect.Effects;
 
 /**
  * Created on 18/11/2017
@@ -46,6 +47,7 @@ public final class HomepageView extends HBox {
 
         final VBox tblock = generateBlock( model.getI18n( ).get( "tournament.management.title" ),
                                            configuration.getHomeTournamentButton( ) );
+        tblock.setOnMouseClicked( event -> model.fireTournamentViewRequested( ) );
         getChildren( ).add( tblock );
     }
 
@@ -57,6 +59,7 @@ public final class HomepageView extends HBox {
         block.setCursor( Cursor.HAND );
 
         final ImageView view = new ImageView( image );
+        view.setEffect( Effects.dropShadow( ) );
         block.getChildren( ).add( view );
 
         final Label label = new Label( );

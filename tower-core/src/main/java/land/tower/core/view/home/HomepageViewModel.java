@@ -25,6 +25,7 @@ import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.player.PlayerManagementView;
+import land.tower.core.view.tournament.management.TournamentManagementView;
 
 /**
  * Created on 18/11/2017
@@ -34,11 +35,13 @@ final class HomepageViewModel {
 
     @Inject
     HomepageViewModel( final EventBus eventBus, final I18nTranslator i18n,
+                       @ApplicationThread final ScheduledExecutorService scheduler,
                        final Provider<PlayerManagementView> playerManagementViewProvider,
-                       @ApplicationThread final ScheduledExecutorService scheduler ) {
+                       final Provider<TournamentManagementView> tournamentManagementViewProvider ) {
         _eventBus = eventBus;
         _i18n = i18n;
         _playerManagementViewProvider = playerManagementViewProvider;
+        _tournamentManagementViewProvider = tournamentManagementViewProvider;
         _eventBus.register( this );
 
         scheduler.schedule( ( ) -> {
@@ -54,7 +57,12 @@ final class HomepageViewModel {
         return _i18n;
     }
 
+    public void fireTournamentViewRequested( ) {
+        _eventBus.post( new SceneRequestedEvent( _tournamentManagementViewProvider.get( ) ) );
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
     private final Provider<PlayerManagementView> _playerManagementViewProvider;
+    private final Provider<TournamentManagementView> _tournamentManagementViewProvider;
 }

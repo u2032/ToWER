@@ -45,4 +45,68 @@ public final class TournamentHeader {
 
     @SerializedName( "kValue" )
     private int _kValue;
+
+    public TournamentStatus getStatus( ) {
+        return _status;
+    }
+
+    public void setStatus( final TournamentStatus status ) {
+        _status = status;
+    }
+
+    public String getTitle( ) {
+        return _title;
+    }
+
+    public void setTitle( final String title ) {
+        _title = title;
+    }
+
+    public String getDate( ) {
+        return _date;
+    }
+
+    public void setDate( final String date ) {
+        _date = date;
+    }
+
+    public PairingMode getPairingMode( ) {
+        return _pairingMode;
+    }
+
+    public void setPairingMode( final PairingMode pairingMode ) {
+        _pairingMode = pairingMode;
+    }
+
+    public Address getAddress( ) {
+        return _address;
+    }
+
+    public void setAddress( final Address address ) {
+        _address = address;
+    }
+
+    public Player getMainJudge( ) {
+        return _mainJudge;
+    }
+
+    public void setMainJudge( final Player mainJudge ) {
+        _mainJudge = mainJudge;
+    }
+
+    public Player getJudges( ) {
+        return _judges;
+    }
+
+    public void setJudges( final Player judges ) {
+        _judges = judges;
+    }
+
+    public int getkValue( ) {
+        return _kValue;
+    }
+
+    public void setkValue( final int kValue ) {
+        _kValue = kValue;
+    }
 }
