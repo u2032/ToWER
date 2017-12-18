@@ -32,6 +32,7 @@ final class ApplicationMenuBar extends MenuBar {
     public ApplicationMenuBar( final ApplicationMenuBarModel model ) {
         _model = model;
         getMenus( ).add( fileMenu( ) );
+        getMenus( ).add( tournamentMenu( ) );
     }
 
     private Menu fileMenu( ) {
@@ -55,6 +56,20 @@ final class ApplicationMenuBar extends MenuBar {
         fileMenu.getItems( ).add( exitMenu );
 
         return fileMenu;
+    }
+
+    private Menu tournamentMenu( ) {
+        final Menu tournamentMenu = new Menu( );
+        tournamentMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.tournament" ) );
+
+        final MenuItem homepageMenu = new MenuItem( );
+        homepageMenu.getStyleClass( ).add( "fa" );
+        homepageMenu.textProperty( ).bind( Bindings.concat( FontAwesome.PLUS, " ",
+                                                            _model.getI18n( ).get( "menu.add.tournament" ) ) );
+        homepageMenu.setOnAction( event -> _model.fireTournamentCreation( ) );
+        tournamentMenu.getItems( ).add( homepageMenu );
+
+        return tournamentMenu;
     }
 
     private final ApplicationMenuBarModel _model;
