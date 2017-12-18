@@ -14,15 +14,13 @@
 
 package land.tower.core.view.main;
 
-import com.google.common.eventbus.EventBus;
-
+import javafx.beans.binding.Bindings;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javax.inject.Inject;
-import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.view.event.CloseRequestEvent;
+import land.tower.core.ext.font.FontAwesome;
 
 /**
  * Created on 12/11/2017
@@ -31,25 +29,33 @@ import land.tower.core.view.event.CloseRequestEvent;
 final class ApplicationMenuBar extends MenuBar {
 
     @Inject
-    public ApplicationMenuBar( final EventBus eventBus, final I18nTranslator translator ) {
-        _eventBus = eventBus;
-        _i18n = translator;
+    public ApplicationMenuBar( final ApplicationMenuBarModel model ) {
+        _model = model;
         getMenus( ).add( fileMenu( ) );
     }
 
     private Menu fileMenu( ) {
         final Menu fileMenu = new Menu( );
-        fileMenu.textProperty( ).bind( _i18n.get( "menu.file" ) );
+        fileMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.file" ) );
+
+        final MenuItem homepageMenu = new MenuItem( );
+        homepageMenu.getStyleClass( ).add( "fa" );
+        homepageMenu.textProperty( ).bind( Bindings.concat( FontAwesome.HOME, " ",
+                                                            _model.getI18n( ).get( "menu.home" ) ) );
+        homepageMenu.setOnAction( event -> _model.fireHomeRequest( ) );
+        fileMenu.getItems( ).add( homepageMenu );
+
         fileMenu.getItems( ).add( new SeparatorMenuItem( ) );
 
         final MenuItem exitMenu = new MenuItem( );
-        exitMenu.textProperty( ).bind( _i18n.get( "menu.file.exit" ) );
-        exitMenu.setOnAction( event -> _eventBus.post( new CloseRequestEvent( ) ) );
+        exitMenu.getStyleClass( ).add( "fa" );
+        exitMenu.textProperty( ).bind( Bindings.concat( FontAwesome.OFF, " ",
+                                                        _model.getI18n( ).get( "menu.file.exit" ) ) );
+        exitMenu.setOnAction( event -> _model.fireCloseRequest( ) );
         fileMenu.getItems( ).add( exitMenu );
 
         return fileMenu;
     }
 
-    private final EventBus _eventBus;
-    private final I18nTranslator _i18n;
+    private final ApplicationMenuBarModel _model;
 }

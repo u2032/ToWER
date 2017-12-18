@@ -27,4 +27,5 @@ public final class FontAwesome {
     public static final String HOME = "\uf015";
     public static final String PLUS = "\uf0fe";
     public static final String DELETE = "\uf2ed";
+    public static final String OFF = "\uf011";
 }

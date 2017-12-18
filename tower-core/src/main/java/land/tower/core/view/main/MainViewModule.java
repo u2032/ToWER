@@ -28,6 +28,7 @@ public final class MainViewModule extends AbstractModule {
         bind( ApplicationScene.class ).in( Scopes.SINGLETON );
         bind( ApplicationSceneModel.class ).in( Scopes.SINGLETON );
         bind( ApplicationMenuBar.class ).in( Scopes.SINGLETON );
+        bind( ApplicationMenuBarModel.class ).in( Scopes.SINGLETON );
         bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
         bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
     }
