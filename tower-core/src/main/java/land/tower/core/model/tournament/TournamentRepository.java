@@ -65,7 +65,7 @@ public final class TournamentRepository implements IService {
 
         final TournamentHeader header = new TournamentHeader( );
         header.setTitle( "" );
-        header.setDate( LocalDateTime.now( ).truncatedTo( ChronoUnit.HOURS ).toString( ) );
+        header.setDate( LocalDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ).toString( ) );
         header.setStatus( TournamentStatus.PLANNED );
         header.setPairingMode( PairingMode.SWISS );
         header.setkValue( 1 );

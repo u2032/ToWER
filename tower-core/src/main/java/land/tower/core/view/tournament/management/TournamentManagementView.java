@@ -14,8 +14,10 @@
 
 package land.tower.core.view.tournament.management;
 
+import static javafx.beans.binding.Bindings.concat;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
+import static land.tower.core.ext.binding.Strings.toUpperCase;
 
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
@@ -35,7 +37,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javax.inject.Inject;
-import land.tower.core.ext.binding.Strings;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -57,10 +58,10 @@ public final class TournamentManagementView extends BorderPane {
         homeButton.getStyleClass( ).add( "rich-button" );
 
         final Button addButton = new Button( );
-        addButton.textProperty( ).bind( Bindings.concat( FontAwesome.PLUS, " ", Strings.toUpperCase(
-            model.getI18n( ).get( "tournament.add.action" ) ) ) );
+        addButton.textProperty( ).bind( concat( FontAwesome.PLUS, " ",
+                                                toUpperCase( model.getI18n( ).get( "tournament.add.action" ) ) ) );
         addButton.setOnMouseClicked( e -> {
-
+            _model.fireTournamentCreation( );
         } );
         addButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
         addButton.getStyleClass( ).add( "rich-button" );

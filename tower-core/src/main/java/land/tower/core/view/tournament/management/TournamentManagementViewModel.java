@@ -63,6 +63,11 @@ final class TournamentManagementViewModel {
         _eventBus.post( new InformationEvent( _i18n.get( "tournament.deleted" ) ) );
     }
 
+    void fireTournamentCreation( ) {
+        final Tournament tournament = _tournamentRepository.create( );
+        // TODO Trigger tournament view
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
 
