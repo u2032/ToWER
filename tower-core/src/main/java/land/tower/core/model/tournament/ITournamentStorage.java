@@ -26,4 +26,6 @@ interface ITournamentStorage {
     List<Tournament> loadTournaments( );
 
     void saveTournament( Tournament tournament );
+
+    void deleteTournament( Tournament tournament );
 }

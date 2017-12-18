@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import javax.inject.Inject;
+import land.tower.data.Tournament;
 
 /**
  * Created on 17/12/2017
@@ -48,11 +49,10 @@ class TournamentRepositoryTest {
     @DisplayName( "When service is started, it loads players from storage" )
     void startTest( ) throws Exception {
         // Setup
+        final Tournament tournament1 = _repository.create( );
+        final Tournament tournament2 = _repository.create( );
         when( _storage.loadTournaments( ) )
-            .thenReturn( Arrays.asList(
-                _repository.create( ),
-                _repository.create( )
-            ) );
+            .thenReturn( Arrays.asList( tournament1, tournament2 ) );
         // Exercice
         _repository.start( );
         // Verify
@@ -60,4 +60,17 @@ class TournamentRepositoryTest {
         assertThat( _repository.getTournamentList( ) ).hasSize( 2 );
     }
 
+    @Test
+    @DisplayName( "When a tournament is removed, it doesn't exist anymore and saved in storage" )
+    void removeTest( ) throws Exception {
+        // Setup
+        final Tournament tournament1 = _repository.create( );
+        final Tournament tournament2 = _repository.create( );
+        // Exercice
+        _repository.remove( tournament1 );
+        // Verify
+        assertThat( _repository.getTournamentList( ) ).hasSize( 1 );
+        assertThat( _repository.getTournamentList( ).get( 0 ).getTournament( ) ).isEqualTo( tournament2 );
+        verify( _storage ).deleteTournament( tournament1 );
+    }
 }

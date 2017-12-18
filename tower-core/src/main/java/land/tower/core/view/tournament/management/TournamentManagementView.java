@@ -17,11 +17,18 @@ package land.tower.core.view.tournament.management;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 
+import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
@@ -32,6 +39,7 @@ import land.tower.core.ext.binding.Strings;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.data.Tournament;
 
 /**
  * Created on 17/12/2017
@@ -97,6 +105,13 @@ public final class TournamentManagementView extends BorderPane {
                 param.getValue( ).getHeader( ).statusProperty( ) ) );
         tableView.getColumns( ).add( statusCol );
 
+        final TableColumn<ObservableTournament, Void> actionColumn = new TableColumn<>( );
+        actionColumn.setMaxWidth( 50 );
+        actionColumn.setMinWidth( 50 );
+        actionColumn.setResizable( false );
+        actionColumn.setCellFactory( param -> new DeleteTournamentCell( ) );
+        tableView.getColumns( ).add( actionColumn );
+
         final Label emptyLabel = new Label( );
         emptyLabel.textProperty( ).bind( model.getI18n( ).get( "tournament.management.no.tournament" ) );
         tableView.setPlaceholder( emptyLabel );
@@ -107,4 +122,53 @@ public final class TournamentManagementView extends BorderPane {
     }
 
     private final TournamentManagementViewModel _model;
+
+    private class DeleteTournamentCell extends TableCell<ObservableTournament, Void> {
+
+        final Button _button = new Button( FontAwesome.DELETE );
+
+        DeleteTournamentCell( ) {
+            _button.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+            _button.getStyleClass( ).add( "rich-button" );
+            _button.getStyleClass( ).add( "dangerous-button" );
+            _button.setCursor( Cursor.HAND );
+            _button.setOnAction( t -> {
+                final Tournament tournament = getTableView( ).getItems( ).get( getIndex( ) ).getTournament( );
+
+                final Alert alert = new Alert( AlertType.WARNING );
+                alert.headerTextProperty( ).bind( _model.getI18n( ).get( "tournament.delete.title" ) );
+                alert.contentTextProperty( ).bind( _model.getI18n( ).get( "tournament.delete.message" ) );
+
+                final ButtonType deleteButtonType =
+                    new ButtonType( _model.getI18n( ).get( "action.delete" ).get( ).toUpperCase( ),
+                                    ButtonData.APPLY );
+                final ButtonType cancelButtonType =
+                    new ButtonType( _model.getI18n( ).get( "action.cancel" ).get( ).toUpperCase( ),
+                                    ButtonData.CANCEL_CLOSE );
+                alert.getDialogPane( ).getButtonTypes( ).setAll( deleteButtonType, cancelButtonType );
+
+                final Button cancelButton = (Button) alert.getDialogPane( ).lookupButton( cancelButtonType );
+                cancelButton.setDefaultButton( true );
+
+                final Button deleteButton = (Button) alert.getDialogPane( ).lookupButton( deleteButtonType );
+                deleteButton.setDefaultButton( false );
+
+                final Optional<ButtonType> clicked = alert.showAndWait( );
+                if ( clicked.isPresent( ) && clicked.get( ) == deleteButtonType ) {
+                    _model.fireTournamentDeleted( tournament );
+                }
+            } );
+        }
+
+        @Override
+        protected void updateItem( Void t, boolean empty ) {
+            super.updateItem( t, empty );
+            if ( !empty ) {
+                setGraphic( _button );
+            } else {
+                setGraphic( null );
+            }
+        }
+    }
+
 }

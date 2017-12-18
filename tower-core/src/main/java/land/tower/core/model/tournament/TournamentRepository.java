@@ -45,6 +45,7 @@ public final class TournamentRepository implements IService {
 
     @Override
     public void start( ) {
+        _tournaments.clear( );
         _storage.loadTournaments( )
                 .stream( )
                 .map( ObservableTournament::new )
@@ -67,8 +68,11 @@ public final class TournamentRepository implements IService {
         header.setDate( LocalDateTime.now( ).truncatedTo( ChronoUnit.HOURS ).toString( ) );
         header.setStatus( TournamentStatus.PLANNED );
         header.setPairingMode( PairingMode.SWISS );
+        header.setkValue( 1 );
         tournament.setHeader( header );
 
+        _tournaments.add( new ObservableTournament( tournament ) );
+        _storage.saveTournament( tournament );
         return tournament;
     }
 
@@ -76,10 +80,14 @@ public final class TournamentRepository implements IService {
         return _tournaments;
     }
 
+    public void remove( final Tournament tournament ) {
+        _tournaments.removeIf( t -> tournament.getId( ).equals( t.getTournament( ).getId( ) ) );
+        _storage.deleteTournament( tournament );
+    }
+
     private final ObservableList<ObservableTournament> _tournaments =
         synchronizedObservableList( observableArrayList( ) );
 
     private final ITournamentStorage _storage;
-
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }

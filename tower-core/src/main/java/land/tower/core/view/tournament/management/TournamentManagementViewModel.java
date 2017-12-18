@@ -24,8 +24,10 @@ import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.model.tournament.TournamentRepository;
+import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
+import land.tower.data.Tournament;
 
 /**
  * Created on 17/12/2017
@@ -54,6 +56,11 @@ final class TournamentManagementViewModel {
 
     ObservableValue<ObservableList<ObservableTournament>> tournamentListProperty( ) {
         return new SimpleListProperty<>( _tournamentRepository.getTournamentList( ) );
+    }
+
+    void fireTournamentDeleted( final Tournament tournament ) {
+        _tournamentRepository.remove( tournament );
+        _eventBus.post( new InformationEvent( _i18n.get( "tournament.deleted" ) ) );
     }
 
     private final EventBus _eventBus;

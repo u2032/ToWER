@@ -103,6 +103,22 @@ final class TournamentStorage implements ITournamentStorage {
         }, 2, TimeUnit.SECONDS );
     }
 
+    @Override
+    public void deleteTournament( final Tournament tournament ) {
+        _scheduledExecutorService.schedule( ( ) -> {
+            if ( !Files.exists( TOURNAMENT_STORAGE ) ) {
+                return;
+            }
+
+            try {
+                final Path file = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr" );
+                Files.deleteIfExists( file );
+            } catch ( IOException e ) {
+                _logger.error( "Error during deleting tournament: " + tournament.getId( ), e );
+            }
+        }, 2, TimeUnit.SECONDS );
+    }
+
     private final ScheduledExecutorService _scheduledExecutorService;
 
     private static final Path TOURNAMENT_STORAGE = Paths.get( "data", "tournaments" );
