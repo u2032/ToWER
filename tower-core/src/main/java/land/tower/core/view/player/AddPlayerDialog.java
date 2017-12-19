@@ -14,6 +14,8 @@
 
 package land.tower.core.view.player;
 
+import com.google.common.base.Strings;
+
 import java.time.LocalDate;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -77,6 +79,10 @@ final class AddPlayerDialog extends Dialog<Player> {
             numeroText.setStyle( "-fx-text-fill: darkgreen" );
         } else {
             numeroText.setStyle( "-fx-text-fill: darkred; -fx-background-color: lightpink" );
+        }
+
+        if ( !Strings.isNullOrEmpty( model.getPlayerNumero( ) ) ) {
+            numeroText.setEditable( false );
         }
 
         final Label numeroLabel = new Label( );
