@@ -49,8 +49,8 @@ class TournamentRepositoryTest {
     @DisplayName( "When service is started, it loads players from storage" )
     void startTest( ) throws Exception {
         // Setup
-        final Tournament tournament1 = _repository.create( );
-        final Tournament tournament2 = _repository.create( );
+        final Tournament tournament1 = _repository.create( ).getTournament( );
+        final Tournament tournament2 = _repository.create( ).getTournament( );
         when( _storage.loadTournaments( ) )
             .thenReturn( Arrays.asList( tournament1, tournament2 ) );
         // Exercice
@@ -64,8 +64,8 @@ class TournamentRepositoryTest {
     @DisplayName( "When a tournament is removed, it doesn't exist anymore and saved in storage" )
     void removeTest( ) throws Exception {
         // Setup
-        final Tournament tournament1 = _repository.create( );
-        final Tournament tournament2 = _repository.create( );
+        final Tournament tournament1 = _repository.create( ).getTournament( );
+        final Tournament tournament2 = _repository.create( ).getTournament( );
         // Exercice
         _repository.remove( tournament1 );
         // Verify

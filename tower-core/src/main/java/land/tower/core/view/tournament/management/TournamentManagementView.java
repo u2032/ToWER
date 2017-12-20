@@ -19,6 +19,7 @@ import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -32,6 +33,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -87,7 +89,7 @@ public final class TournamentManagementView extends BorderPane {
         final TableView<ObservableTournament> tableView = new TableView<>( );
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
 
-        final TableColumn<ObservableTournament, String> dateCol = new TableColumn<>( );
+        final TableColumn<ObservableTournament, LocalDateTime> dateCol = new TableColumn<>( );
         dateCol.textProperty( ).bind( model.getI18n( ).get( "tournament.date" ) );
         dateCol.setCellValueFactory( param -> param.getValue( ).getHeader( ).dateProperty( ) );
         tableView.getColumns( ).add( dateCol );
@@ -112,6 +114,16 @@ public final class TournamentManagementView extends BorderPane {
         actionColumn.setResizable( false );
         actionColumn.setCellFactory( param -> new DeleteTournamentCell( ) );
         tableView.getColumns( ).add( actionColumn );
+
+        tableView.setRowFactory( tv -> {
+            final TableRow<ObservableTournament> row = new TableRow<>( );
+            row.setOnMouseClicked( event -> {
+                if ( !row.isEmpty( ) ) {
+                    _model.fireTournamentDisplay( row.getItem( ) );
+                }
+            } );
+            return row;
+        } );
 
         final Label emptyLabel = new Label( );
         emptyLabel.textProperty( ).bind( model.getI18n( ).get( "tournament.management.no.tournament" ) );

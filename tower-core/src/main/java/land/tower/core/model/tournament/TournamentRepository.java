@@ -58,22 +58,23 @@ public final class TournamentRepository implements IService {
 
     }
 
-    public Tournament create( ) {
+    public ObservableTournament create( ) {
         final Tournament tournament = new Tournament( );
         tournament.setId( UUID.randomUUID( ) );
         tournament.setKey( UUID.randomUUID( ) );
 
         final TournamentHeader header = new TournamentHeader( );
         header.setTitle( "" );
-        header.setDate( LocalDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ).toString( ) );
-        header.setStatus( TournamentStatus.PLANNED );
+        header.setDate( LocalDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ) );
+        header.setStatus( TournamentStatus.NOT_CONFIGURED );
         header.setPairingMode( PairingMode.SWISS );
         header.setkValue( 1 );
         tournament.setHeader( header );
 
-        _tournaments.add( new ObservableTournament( tournament ) );
+        final ObservableTournament observableTournament = new ObservableTournament( tournament );
+        _tournaments.add( observableTournament );
         _storage.saveTournament( tournament );
-        return tournament;
+        return observableTournament;
     }
 
     public ObservableList<ObservableTournament> getTournamentList( ) {

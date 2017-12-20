@@ -20,7 +20,9 @@ package land.tower.data;
  */
 public enum TournamentStatus {
 
+    NOT_CONFIGURED,
     PLANNED,
+    STARTED,
     CLOSED
 
 }

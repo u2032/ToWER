@@ -63,8 +63,8 @@ final class TournamentStorage implements ITournamentStorage {
                      try ( final FileReader fileReader = new FileReader( p.toFile( ) ) ) {
                          final Tournament t = new GsonBuilder( ).create( ).fromJson( fileReader, Tournament.class );
                          result.add( t );
-                     } catch ( IOException e ) {
-                         _logger.error( "Failure loading tournament from file: {}", p.toAbsolutePath( ) );
+                     } catch ( final Exception e ) {
+                         _logger.error( "Failure loading tournament from file: " + p.toAbsolutePath( ), e );
                      }
                  } );
         } catch ( final IOException e ) {

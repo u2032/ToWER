@@ -27,6 +27,8 @@ import land.tower.core.model.tournament.TournamentRepository;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
+import land.tower.core.view.tournament.detail.TournamentView;
+import land.tower.core.view.tournament.detail.TournamentViewModelProvider;
 import land.tower.data.Tournament;
 
 /**
@@ -38,11 +40,13 @@ final class TournamentManagementViewModel {
     @Inject
     TournamentManagementViewModel( final EventBus eventBus, final I18nTranslator i18n,
                                    final Provider<HomepageView> homepageViewProvider,
-                                   final TournamentRepository tournamentRepository ) {
+                                   final TournamentRepository tournamentRepository,
+                                   final TournamentViewModelProvider tournamentViewModelProvider ) {
         _i18n = i18n;
         _eventBus = eventBus;
         _homepageViewProvider = homepageViewProvider;
         _tournamentRepository = tournamentRepository;
+        _tournamentViewModelProvider = tournamentViewModelProvider;
         _eventBus.register( this );
     }
 
@@ -64,8 +68,13 @@ final class TournamentManagementViewModel {
     }
 
     void fireTournamentCreation( ) {
-        final Tournament tournament = _tournamentRepository.create( );
-        // TODO Trigger tournament view
+        final ObservableTournament tournament = _tournamentRepository.create( );
+        fireTournamentDisplay( tournament );
+    }
+
+    void fireTournamentDisplay( final ObservableTournament tournament ) {
+        final TournamentView view = new TournamentView( _tournamentViewModelProvider.forTournament( tournament ) );
+        _eventBus.post( new SceneRequestedEvent( view ) );
     }
 
     private final EventBus _eventBus;
@@ -73,4 +82,5 @@ final class TournamentManagementViewModel {
 
     private final Provider<HomepageView> _homepageViewProvider;
     private final TournamentRepository _tournamentRepository;
+    private final TournamentViewModelProvider _tournamentViewModelProvider;
 }

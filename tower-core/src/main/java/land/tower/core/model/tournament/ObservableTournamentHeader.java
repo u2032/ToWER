@@ -14,6 +14,7 @@
 
 package land.tower.core.model.tournament;
 
+import java.time.LocalDateTime;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import land.tower.data.TournamentHeader;
@@ -31,7 +32,7 @@ public final class ObservableTournamentHeader {
         _title = new SimpleStringProperty( header.getTitle( ) );
         _title.addListener( ( obs, oldValue, newValue ) -> header.setTitle( newValue ) );
 
-        _date = new SimpleStringProperty( header.getDate( ) );
+        _date = new SimpleObjectProperty<>( header.getDate( ) );
         _date.addListener( ( obs, oldV, newV ) -> header.setDate( newV ) );
 
         _status = new SimpleObjectProperty<>( header.getStatus( ) );
@@ -46,15 +47,15 @@ public final class ObservableTournamentHeader {
         return _title;
     }
 
-    public String getDate( ) {
+    public LocalDateTime getDate( ) {
         return _date.get( );
     }
 
-    public SimpleStringProperty dateProperty( ) {
+    public SimpleObjectProperty<LocalDateTime> dateProperty( ) {
         return _date;
     }
 
-    public void setDate( final String date ) {
+    public void setDate( final LocalDateTime date ) {
         this._date.set( date );
     }
 
@@ -71,7 +72,7 @@ public final class ObservableTournamentHeader {
     }
 
     private final SimpleStringProperty _title;
-    private final SimpleStringProperty _date;
+    private final SimpleObjectProperty<LocalDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
 
     private final TournamentHeader _header;
