@@ -97,9 +97,12 @@ final class TournamentStorage implements ITournamentStorage {
             try {
                 final Path file = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr" );
                 Files.move( fileTmp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE );
+                _logger.info( "Tournament saved into: {}", file );
+                
             } catch ( IOException e ) {
                 _logger.error( "Error during saving tournament: " + tournament.getId( ), e );
             }
+
         }, 2, TimeUnit.SECONDS );
     }
 

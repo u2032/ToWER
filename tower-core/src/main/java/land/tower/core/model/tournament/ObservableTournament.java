@@ -14,6 +14,7 @@
 
 package land.tower.core.model.tournament;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import land.tower.data.Tournament;
 
 /**
@@ -25,6 +26,10 @@ public final class ObservableTournament {
     public ObservableTournament( final Tournament tournament ) {
         _tournament = tournament;
         _header = new ObservableTournamentHeader( tournament.getHeader( ) );
+
+        _header.dirtyProperty( )
+               .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
+        _dirty.setValue( false );
     }
 
     public Tournament getTournament( ) {
@@ -35,6 +40,16 @@ public final class ObservableTournament {
         return _header;
     }
 
+    public boolean isDirty( ) {
+        return _dirty.get( );
+    }
+
+    public SimpleBooleanProperty dirtyProperty( ) {
+        return _dirty;
+    }
+
     private final Tournament _tournament;
     private final ObservableTournamentHeader _header;
+
+    private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 }

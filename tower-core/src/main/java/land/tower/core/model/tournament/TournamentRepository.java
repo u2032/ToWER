@@ -23,10 +23,13 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.IService;
+import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.data.PairingMode;
 import land.tower.data.Tournament;
 import land.tower.data.TournamentHeader;
@@ -39,8 +42,10 @@ import land.tower.data.TournamentStatus;
 public final class TournamentRepository implements IService {
 
     @Inject
-    public TournamentRepository( final ITournamentStorage storage ) {
+    public TournamentRepository( final ITournamentStorage storage,
+                                 final @ApplicationThread ScheduledExecutorService scheduler ) {
         _storage = storage;
+        _scheduler = scheduler;
     }
 
     @Override
@@ -51,11 +56,19 @@ public final class TournamentRepository implements IService {
                 .map( ObservableTournament::new )
                 .forEach( _tournaments::add );
         _logger.info( "{} tournaments loaded from storage", _tournaments.size( ) );
+
+        _scheduler.scheduleWithFixedDelay( this::saveDirtyTournaments, 30, 30, TimeUnit.SECONDS );
+    }
+
+    private synchronized void saveDirtyTournaments( ) {
+        _tournaments.stream( )
+                    .filter( ObservableTournament::isDirty )
+                    .forEach( t -> _storage.saveTournament( t.getTournament( ) ) );
     }
 
     @Override
     public void stop( ) {
-
+        saveDirtyTournaments( );
     }
 
     public ObservableTournament create( ) {
@@ -90,5 +103,7 @@ public final class TournamentRepository implements IService {
         synchronizedObservableList( observableArrayList( ) );
 
     private final ITournamentStorage _storage;
+    private final ScheduledExecutorService _scheduler;
+
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }

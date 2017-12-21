@@ -15,6 +15,7 @@
 package land.tower.core.model.tournament;
 
 import java.time.LocalDateTime;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import land.tower.data.TournamentHeader;
@@ -31,12 +32,17 @@ public final class ObservableTournamentHeader {
 
         _title = new SimpleStringProperty( header.getTitle( ) );
         _title.addListener( ( obs, oldValue, newValue ) -> header.setTitle( newValue ) );
+        _title.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
         _date = new SimpleObjectProperty<>( header.getDate( ) );
         _date.addListener( ( obs, oldV, newV ) -> header.setDate( newV ) );
+        _date.addListener( ( obs, oldV, newV ) -> _dirty.set( true ) );
 
         _status = new SimpleObjectProperty<>( header.getStatus( ) );
         _status.addListener( ( ( observable, oldValue, newValue ) -> header.setStatus( newValue ) ) );
+        _status.addListener( ( ( observable, oldValue, newValue ) -> _dirty.set( true ) ) );
+
+        _dirty.setValue( false );
     }
 
     public String getTitle( ) {
@@ -71,9 +77,23 @@ public final class ObservableTournamentHeader {
         this._status.set( status );
     }
 
+    public boolean isDirty( ) {
+        return _dirty.get( );
+    }
+
+    public SimpleBooleanProperty dirtyProperty( ) {
+        return _dirty;
+    }
+
+    public TournamentHeader getHeader( ) {
+        return _header;
+    }
+
     private final SimpleStringProperty _title;
     private final SimpleObjectProperty<LocalDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
+
+    private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 
     private final TournamentHeader _header;
 }
