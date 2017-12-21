@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import land.tower.data.PairingMode;
 import land.tower.data.TournamentHeader;
 import land.tower.data.TournamentStatus;
 
@@ -42,7 +43,16 @@ public final class ObservableTournamentHeader {
         _status.addListener( ( ( observable, oldValue, newValue ) -> header.setStatus( newValue ) ) );
         _status.addListener( ( ( observable, oldValue, newValue ) -> _dirty.set( true ) ) );
 
+        _pairingMode = new SimpleObjectProperty<>( header.getPairingMode( ) );
+        _pairingMode.addListener( ( ( observable, oldValue, newValue ) -> header.setPairingMode( newValue ) ) );
+        _pairingMode.addListener( ( ( observable, oldValue, newValue ) -> _dirty.set( true ) ) );
+
+        _address = new ObservableAddress( _header.getAddress( ) );
+
         _dirty.setValue( false );
+        _address.dirtyProperty( )
+                .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
+
     }
 
     public String getTitle( ) {
@@ -77,6 +87,14 @@ public final class ObservableTournamentHeader {
         this._status.set( status );
     }
 
+    public PairingMode getPairingMode( ) {
+        return _pairingMode.get( );
+    }
+
+    public SimpleObjectProperty<PairingMode> pairingModeProperty( ) {
+        return _pairingMode;
+    }
+
     public boolean isDirty( ) {
         return _dirty.get( );
     }
@@ -89,9 +107,15 @@ public final class ObservableTournamentHeader {
         return _header;
     }
 
+    public ObservableAddress getAddress( ) {
+        return _address;
+    }
+
     private final SimpleStringProperty _title;
     private final SimpleObjectProperty<LocalDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
+    private final SimpleObjectProperty<PairingMode> _pairingMode;
+    private final ObservableAddress _address;
 
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 

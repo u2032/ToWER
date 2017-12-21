@@ -16,8 +16,11 @@ package land.tower.core.view.tournament.detail.information;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -27,12 +30,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import javax.inject.Inject;
+import land.tower.data.PairingMode;
 
 /**
  * Created on 20/12/2017
  * @author Cédric Longo
  */
 public final class TournamentInformationTab extends Tab {
+
+    private static final int WIDTH = 600;
 
     @Inject
     public TournamentInformationTab( final TournamentInformationTabModel model ) {
@@ -51,12 +57,13 @@ public final class TournamentInformationTab extends Tab {
 
         int line = 0;
 
-        // TODO General : title, date
         /* General Section */
         final Label generalTitle = new Label( );
         generalTitle.textProperty( ).bind( _model.getI18n( ).get( "tournament.information.general" ) );
         generalTitle.getStyleClass( ).add( "important" );
         generalTitle.getStyleClass( ).add( "medium" );
+        generalTitle.setAlignment( Pos.CENTER );
+        generalTitle.setPrefWidth( WIDTH );
         grid.add( generalTitle, 0, line, 2, 1 );
 
         line++;
@@ -163,11 +170,112 @@ public final class TournamentInformationTab extends Tab {
         grid.add( timeLabel, 0, line );
         grid.add( timeCell, 1, line );
 
-        // TODO Adresse
-        // TODO Configuration : kvalue, pairing mode
-        // TODO Arbitrage
-        mainPane.getChildren( ).add( grid );
+        /* Address Section */
+        line++;
+        final Label addressTitle = new Label( );
+        addressTitle.textProperty( ).bind( _model.getI18n( ).get( "tournament.address" ) );
+        addressTitle.getStyleClass( ).add( "important" );
+        addressTitle.getStyleClass( ).add( "medium" );
+        addressTitle.setAlignment( Pos.CENTER );
+        addressTitle.setPrefWidth( WIDTH );
+        grid.add( addressTitle, 0, line, 2, 1 );
 
+        line++;
+        final TextField addressNameField = new TextField( );
+        addressNameField.textProperty( )
+                        .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).nameProperty( ) );
+        final Label addressNameLabel = new Label( );
+        addressNameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.name" ) );
+        addressNameLabel.setLabelFor( addressNameLabel );
+        grid.add( addressNameLabel, 0, line );
+        grid.add( addressNameField, 1, line );
+
+        line++;
+        final TextField addressLine1Field = new TextField( );
+        addressLine1Field.textProperty( )
+                         .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).line1Property( ) );
+        final Label addressLine1Label = new Label( );
+        addressLine1Label.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.line1" ) );
+        addressLine1Label.setLabelFor( addressLine1Label );
+        grid.add( addressLine1Label, 0, line );
+        grid.add( addressLine1Field, 1, line );
+
+        line++;
+        final TextField addressLine2Field = new TextField( );
+        addressLine2Field.textProperty( )
+                         .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).line2Property( ) );
+        final Label addressLine2Label = new Label( );
+        addressLine2Label.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.line2" ) );
+        addressLine2Label.setLabelFor( addressLine2Label );
+        grid.add( addressLine2Label, 0, line );
+        grid.add( addressLine2Field, 1, line );
+
+        line++;
+        final TextField addressPostalCodeField = new TextField( );
+        addressPostalCodeField.textProperty( )
+                              .bindBidirectional(
+                                  _model.getTournament( ).getHeader( ).getAddress( ).postalCodeProperty( ) );
+        final Label addressPostalCodeLabel = new Label( );
+        addressPostalCodeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.postalCode" ) );
+        addressPostalCodeLabel.setLabelFor( addressPostalCodeLabel );
+        grid.add( addressPostalCodeLabel, 0, line );
+        grid.add( addressPostalCodeField, 1, line );
+
+        line++;
+        final TextField addressCityField = new TextField( );
+        addressCityField.textProperty( )
+                        .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).cityProperty( ) );
+        final Label addressCityLabel = new Label( );
+        addressCityLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.city" ) );
+        addressCityLabel.setLabelFor( addressCityLabel );
+        grid.add( addressCityLabel, 0, line );
+        grid.add( addressCityField, 1, line );
+
+        line++;
+        final TextField addressCountryField = new TextField( );
+        addressCountryField.textProperty( )
+                           .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).countryProperty( ) );
+        final Label addressCountryLabel = new Label( );
+        addressCountryLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.country" ) );
+        addressCountryLabel.setLabelFor( addressCountryLabel );
+        grid.add( addressCountryLabel, 0, line );
+        grid.add( addressCountryField, 1, line );
+
+        /* Configuration Section */
+        line++;
+        final Label configurationTitle = new Label( );
+        configurationTitle.textProperty( ).bind( _model.getI18n( ).get( "tournament.configuration" ) );
+        configurationTitle.getStyleClass( ).add( "important" );
+        configurationTitle.getStyleClass( ).add( "medium" );
+        configurationTitle.setAlignment( Pos.CENTER );
+        configurationTitle.setPrefWidth( WIDTH );
+        grid.add( configurationTitle, 0, line, 2, 1 );
+
+        line++;
+        final ChoiceBox<PairingMode> pairingField = new ChoiceBox<>( );
+        pairingField.itemsProperty( )
+                    .bind( new SimpleListProperty<>( FXCollections.observableArrayList( PairingMode.values( ) ) ) );
+        pairingField.setConverter( new StringConverter<PairingMode>( ) {
+            @Override
+            public String toString( final PairingMode object ) {
+                return _model.getI18n( ).get( "pairing." + object.name( ) ).get( );
+            }
+
+            @Override
+            public PairingMode fromString( final String string ) {
+                return null;
+            }
+        } );
+        pairingField.valueProperty( )
+                    .bindBidirectional( _model.getTournament( ).getHeader( ).pairingModeProperty( ) );
+        final Label pairingModeLabel = new Label( );
+        pairingModeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.pairingMode" ) );
+        pairingModeLabel.setLabelFor( pairingModeLabel );
+        grid.add( pairingModeLabel, 0, line );
+        grid.add( pairingField, 1, line );
+
+        // TODO Judge
+        mainPane.getChildren( ).add( grid );
     }
 
     private final TournamentInformationTabModel _model;

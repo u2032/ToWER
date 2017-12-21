@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.IService;
 import land.tower.core.ext.thread.ApplicationThread;
+import land.tower.data.Address;
 import land.tower.data.PairingMode;
 import land.tower.data.Tournament;
 import land.tower.data.TournamentHeader;
@@ -83,6 +84,15 @@ public final class TournamentRepository implements IService {
         header.setPairingMode( PairingMode.SWISS );
         header.setkValue( 1 );
         tournament.setHeader( header );
+
+        final Address address = new Address( );
+        address.setName( "" );
+        address.setLine1( "" );
+        address.setLine2( "" );
+        address.setPostalCode( "" );
+        address.setCity( "" );
+        address.setCountry( "" );
+        header.setAddress( address );
 
         final ObservableTournament observableTournament = new ObservableTournament( tournament );
         _tournaments.add( observableTournament );

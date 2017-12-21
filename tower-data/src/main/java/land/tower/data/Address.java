@@ -40,4 +40,51 @@ public final class Address {
     @SerializedName( "country" )
     public String _country;
 
+    public String getName( ) {
+        return _name;
+    }
+
+    public void setName( final String name ) {
+        _name = name;
+    }
+
+    public String getLine1( ) {
+        return _line1;
+    }
+
+    public void setLine1( final String line1 ) {
+        _line1 = line1;
+    }
+
+    public String getLine2( ) {
+        return _line2;
+    }
+
+    public void setLine2( final String line2 ) {
+        _line2 = line2;
+    }
+
+    public String getPostalCode( ) {
+        return _postalCode;
+    }
+
+    public void setPostalCode( final String postalCode ) {
+        _postalCode = postalCode;
+    }
+
+    public String getCity( ) {
+        return _city;
+    }
+
+    public void setCity( final String city ) {
+        _city = city;
+    }
+
+    public String getCountry( ) {
+        return _country;
+    }
+
+    public void setCountry( final String country ) {
+        _country = country;
+    }
 }
