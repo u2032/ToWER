@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import javax.inject.Inject;
+import land.tower.core.ext.thread.ThreadingModule;
 import land.tower.data.Tournament;
 
 /**
@@ -42,7 +43,7 @@ class TournamentRepositoryTest {
 
     @BeforeEach
     void setUp( ) {
-        Guice.createInjector( new TestTournamentModule( ) ).injectMembers( this );
+        Guice.createInjector( new TestTournamentModule( ), new ThreadingModule( ) ).injectMembers( this );
     }
 
     @Test
