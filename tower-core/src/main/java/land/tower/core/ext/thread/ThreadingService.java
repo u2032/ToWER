@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.inject.Inject;
 import land.tower.core.ext.service.IService;
+import land.tower.core.ext.service.ServicePriority;
 
 /**
  * Created on 06/12/2017
@@ -41,6 +42,11 @@ final class ThreadingService implements IService {
     public void stop( ) {
         _executorService.shutdown( );
         _scheduledExecutorService.shutdown( );
+    }
+
+    @Override
+    public ServicePriority getPriority( ) {
+        return ServicePriority.VERY_HIGH;
     }
 
     private final ExecutorService _executorService;

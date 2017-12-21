@@ -14,9 +14,12 @@
 
 package land.tower.core.ext.service;
 
+import static java.util.Comparator.reverseOrder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.Set;
 import javax.inject.Inject;
 import land.tower.core.ext.logger.Loggers;
@@ -33,21 +36,27 @@ public final class ServiceManager {
     }
 
     public void startAll( ) {
-        _services.forEach( service -> {
-            _logger.info( "Starting service: " + service.getName( ) );
-            service.start( );
-        } );
+        _services
+            .stream( )
+            .sorted( Comparator.comparing( s -> s.getPriority( ).ordinal( ), reverseOrder( ) ) )
+            .forEach( service -> {
+                _logger.info( "Starting service: " + service.getName( ) );
+                service.start( );
+            } );
     }
 
     public void stopAll( ) {
-        _services.forEach( service -> {
-            try {
-                _logger.info( "Stopping service: " + service.getName( ) );
-                service.stop( );
-            } catch ( final Exception e ) {
-                _logger.error( "Error during stoping service " + service.getName( ) );
-            }
-        } );
+        _services
+            .stream( )
+            .sorted( Comparator.comparing( s -> s.getPriority( ).ordinal( ) ) )
+            .forEach( service -> {
+                try {
+                    _logger.info( "Stopping service: " + service.getName( ) );
+                    service.stop( );
+                } catch ( final Exception e ) {
+                    _logger.error( "Error during stoping service " + service.getName( ), e );
+                }
+            } );
     }
 
     private final Set<IService> _services;

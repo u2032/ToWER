@@ -15,21 +15,14 @@
 package land.tower.core.ext.service;
 
 /**
- * Created on 06/12/2017
+ * Created on 21/12/2017
  * @author Cédric Longo
  */
-public interface IService {
+public enum ServicePriority {
 
-    void start( );
-
-    void stop( );
-
-    default ServicePriority getPriority( ) {
-        return ServicePriority.NORMAL;
-    }
-
-    default String getName( ) {
-        return getClass( ).getSimpleName( );
-    }
+    LOW,
+    NORMAL,
+    HIGH,
+    VERY_HIGH
 
 }

@@ -15,7 +15,7 @@
 package land.tower.core.ext.service;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -25,6 +25,8 @@ import com.google.inject.multibindings.Multibinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import javax.inject.Inject;
 
@@ -41,6 +43,10 @@ class ServiceManagerTest {
     void setUp( ) {
         Guice.createInjector( new ServiceModule( ), mockModules( ) )
              .injectMembers( this );
+
+        when( _mockService1.getPriority( ) ).thenReturn( ServicePriority.LOW );
+        when( _mockService2.getPriority( ) ).thenReturn( ServicePriority.NORMAL );
+        when( _mockService3.getPriority( ) ).thenReturn( ServicePriority.HIGH );
     }
 
     private Module mockModules( ) {
@@ -48,30 +54,44 @@ class ServiceManagerTest {
             @Override
             protected void configure( ) {
                 Multibinder.newSetBinder( binder( ), IService.class )
-                           .addBinding( ).toInstance( _mockService );
+                           .addBinding( ).toInstance( _mockService1 );
+
+                Multibinder.newSetBinder( binder( ), IService.class )
+                           .addBinding( ).toInstance( _mockService2 );
+
+                Multibinder.newSetBinder( binder( ), IService.class )
+                           .addBinding( ).toInstance( _mockService3 );
             }
         };
     }
 
     @Test
-    @DisplayName( "Starting all services calls start entry point of each service" )
+    @DisplayName( "Starting all services calls start entry point of each service according to priority" )
     void startServiceTest( ) throws Exception {
         // Setup
         // Exercice
         _serviceManager.startAll( );
         // Verify
-        verify( _mockService ).start( );
+        final InOrder inOrder = Mockito.inOrder( _mockService1, _mockService2, _mockService3 );
+        inOrder.verify( _mockService3 ).start( );
+        inOrder.verify( _mockService2 ).start( );
+        inOrder.verify( _mockService1 ).start( );
     }
 
     @Test
-    @DisplayName( "Stopping all services calls stop entry point of each service" )
+    @DisplayName( "Stopping all services calls stop entry point of each service according to priority" )
     void stopServiceTest( ) throws Exception {
         // Setup
         // Exercice
         _serviceManager.stopAll( );
         // Verify
-        verify( _mockService ).stop( );
+        final InOrder inOrder = Mockito.inOrder( _mockService1, _mockService2, _mockService3 );
+        inOrder.verify( _mockService1 ).stop( );
+        inOrder.verify( _mockService2 ).stop( );
+        inOrder.verify( _mockService3 ).stop( );
     }
 
-    private IService _mockService = mock( IService.class );
+    private IService _mockService1 = mock( IService.class );
+    private IService _mockService2 = mock( IService.class );
+    private IService _mockService3 = mock( IService.class );
 }
