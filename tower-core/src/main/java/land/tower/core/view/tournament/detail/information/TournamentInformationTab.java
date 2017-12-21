@@ -23,6 +23,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -46,9 +47,13 @@ public final class TournamentInformationTab extends Tab {
         textProperty( ).bind( _model.getI18n( ).get( "tournament.tab.information" ) );
 
         final VBox mainPane = new VBox( );
+        mainPane.setAlignment( Pos.CENTER );
         mainPane.setSpacing( 10 );
-        mainPane.setPadding( new Insets( 10, 0, 0, 0 ) );
-        setContent( mainPane );
+        mainPane.setPadding( new Insets( 20, 0, 20, 0 ) );
+
+        final ScrollPane scrollPane = new ScrollPane( mainPane );
+        scrollPane.setFitToWidth( true );
+        setContent( scrollPane );
 
         final GridPane grid = new GridPane( );
         grid.setAlignment( Pos.TOP_CENTER );
@@ -170,6 +175,40 @@ public final class TournamentInformationTab extends Tab {
         grid.add( timeLabel, 0, line );
         grid.add( timeCell, 1, line );
 
+
+        /* Configuration Section */
+        line++;
+        final Label configurationTitle = new Label( );
+        configurationTitle.textProperty( ).bind( _model.getI18n( ).get( "tournament.configuration" ) );
+        configurationTitle.getStyleClass( ).add( "important" );
+        configurationTitle.getStyleClass( ).add( "medium" );
+        configurationTitle.setAlignment( Pos.CENTER );
+        configurationTitle.setPrefWidth( WIDTH );
+        grid.add( configurationTitle, 0, line, 2, 1 );
+
+        line++;
+        final ChoiceBox<PairingMode> pairingField = new ChoiceBox<>( );
+        pairingField.itemsProperty( )
+                    .bind( new SimpleListProperty<>( FXCollections.observableArrayList( PairingMode.values( ) ) ) );
+        pairingField.setConverter( new StringConverter<PairingMode>( ) {
+            @Override
+            public String toString( final PairingMode object ) {
+                return _model.getI18n( ).get( "pairing." + object.name( ) ).get( );
+            }
+
+            @Override
+            public PairingMode fromString( final String string ) {
+                return null;
+            }
+        } );
+        pairingField.valueProperty( )
+                    .bindBidirectional( _model.getTournament( ).getHeader( ).pairingModeProperty( ) );
+        final Label pairingModeLabel = new Label( );
+        pairingModeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.pairingMode" ) );
+        pairingModeLabel.setLabelFor( pairingModeLabel );
+        grid.add( pairingModeLabel, 0, line );
+        grid.add( pairingField, 1, line );
+
         /* Address Section */
         line++;
         final Label addressTitle = new Label( );
@@ -240,39 +279,6 @@ public final class TournamentInformationTab extends Tab {
         addressCountryLabel.setLabelFor( addressCountryLabel );
         grid.add( addressCountryLabel, 0, line );
         grid.add( addressCountryField, 1, line );
-
-        /* Configuration Section */
-        line++;
-        final Label configurationTitle = new Label( );
-        configurationTitle.textProperty( ).bind( _model.getI18n( ).get( "tournament.configuration" ) );
-        configurationTitle.getStyleClass( ).add( "important" );
-        configurationTitle.getStyleClass( ).add( "medium" );
-        configurationTitle.setAlignment( Pos.CENTER );
-        configurationTitle.setPrefWidth( WIDTH );
-        grid.add( configurationTitle, 0, line, 2, 1 );
-
-        line++;
-        final ChoiceBox<PairingMode> pairingField = new ChoiceBox<>( );
-        pairingField.itemsProperty( )
-                    .bind( new SimpleListProperty<>( FXCollections.observableArrayList( PairingMode.values( ) ) ) );
-        pairingField.setConverter( new StringConverter<PairingMode>( ) {
-            @Override
-            public String toString( final PairingMode object ) {
-                return _model.getI18n( ).get( "pairing." + object.name( ) ).get( );
-            }
-
-            @Override
-            public PairingMode fromString( final String string ) {
-                return null;
-            }
-        } );
-        pairingField.valueProperty( )
-                    .bindBidirectional( _model.getTournament( ).getHeader( ).pairingModeProperty( ) );
-        final Label pairingModeLabel = new Label( );
-        pairingModeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.pairingMode" ) );
-        pairingModeLabel.setLabelFor( pairingModeLabel );
-        grid.add( pairingModeLabel, 0, line );
-        grid.add( pairingField, 1, line );
 
         // TODO Judge
         mainPane.getChildren( ).add( grid );
