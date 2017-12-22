@@ -16,6 +16,7 @@ package land.tower.core.view.tournament.detail.information;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -26,10 +27,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
+import javafx.util.converter.IntegerStringConverter;
 import javax.inject.Inject;
 import land.tower.data.PairingMode;
 
@@ -209,6 +213,48 @@ public final class TournamentInformationTab extends Tab {
         grid.add( pairingModeLabel, 0, line );
         grid.add( pairingField, 1, line );
 
+        line++;
+        final TextField teamSizeField = new TextField( );
+        teamSizeField.setPrefWidth( 40 );
+        teamSizeField.setMaxWidth( Pane.USE_PREF_SIZE );
+        teamSizeField.textProperty( ).bindBidirectional( _model.getTournament( ).getHeader( ).teamSizeProperty( ),
+                                                         new IntegerStringConverter( ) );
+        teamSizeField.setTextFormatter(
+            new TextFormatter<>( new IntegerStringConverter( ),
+                                 _model.getTournament( ).getHeader( ).getTeamSize( ),
+                                 c -> {
+                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
+                                     if ( !c.getControlNewText( ).isEmpty( ) ) {
+                                         if ( Integer.parseInt( c.getControlNewText( ) ) > 20 ) {
+                                             return null;
+                                         }
+                                     }
+                                     return matches ? c : null;
+                                 } ) );
+        final Label teamSizeLabel = new Label( );
+        teamSizeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.teamSize" ) );
+        teamSizeLabel.setLabelFor( teamSizeField );
+        grid.add( teamSizeLabel, 0, line );
+        grid.add( teamSizeField, 1, line );
+
+        line++;
+        final TextField matchDurationField = new TextField( );
+        matchDurationField.setPrefWidth( 40 );
+        matchDurationField.setMaxWidth( Pane.USE_PREF_SIZE );
+        matchDurationField.textProperty( )
+                          .bindBidirectional( _model.getTournament( ).getHeader( ).matchDurationProperty( ),
+                                              new IntegerStringConverter( ) );
+        matchDurationField.setTextFormatter(
+            new TextFormatter<>( new IntegerStringConverter( ),
+                                 _model.getTournament( ).getHeader( ).getMatchDuration( ),
+                                 c -> Pattern.matches( "\\d*", c.getControlNewText( ) ) ? c : null ) );
+        final Label matchDurationLabel = new Label( );
+        matchDurationLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.matchDuration" ) );
+        matchDurationLabel.setLabelFor( matchDurationField );
+        grid.add( matchDurationLabel, 0, line );
+        grid.add( matchDurationField, 1, line );
+
+
         /* Address Section */
         line++;
         final Label addressTitle = new Label( );
@@ -251,6 +297,8 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final TextField addressPostalCodeField = new TextField( );
+        addressPostalCodeField.setPrefWidth( 100 );
+        addressPostalCodeField.setMaxWidth( Pane.USE_PREF_SIZE );
         addressPostalCodeField.textProperty( )
                               .bindBidirectional(
                                   _model.getTournament( ).getHeader( ).getAddress( ).postalCodeProperty( ) );

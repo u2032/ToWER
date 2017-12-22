@@ -47,6 +47,15 @@ public final class ObservableTournamentHeader {
         _pairingMode.addListener( ( ( observable, oldValue, newValue ) -> header.setPairingMode( newValue ) ) );
         _pairingMode.addListener( ( ( observable, oldValue, newValue ) -> _dirty.set( true ) ) );
 
+        _matchDuration = new SimpleObjectProperty<>( header.getMatchDuration( ) );
+        _matchDuration.addListener( ( obs, oldValue, newValue ) ->
+                                        header.setMatchDuration( newValue != null ? newValue : 30 ) );
+        _matchDuration.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
+        _teamSize = new SimpleObjectProperty<>( header.getTeamSize( ) );
+        _teamSize.addListener( ( obs, oldValue, newValue ) -> header.setTeamSize( newValue != null ? newValue : 1 ) );
+        _teamSize.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
         _address = new ObservableAddress( _header.getAddress( ) );
 
         _dirty.setValue( false );
@@ -111,10 +120,28 @@ public final class ObservableTournamentHeader {
         return _address;
     }
 
+    public int getMatchDuration( ) {
+        return _matchDuration.get( );
+    }
+
+    public SimpleObjectProperty<Integer> matchDurationProperty( ) {
+        return _matchDuration;
+    }
+
+    public int getTeamSize( ) {
+        return _teamSize.get( );
+    }
+
+    public SimpleObjectProperty<Integer> teamSizeProperty( ) {
+        return _teamSize;
+    }
+
     private final SimpleStringProperty _title;
     private final SimpleObjectProperty<LocalDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
     private final SimpleObjectProperty<PairingMode> _pairingMode;
+    private final SimpleObjectProperty<Integer> _matchDuration;
+    private final SimpleObjectProperty<Integer> _teamSize;
     private final ObservableAddress _address;
 
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
