@@ -127,8 +127,8 @@ public final class TournamentInformationTab extends Tab {
         hourField.textProperty( )
                  .setValue( ( thour < 10 ? "0" : "" ) + String.valueOf( thour ) );
         hourField.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
-            if ( !newValue.matches( "[\\d ]*" ) ) {
-                hourField.setText( newValue.replaceAll( "[^\\d ]", "" ) );
+            if ( !newValue.matches( "[\\d]*" ) ) {
+                hourField.setText( newValue.replaceAll( "[^\\d]", "" ) );
             }
             if ( newValue.length( ) > 2 ) {
                 hourField.setText( newValue.substring( 0, 2 ) );
@@ -152,8 +152,8 @@ public final class TournamentInformationTab extends Tab {
         final int tmin = _model.getTournament( ).getHeader( ).getDate( ).getMinute( );
         minField.textProperty( ).setValue( ( tmin < 10 ? "0" : "" ) + String.valueOf( tmin ) );
         minField.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
-            if ( !newValue.matches( "[\\d ]*" ) ) {
-                minField.setText( newValue.replaceAll( "[^\\d ]", "" ) );
+            if ( !newValue.matches( "[\\d]*" ) ) {
+                minField.setText( newValue.replaceAll( "[^\\d]", "" ) );
             }
             if ( newValue.length( ) > 2 ) {
                 minField.setText( newValue.substring( 0, 2 ) );
