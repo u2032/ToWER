@@ -20,7 +20,7 @@ import static javafx.collections.FXCollections.synchronizedObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
@@ -79,7 +79,7 @@ public final class TournamentRepository implements IService {
 
         final TournamentHeader header = new TournamentHeader( );
         header.setTitle( "" );
-        header.setDate( LocalDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ) );
+        header.setDate( ZonedDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ) );
         header.setStatus( TournamentStatus.NOT_CONFIGURED );
         header.setPairingMode( PairingMode.SWISS );
         header.setkValue( 1 );

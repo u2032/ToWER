@@ -15,7 +15,7 @@
 package land.tower.core.view.tournament.detail.information;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -90,7 +90,7 @@ public final class TournamentInformationTab extends Tab {
         dateField.setShowWeekNumbers( false );
         dateField.setValue( _model.getTournament( ).getHeader( ).getDate( ).toLocalDate( ) );
         dateField.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {
-            final LocalDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
+            final ZonedDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
             _model.getTournament( ).getHeader( ).setDate( tdate.withYear( newValue.getYear( ) )
                                                                .withMonth( newValue.getMonthValue( ) )
                                                                .withDayOfYear( newValue.getDayOfYear( ) ) );
@@ -141,7 +141,7 @@ public final class TournamentInformationTab extends Tab {
                     hour = Math.min( hour, 23 );
                 } catch ( final NumberFormatException ignored ) {
                 }
-                final LocalDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
+                final ZonedDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
                 _model.getTournament( ).getHeader( ).setDate( tdate.withHour( hour ) );
                 hourField.setText( ( hour < 10 ? "0" : "" ) + String.valueOf( hour ) );
             }
@@ -166,19 +166,23 @@ public final class TournamentInformationTab extends Tab {
                     minute = Math.min( minute, 59 );
                 } catch ( final NumberFormatException ignored ) {
                 }
-                final LocalDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
+                final ZonedDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
                 _model.getTournament( ).getHeader( ).setDate( tdate.withMinute( minute ) );
                 minField.setText( ( minute < 10 ? "0" : "" ) + String.valueOf( minute ) );
             }
         } );
-        timeCell.getChildren( ).addAll( hourField, new Label( ":" ), minField );
+        final Label zoneLabel = new Label( );
+        zoneLabel.setText( "  " + _model.getTournament( ).getHeader( ).getDate( )
+                                        .getZone( ).toString( ) );
+        zoneLabel.setStyle( "-fx-font-style: italic" );
+        timeCell.setAlignment( Pos.CENTER_LEFT );
+        timeCell.getChildren( ).addAll( hourField, new Label( ":" ), minField, zoneLabel );
 
         final Label timeLabel = new Label( );
         timeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.time" ) );
         timeLabel.setLabelFor( timeCell );
         grid.add( timeLabel, 0, line );
         grid.add( timeCell, 1, line );
-
 
         /* Configuration Section */
         line++;

@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,6 +37,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.data.Tournament;
+import land.tower.data.adapter.ZonedDateTimeAdapter;
 
 /**
  * Created on 16/12/2017
@@ -61,7 +63,10 @@ final class TournamentStorage implements ITournamentStorage {
                  .filter( p -> p.toFile( ).isFile( ) )
                  .forEach( p -> {
                      try ( final FileReader fileReader = new FileReader( p.toFile( ) ) ) {
-                         final Tournament t = new GsonBuilder( ).create( ).fromJson( fileReader, Tournament.class );
+                         final Tournament t = new GsonBuilder( ).registerTypeAdapter( ZonedDateTime.class,
+                                                                                      new ZonedDateTimeAdapter( ) )
+                                                                .create( )
+                                                                .fromJson( fileReader, Tournament.class );
                          result.add( t );
                      } catch ( final Exception e ) {
                          _logger.error( "Failure loading tournament from file: " + p.toAbsolutePath( ), e );
@@ -86,7 +91,10 @@ final class TournamentStorage implements ITournamentStorage {
                 }
             }
 
-            final String json = new GsonBuilder( ).create( ).toJson( tournament );
+            final String json = new GsonBuilder( )
+                                    .registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeAdapter( ) )
+                                    .create( )
+                                    .toJson( tournament );
             final Path fileTmp = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr.tmp" );
             try ( final BufferedWriter out = Files.newBufferedWriter( fileTmp, StandardCharsets.UTF_8 ) ) {
                 out.write( json );
@@ -98,7 +106,7 @@ final class TournamentStorage implements ITournamentStorage {
                 final Path file = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr" );
                 Files.move( fileTmp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE );
                 _logger.info( "Tournament saved into: {}", file );
-                
+
             } catch ( IOException e ) {
                 _logger.error( "Error during saving tournament: " + tournament.getId( ), e );
             }

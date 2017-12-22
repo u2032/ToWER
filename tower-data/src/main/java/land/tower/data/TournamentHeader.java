@@ -16,7 +16,7 @@ package land.tower.data;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * Created on 16/12/2017
@@ -31,7 +31,7 @@ public final class TournamentHeader {
     private String _title;
 
     @SerializedName( "date" )
-    private LocalDateTime _date;
+    private ZonedDateTime _date;
 
     @SerializedName( "pairingMode" )
     private PairingMode _pairingMode;
@@ -70,11 +70,11 @@ public final class TournamentHeader {
         _title = title;
     }
 
-    public LocalDateTime getDate( ) {
+    public ZonedDateTime getDate( ) {
         return _date;
     }
 
-    public void setDate( final LocalDateTime date ) {
+    public void setDate( final ZonedDateTime date ) {
         _date = date;
     }
 

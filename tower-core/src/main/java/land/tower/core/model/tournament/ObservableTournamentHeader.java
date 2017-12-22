@@ -14,7 +14,7 @@
 
 package land.tower.core.model.tournament;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -72,15 +72,15 @@ public final class ObservableTournamentHeader {
         return _title;
     }
 
-    public LocalDateTime getDate( ) {
+    public ZonedDateTime getDate( ) {
         return _date.get( );
     }
 
-    public SimpleObjectProperty<LocalDateTime> dateProperty( ) {
+    public SimpleObjectProperty<ZonedDateTime> dateProperty( ) {
         return _date;
     }
 
-    public void setDate( final LocalDateTime date ) {
+    public void setDate( final ZonedDateTime date ) {
         this._date.set( date );
     }
 
@@ -137,7 +137,7 @@ public final class ObservableTournamentHeader {
     }
 
     private final SimpleStringProperty _title;
-    private final SimpleObjectProperty<LocalDateTime> _date;
+    private final SimpleObjectProperty<ZonedDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
     private final SimpleObjectProperty<PairingMode> _pairingMode;
     private final SimpleObjectProperty<Integer> _matchDuration;

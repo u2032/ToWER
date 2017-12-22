@@ -19,7 +19,6 @@ import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -89,9 +88,13 @@ public final class TournamentManagementView extends BorderPane {
         final TableView<ObservableTournament> tableView = new TableView<>( );
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
 
-        final TableColumn<ObservableTournament, LocalDateTime> dateCol = new TableColumn<>( );
+        final TableColumn<ObservableTournament, String> dateCol = new TableColumn<>( );
         dateCol.textProperty( ).bind( model.getI18n( ).get( "tournament.date" ) );
-        dateCol.setCellValueFactory( param -> param.getValue( ).getHeader( ).dateProperty( ) );
+        dateCol.setCellValueFactory( param -> {
+            return Bindings.createObjectBinding( ( ) -> param.getValue( ).getHeader( ).getDate( ).toLocalDateTime( )
+                                                             .toString( ),
+                                                 param.getValue( ).getHeader( ).dateProperty( ) );
+        } );
         tableView.getColumns( ).add( dateCol );
 
         final TableColumn<ObservableTournament, String> nameCol = new TableColumn<>( );
