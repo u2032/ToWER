@@ -29,6 +29,7 @@ import org.mockito.Mockito;
 import java.util.Arrays;
 import javax.inject.Inject;
 import land.tower.data.Player;
+import land.tower.data.PlayerNationality;
 
 /**
  * Created on 16/12/2017
@@ -53,8 +54,8 @@ class PlayerRepositoryTest {
         // Setup
         when( _storage.loadPlayers( ) )
             .thenReturn( Arrays.asList(
-                new Player( 1, "John", "Doe", "1985-08-29" ),
-                new Player( 2, "Manu", "Macaron", "1977-12-16" )
+                new Player( 1, "John", "Doe", "1985-08-29", PlayerNationality.FR ),
+                new Player( 2, "Manu", "Macaron", "1977-12-16", PlayerNationality.FR )
             ) );
         // Exercice
         _repository.start( );
@@ -67,7 +68,7 @@ class PlayerRepositoryTest {
     @DisplayName( "When a player is registered, it persists into repository and saved into storage" )
     void registerTest( ) throws Exception {
         // Setup
-        final Player player = new Player( 1, "John", "Doe", "1985-08-29" );
+        final Player player = new Player( 1, "John", "Doe", "1985-08-29", PlayerNationality.FR );
         // Exercice
         _repository.registerPlayer( player );
         // Verify
@@ -79,7 +80,7 @@ class PlayerRepositoryTest {
     @DisplayName( "When a player is removes, it not anymore into repository and removed from storage" )
     void removeTest( ) throws Exception {
         // Setup
-        final Player player = new Player( 1, "John", "Doe", "1985-08-29" );
+        final Player player = new Player( 1, "John", "Doe", "1985-08-29", PlayerNationality.FR );
         _repository.registerPlayer( player );
         Mockito.clearInvocations( _storage );
         // Exercice

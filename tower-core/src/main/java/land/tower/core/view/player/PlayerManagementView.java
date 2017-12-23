@@ -17,6 +17,8 @@ package land.tower.core.view.player;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -31,7 +33,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -93,6 +98,11 @@ public final class PlayerManagementView extends BorderPane {
         numeroCol.setCellValueFactory( new PropertyValueFactory<>( "numero" ) );
         tableView.getColumns( ).add( numeroCol );
 
+        final TableColumn<ObservablePlayer, Void> nationalityCol = new TableColumn<>( );
+        nationalityCol.textProperty( ).bind( model.getI18n( ).get( "player.nationality" ) );
+        nationalityCol.setCellFactory( param -> new NationalityCell( ) );
+        tableView.getColumns( ).add( nationalityCol );
+
         final TableColumn<ObservablePlayer, String> firstNameCol = new TableColumn<>( "Firstname" );
         firstNameCol.textProperty( ).bind( model.getI18n( ).get( "player.firstname" ) );
         firstNameCol.setCellValueFactory( new PropertyValueFactory<>( "firstname" ) );
@@ -125,6 +135,34 @@ public final class PlayerManagementView extends BorderPane {
     }
 
     private final PlayerManagementViewModel _model;
+
+    private class NationalityCell extends TableCell<ObservablePlayer, Void> {
+
+        @Override
+        protected void updateItem( final Void item, final boolean empty ) {
+            super.updateItem( item, empty );
+            if ( empty ) {
+                setGraphic( null );
+                return;
+            }
+            final Player player = getTableView( ).getItems( ).get( getIndex( ) ).getPlayer( );
+            final String iconName = "img/country/" + player.getNationality( ).name( ).toLowerCase( ) + ".png";
+            try ( final InputStream imStream = getClass( ).getClassLoader( ).getResourceAsStream( iconName ) ) {
+                if ( imStream != null ) {
+                    final Image icon = new Image( imStream, 20, 20, true, true );
+                    final ImageView image = new ImageView( icon );
+                    final Tooltip tooltip = new Tooltip( _model.getI18n( )
+                                                               .get( "nationality." + player.getNationality( ).name( ) )
+                                                               .get( ) );
+                    setTooltip( tooltip );
+                    setGraphic( image );
+                } else {
+                    setGraphic( null );
+                }
+            } catch ( final IOException ignored ) {
+            }
+        }
+    }
 
     private class DeletePlayerCell extends TableCell<ObservablePlayer, Void> {
 

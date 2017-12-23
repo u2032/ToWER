@@ -34,14 +34,23 @@ public final class Player {
     @SerializedName( "birthday" )
     private String _birthday;
 
+    @SerializedName( "nationality" )
+    private PlayerNationality _nationality;
+
+    /**
+     * @deprecated Should be used only for deserialization
+     */
+    @Deprecated
     public Player( ) {
     }
 
-    public Player( final long numero, final String firstname, final String lastname, final String birthday ) {
+    public Player( final long numero, final String firstname, final String lastname, final String birthday,
+                   final PlayerNationality nationality ) {
         _numero = numero;
         _firstname = firstname;
         _lastname = lastname;
         _birthday = birthday;
+        _nationality = nationality;
     }
 
     public long getNumero( ) {
@@ -60,13 +69,18 @@ public final class Player {
         return _birthday;
     }
 
+    public PlayerNationality getNationality( ) {
+        return _nationality;
+    }
+
     @Override
     public String toString( ) {
         return "Player{" +
-               "numero=" + _numero +
-               ", firstname='" + _firstname + '\'' +
-               ", lastname='" + _lastname + '\'' +
-               ", birthday='" + _birthday + '\'' +
+               "_numero=" + _numero +
+               ", _firstname='" + _firstname + '\'' +
+               ", _lastname='" + _lastname + '\'' +
+               ", _birthday='" + _birthday + '\'' +
+               ", _nationality=" + _nationality +
                '}';
     }
 }

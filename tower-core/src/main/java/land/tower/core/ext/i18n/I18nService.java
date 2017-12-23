@@ -42,13 +42,19 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
         final Locale defaultLocale = Locale.getDefault( );
         _logger.info( "Default Locale is: {}", defaultLocale );
 
-        load( "i18n/i18n_en.properties" )
+        loadBundle( "i18n", defaultLocale );
+        loadBundle( "nationalities", defaultLocale );
+    }
+
+    private void loadBundle( final String bundle, final Locale defaultLocale ) {
+        load( "i18n/" + bundle + "_en.properties" )
             .ifPresent( _i18nTranslator::registerEntries );
 
-        load( "i18n/i18n_" + defaultLocale.getLanguage( ) + ".properties" )
+        load( "i18n/" + bundle + "_" + defaultLocale.getLanguage( ) + ".properties" )
             .ifPresent( _i18nTranslator::registerEntries );
 
-        load( "i18n/i18n_" + defaultLocale.getLanguage( ) + "_" + defaultLocale.getCountry( ) + ".properties" )
+        load( "i18n/" + bundle + "_" + defaultLocale.getLanguage( )
+              + "_" + defaultLocale.getCountry( ) + ".properties" )
             .ifPresent( _i18nTranslator::registerEntries );
     }
 

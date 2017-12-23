@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.player.PlayerNumeroValidator;
+import land.tower.data.PlayerNationality;
 
 /**
  * Created on 10/12/2017
@@ -40,19 +41,20 @@ final class AddPlayerDialogModel {
         _playerLastname.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
         _playerFirstname.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
         _playerBirthday.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
+        _playerNumeroValidity.addListener( ( observable, oldValue, newValue ) -> checkValidty( ) );
 
-        _playerNumeroValidator.generate( ).ifPresent( n -> _playerNumero.set( String.valueOf( n ) ) );
+        _playerNumeroValidator.generate( ).ifPresent( _playerNumero::set );
         checkValidty( );
     }
 
     private void checkValidty( ) {
-        if ( Strings.isNullOrEmpty( _playerNumero.get( ) ) ) {
+        if ( _playerNumero.get( ) == null ) {
             _isValid.set( false );
             _playerNumeroValidity.set( true );
             return;
         } else {
             try {
-                final long numero = Long.parseLong( _playerNumero.get( ) );
+                final long numero = _playerNumero.get( );
                 if ( !_playerNumeroValidator.isValid( numero ) || _playerNumeroValidator.exists( numero ) ) {
                     _playerNumeroValidity.set( false );
                     _isValid.set( false );
@@ -77,6 +79,11 @@ final class AddPlayerDialogModel {
             return;
         }
 
+        if ( _nationality.get( ) == null ) {
+            _isValid.set( false );
+            return;
+        }
+
         if ( _playerBirthday.get( ) == null ) {
             _isValid.set( false );
             return;
@@ -88,11 +95,11 @@ final class AddPlayerDialogModel {
         return _isValid;
     }
 
-    public String getPlayerNumero( ) {
+    public Long getPlayerNumero( ) {
         return _playerNumero.get( );
     }
 
-    public SimpleStringProperty playerNumeroProperty( ) {
+    public SimpleObjectProperty<Long> playerNumeroProperty( ) {
         return _playerNumero;
     }
 
@@ -128,17 +135,26 @@ final class AddPlayerDialogModel {
         return _playerNumeroValidity;
     }
 
+    public PlayerNationality getNationality( ) {
+        return _nationality.get( );
+    }
+
+    public SimpleObjectProperty<PlayerNationality> nationalityProperty( ) {
+        return _nationality;
+    }
+
     public I18nTranslator getI18n( ) {
         return _i18n;
     }
 
     private final SimpleBooleanProperty _isValid = new SimpleBooleanProperty( );
 
-    private final SimpleStringProperty _playerNumero = new SimpleStringProperty( );
+    private final SimpleObjectProperty<Long> _playerNumero = new SimpleObjectProperty<Long>( );
     private final SimpleStringProperty _playerLastname = new SimpleStringProperty( );
     private final SimpleStringProperty _playerFirstname = new SimpleStringProperty( );
     private final SimpleObjectProperty<LocalDate> _playerBirthday = new SimpleObjectProperty<>( LocalDate.of( 2000, 1,
                                                                                                               1 ) );
+    private final SimpleObjectProperty<PlayerNationality> _nationality = new SimpleObjectProperty<>( );
     private final SimpleBooleanProperty _playerNumeroValidity = new SimpleBooleanProperty( );
 
     private final PlayerNumeroValidator _playerNumeroValidator;

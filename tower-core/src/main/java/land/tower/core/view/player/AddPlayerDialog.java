@@ -14,22 +14,35 @@
 
 package land.tower.core.view.player;
 
-import com.google.common.base.Strings;
+import static java.util.Comparator.comparing;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
+import javafx.util.converter.LongStringConverter;
 import land.tower.data.Player;
+import land.tower.data.PlayerNationality;
 
 /**
  * Created on 10/12/2017
@@ -58,16 +71,12 @@ final class AddPlayerDialog extends Dialog<Player> {
         grid.setPadding( new Insets( 20, 150, 10, 10 ) );
 
         final TextField numeroText = new TextField( );
-        numeroText.textProperty( ).bindBidirectional( model.playerNumeroProperty( ) );
+        numeroText.textProperty( ).bindBidirectional( model.playerNumeroProperty( ), new LongStringConverter( ) );
         numeroText.promptTextProperty( ).bind( model.getI18n( ).get( "player.numero" ) );
-        numeroText.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
-            if ( !newValue.matches( "[\\d ]*" ) ) {
-                numeroText.setText( newValue.replaceAll( "[^\\d ]", "" ) );
-            }
-            if ( newValue.length( ) > 10 ) {
-                numeroText.setText( newValue.substring( 0, 10 ) );
-            }
-        } );
+        numeroText.setTextFormatter(
+            new TextFormatter<>( new LongStringConverter( ),
+                                 model.getPlayerNumero( ),
+                                 c -> Pattern.matches( "[\\d]*", c.getControlNewText( ) ) ? c : null ) );
         model.playerNumeroValidityProperty( ).addListener( ( observable, oldValue, newValue ) -> {
             if ( newValue ) {
                 numeroText.setStyle( "-fx-text-fill: darkgreen" );
@@ -81,7 +90,7 @@ final class AddPlayerDialog extends Dialog<Player> {
             numeroText.setStyle( "-fx-text-fill: darkred; -fx-background-color: lightpink" );
         }
 
-        if ( !Strings.isNullOrEmpty( model.getPlayerNumero( ) ) ) {
+        if ( model.getPlayerNumero( ) != null ) {
             numeroText.setEditable( false );
         }
 
@@ -104,6 +113,34 @@ final class AddPlayerDialog extends Dialog<Player> {
         final Label lastnameLabel = new Label( );
         lastnameLabel.textProperty( ).bind( model.getI18n( ).get( "player.lastname" ) );
         lastnameLabel.setLabelFor( lastnameText );
+
+        final ComboBox<PlayerNationality> nationalityBox = new ComboBox<>( );
+        nationalityBox.setVisibleRowCount( 10 );
+        nationalityBox.valueProperty( ).bindBidirectional( model.nationalityProperty( ) );
+        nationalityBox.itemsProperty( )
+                      .bind( new SimpleObjectProperty<>( FXCollections.observableArrayList(
+                          Stream.of( PlayerNationality.values( ) )
+                                .sorted( comparing( n -> _model.getI18n( ).get( "nationality." + n.name( ) ).get( ) ) )
+                                .toArray( PlayerNationality[]::new ) ) ) );
+        nationalityBox.setCellFactory( param -> new NationalityCell( ) );
+        nationalityBox.setConverter( new StringConverter<PlayerNationality>( ) {
+            @Override
+            public String toString( final PlayerNationality n ) {
+                if ( n == null ) {
+                    return null;
+                }
+                return model.getI18n( ).get( "nationality." + n.name( ) ).get( );
+            }
+
+            @Override
+            public PlayerNationality fromString( final String string ) {
+                return null;
+            }
+        } );
+
+        final Label nationalityLabel = new Label( );
+        nationalityLabel.textProperty( ).bind( model.getI18n( ).get( "player.nationality" ) );
+        nationalityLabel.setLabelFor( nationalityBox );
 
         final DatePicker birthdayDatePicker = new DatePicker( );
         birthdayDatePicker.setPromptText( "yyyy-mm-dd" );
@@ -136,17 +173,20 @@ final class AddPlayerDialog extends Dialog<Player> {
         grid.add( firstnameText, 1, 1 );
         grid.add( lastnameLabel, 0, 2 );
         grid.add( lastnameText, 1, 2 );
-        grid.add( birthdayLabel, 0, 3 );
-        grid.add( birthdayDatePicker, 1, 3 );
+        grid.add( nationalityLabel, 0, 3 );
+        grid.add( nationalityBox, 1, 3 );
+        grid.add( birthdayLabel, 0, 4 );
+        grid.add( birthdayDatePicker, 1, 4 );
 
         getDialogPane( ).setContent( grid );
 
         setResultConverter( param -> {
             if ( param == saveButtonType ) {
-                return new Player( Long.parseLong( _model.getPlayerNumero( ) ),
+                return new Player( _model.getPlayerNumero( ),
                                    _model.getPlayerFirstname( ),
                                    _model.getPlayerLastname( ),
-                                   _model.getPlayerBirthday( ).toString( ) );
+                                   _model.getPlayerBirthday( ).toString( ),
+                                   _model.getNationality( ) );
             }
             return null;
         } );
@@ -158,6 +198,36 @@ final class AddPlayerDialog extends Dialog<Player> {
                 firstnameText.requestFocus( );
             }
         } );
+    }
+
+    private final class NationalityCell extends ListCell<PlayerNationality> {
+
+        NationalityCell( ) {
+            setGraphicTextGap( 10 );
+        }
+
+        @Override
+        protected void updateItem( final PlayerNationality item, final boolean empty ) {
+            super.updateItem( item, empty );
+            if ( empty || item == null ) {
+                setText( null );
+                setGraphic( null );
+                return;
+            }
+
+            setText( _model.getI18n( ).get( "nationality." + item.name( ) ).getValue( ) );
+
+            final String iconName = "img/country/" + item.name( ).toLowerCase( ) + ".png";
+            try ( final InputStream imStream = getClass( ).getClassLoader( ).getResourceAsStream( iconName ) ) {
+                if ( imStream != null ) {
+                    final Image icon = new Image( imStream, 20, 20, true, true );
+                    setGraphic( new ImageView( icon ) );
+                } else {
+                    setGraphic( null );
+                }
+            } catch ( final IOException ignored ) {
+            }
+        }
     }
 
     private final AddPlayerDialogModel _model;
