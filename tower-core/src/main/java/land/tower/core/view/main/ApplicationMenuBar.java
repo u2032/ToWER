@@ -21,6 +21,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
+import land.tower.core.view.component.FaMenuItem;
 
 /**
  * Created on 12/11/2017
@@ -39,19 +40,15 @@ final class ApplicationMenuBar extends MenuBar {
         final Menu fileMenu = new Menu( );
         fileMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.file" ) );
 
-        final MenuItem homepageMenu = new MenuItem( );
-        homepageMenu.getStyleClass( ).add( "fa" );
-        homepageMenu.textProperty( ).bind( Bindings.concat( FontAwesome.HOME, " ",
-                                                            _model.getI18n( ).get( "menu.home" ) ) );
+        final MenuItem homepageMenu = new FaMenuItem( FontAwesome.HOME, "black" );
+        homepageMenu.textProperty( ).bind( Bindings.concat( _model.getI18n( ).get( "menu.home" ) ) );
         homepageMenu.setOnAction( event -> _model.fireHomeRequest( ) );
         fileMenu.getItems( ).add( homepageMenu );
 
         fileMenu.getItems( ).add( new SeparatorMenuItem( ) );
 
-        final MenuItem exitMenu = new MenuItem( );
-        exitMenu.getStyleClass( ).add( "fa" );
-        exitMenu.textProperty( ).bind( Bindings.concat( FontAwesome.OFF, " ",
-                                                        _model.getI18n( ).get( "menu.file.exit" ) ) );
+        final MenuItem exitMenu = new FaMenuItem( FontAwesome.OFF, "black" );
+        exitMenu.textProperty( ).bind( Bindings.concat( _model.getI18n( ).get( "menu.file.exit" ) ) );
         exitMenu.setOnAction( event -> _model.fireCloseRequest( ) );
         fileMenu.getItems( ).add( exitMenu );
 
@@ -62,10 +59,8 @@ final class ApplicationMenuBar extends MenuBar {
         final Menu tournamentMenu = new Menu( );
         tournamentMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.tournament" ) );
 
-        final MenuItem homepageMenu = new MenuItem( );
-        homepageMenu.getStyleClass( ).add( "fa" );
-        homepageMenu.textProperty( ).bind( Bindings.concat( FontAwesome.PLUS, " ",
-                                                            _model.getI18n( ).get( "menu.add.tournament" ) ) );
+        final MenuItem homepageMenu = new FaMenuItem( FontAwesome.PLUS, "black" );
+        homepageMenu.textProperty( ).bind( Bindings.concat( _model.getI18n( ).get( "menu.add.tournament" ) ) );
         homepageMenu.setOnAction( event -> _model.fireTournamentCreation( ) );
         tournamentMenu.getItems( ).add( homepageMenu );
 

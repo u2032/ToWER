@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.component.FaButton;
 import land.tower.data.Tournament;
 
 /**
@@ -58,13 +59,11 @@ public final class TournamentManagementView extends BorderPane {
         homeButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
         homeButton.getStyleClass( ).add( "rich-button" );
 
-        final Button addButton = new Button( );
-        addButton.textProperty( ).bind( concat( FontAwesome.PLUS, " ",
-                                                toUpperCase( model.getI18n( ).get( "tournament.add.action" ) ) ) );
+        final Button addButton = new FaButton( FontAwesome.PLUS, "white" );
+        addButton.textProperty( ).bind( concat( toUpperCase( model.getI18n( ).get( "tournament.add.action" ) ) ) );
         addButton.setOnMouseClicked( e -> {
             _model.fireTournamentCreation( );
         } );
-        addButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
         addButton.getStyleClass( ).add( "rich-button" );
         addButton.getStyleClass( ).add( "action-button" );
 

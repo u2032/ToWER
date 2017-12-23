@@ -12,21 +12,23 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.ext.font;
+package land.tower.core.view.component;
+
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import land.tower.core.ext.font.FontAwesome;
 
 /**
- * Created on 10/12/2017
+ * Created on 23/12/2017
  * @author Cédric Longo
  */
-public final class FontAwesome {
+public final class FaMenuItem extends MenuItem {
 
-    public static final String FA_STYLE_NAME = "fa";
+    public FaMenuItem( final String icon, final String color ) {
+        final Label faIcon = new Label( icon + " " );
+        faIcon.setStyle( "-fx-text-fill: " + color ); // Should be inherited from CSS
+        faIcon.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+        setGraphic( faIcon );
+    }
 
-    // Icons
-
-    public static final String HOME = "\uf015";
-    public static final String PLUS = "\uf0fe";
-    public static final String DELETE = "\uf2ed";
-    public static final String OFF = "\uf011";
-    public static final String ABOUT = "\uf059";
 }
