@@ -21,6 +21,7 @@ import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.model.tournament.TournamentRepository;
+import land.tower.core.view.about.AboutDialog;
 import land.tower.core.view.event.CloseRequestEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
@@ -37,12 +38,14 @@ final class ApplicationMenuBarModel {
     ApplicationMenuBarModel( final EventBus eventBus, final I18nTranslator i18n,
                              final Provider<HomepageView> homepageViewProvider,
                              final TournamentRepository tournamentRepository,
-                             final TournamentViewModelProvider tournamentViewModelProvider ) {
+                             final TournamentViewModelProvider tournamentViewModelProvider,
+                             final Provider<AboutDialog> aboutDialogProvider ) {
         _eventBus = eventBus;
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
         _tournamentRepository = tournamentRepository;
         _tournamentViewModelProvider = tournamentViewModelProvider;
+        _aboutDialogProvider = aboutDialogProvider;
     }
 
     public I18nTranslator getI18n( ) {
@@ -63,10 +66,15 @@ final class ApplicationMenuBarModel {
         _eventBus.post( new SceneRequestedEvent( view ) );
     }
 
+    void fireAboutDialog( ) {
+        _aboutDialogProvider.get( ).show( );
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
     private final Provider<HomepageView> _homepageViewProvider;
     private final TournamentRepository _tournamentRepository;
 
     private final TournamentViewModelProvider _tournamentViewModelProvider;
+    private final Provider<AboutDialog> _aboutDialogProvider;
 }

@@ -21,6 +21,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
+import land.tower.core.view.component.FaMenu;
 import land.tower.core.view.component.FaMenuItem;
 
 /**
@@ -34,6 +35,7 @@ final class ApplicationMenuBar extends MenuBar {
         _model = model;
         getMenus( ).add( fileMenu( ) );
         getMenus( ).add( tournamentMenu( ) );
+        getMenus( ).add( aboutMenu( ) );
     }
 
     private Menu fileMenu( ) {
@@ -65,6 +67,17 @@ final class ApplicationMenuBar extends MenuBar {
         tournamentMenu.getItems( ).add( homepageMenu );
 
         return tournamentMenu;
+    }
+
+    private Menu aboutMenu( ) {
+        final Menu aboutMenu = new FaMenu( FontAwesome.ABOUT, "darkgrey" );
+
+        final MenuItem about = new FaMenuItem( FontAwesome.INFO, "black" );
+        about.textProperty( ).bind( Bindings.concat( _model.getI18n( ).get( "menu.about.about" ) ) );
+        about.setOnAction( event -> _model.fireAboutDialog( ) );
+        aboutMenu.getItems( ).add( about );
+
+        return aboutMenu;
     }
 
     private final ApplicationMenuBarModel _model;
