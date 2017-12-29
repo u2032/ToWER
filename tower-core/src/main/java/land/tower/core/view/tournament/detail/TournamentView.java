@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
+import land.tower.data.TournamentStatus;
 
 /**
  * Created on 19/12/2017
@@ -45,6 +46,11 @@ public final class TournamentView extends BorderPane {
         _model.tabListProperty( ).addListener( ( observable, oldValue, newValue ) -> {
             tabPane.getTabs( ).setAll( newValue );
         } );
+
+        // Select default tab
+        if ( _model.getTournament( ).getHeader( ).getStatus( ) == TournamentStatus.ENROLMENT ) {
+            tabPane.getSelectionModel( ).clearAndSelect( 1 );
+        }
 
         setCenter( tabPane );
     }

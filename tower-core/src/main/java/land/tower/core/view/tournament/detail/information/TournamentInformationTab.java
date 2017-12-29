@@ -17,6 +17,7 @@ package land.tower.core.view.tournament.detail.information;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -35,7 +36,9 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javax.inject.Inject;
+import land.tower.core.ext.font.FontAwesome;
 import land.tower.data.PairingMode;
+import land.tower.data.TournamentStatus;
 
 /**
  * Created on 20/12/2017
@@ -49,6 +52,10 @@ public final class TournamentInformationTab extends Tab {
     public TournamentInformationTab( final TournamentInformationTabModel model ) {
         _model = model;
         textProperty( ).bind( _model.getI18n( ).get( "tournament.tab.information" ) );
+
+        final Label icon = new Label( FontAwesome.OPTIONS );
+        icon.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+        setGraphic( icon );
 
         final VBox mainPane = new VBox( );
         mainPane.setAlignment( Pos.CENTER );
@@ -235,6 +242,10 @@ public final class TournamentInformationTab extends Tab {
                                      }
                                      return matches ? c : null;
                                  } ) );
+        teamSizeField.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+            final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
+            return status == TournamentStatus.NOT_CONFIGURED || status == TournamentStatus.ENROLMENT;
+        }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
         final Label teamSizeLabel = new Label( );
         teamSizeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.teamSize" ) );
         teamSizeLabel.setLabelFor( teamSizeField );

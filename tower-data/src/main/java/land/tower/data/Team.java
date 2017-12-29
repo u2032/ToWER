@@ -18,59 +18,59 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
- * Created on 16/12/2017
+ * Created on 27/12/2017
  * @author Cédric Longo
  */
-public final class Tournament {
+public final class Team {
 
     @SerializedName( "id" )
-    private UUID _id;
+    private int _id;
 
-    @SerializedName( "key" )
-    private UUID _key;
+    @SerializedName( "active" )
+    private boolean _active;
 
-    @SerializedName( "header" )
-    private TournamentHeader _header;
+    @SerializedName( "name" )
+    private String _name;
 
-    @SerializedName( "teams" )
-    private List<Team> _teams = new ArrayList<>( );
+    @SerializedName( "players" )
+    private List<Player> _players = new ArrayList<>( 1 );
 
-    // TODO Round information
-    // TODO Final ranking
-
-    public Tournament( ) {
-
+    public String getName( ) {
+        return _name;
     }
 
-    public UUID getId( ) {
+    public int getId( ) {
         return _id;
     }
 
-    public UUID getKey( ) {
-        return _key;
-    }
-
-    public TournamentHeader getHeader( ) {
-        return _header;
-    }
-
-    public void setId( final UUID id ) {
+    public void setId( final int id ) {
         _id = id;
     }
 
-    public void setKey( final UUID key ) {
-        _key = key;
+    public void setName( final String name ) {
+        _name = name;
     }
 
-    public void setHeader( final TournamentHeader header ) {
-        _header = header;
+    public boolean isActive( ) {
+        return _active;
     }
 
-    public List<Team> getTeams( ) {
-        return _teams;
+    public void setActive( final boolean active ) {
+        _active = active;
+    }
+
+    public List<Player> getPlayers( ) {
+        return _players;
+    }
+
+    public void setPlayers( final List<Player> players ) {
+        _players = players;
+    }
+
+    public boolean hasPlayer( final Player p ) {
+        return getPlayers( ).stream( ).anyMatch( p2 -> p.getNumero( ) == p2.getNumero( ) );
     }
 
 }

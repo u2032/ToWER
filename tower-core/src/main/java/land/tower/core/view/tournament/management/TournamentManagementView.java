@@ -119,6 +119,13 @@ public final class TournamentManagementView extends BorderPane {
 
         tableView.setRowFactory( tv -> {
             final TableRow<ObservableTournament> row = new TableRow<>( );
+            row.indexProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+                row.setCursor( Cursor.DEFAULT );
+                if ( newValue.intValue( ) >= 0 && newValue.intValue( ) < row.getTableView( ).getItems( ).size( ) ) {
+                    final ObservableTournament item = row.getTableView( ).getItems( ).get( newValue.intValue( ) );
+                    row.setCursor( item == null ? Cursor.DEFAULT : Cursor.HAND );
+                }
+            } );
             row.setOnMouseClicked( event -> {
                 if ( !row.isEmpty( ) ) {
                     _model.fireTournamentDisplay( row.getItem( ) );

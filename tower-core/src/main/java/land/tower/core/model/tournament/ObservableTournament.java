@@ -14,8 +14,13 @@
 
 package land.tower.core.model.tournament;
 
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import land.tower.data.Tournament;
+import land.tower.data.TournamentStatus;
 
 /**
  * Created on 16/12/2017
@@ -26,9 +31,26 @@ public final class ObservableTournament {
     public ObservableTournament( final Tournament tournament ) {
         _tournament = tournament;
         _header = new ObservableTournamentHeader( tournament.getHeader( ) );
-
         _header.dirtyProperty( )
                .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
+        _header.dateProperty( ).addListener( ( observable, oldValue, newValue ) -> updateStatus( ) );
+
+        tournament.getTeams( )
+                  .forEach( team -> {
+                      final ObservableTeam oTeam = new ObservableTeam( team );
+                      oTeam.dirtyProperty( )
+                           .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
+                      _teams.add( oTeam );
+                  } );
+        _teams.addListener( (ListChangeListener<ObservableTeam>) c -> {
+            _tournament.getTeams( ).clear( );
+            _tournament.getTeams( ).addAll( _teams.stream( )
+                                                  .map( ObservableTeam::getTeam )
+                                                  .collect( Collectors.toList( ) ) );
+        } );
+        _teams.addListener( (ListChangeListener<ObservableTeam>) c -> _dirty.set( true ) );
+        _teams.addListener( (ListChangeListener<ObservableTeam>) c -> updateStatus( ) );
+
         _dirty.setValue( false );
     }
 
@@ -40,6 +62,14 @@ public final class ObservableTournament {
         return _header;
     }
 
+    public ObservableList<ObservableTeam> getTeams( ) {
+        return _teams;
+    }
+
+    public void registerTeam( final ObservableTeam team ) {
+        _teams.add( team );
+    }
+
     public boolean isDirty( ) {
         return _dirty.get( );
     }
@@ -48,8 +78,24 @@ public final class ObservableTournament {
         return _dirty;
     }
 
+    public void updateStatus( ) {
+        TournamentStatus current = getHeader( ).getStatus( );
+        if ( current == TournamentStatus.CLOSED ) {
+            return;
+        }
+
+        current = TournamentStatus.PLANNED;
+
+        if ( !_teams.isEmpty( ) ) {
+            current = TournamentStatus.ENROLMENT;
+        }
+        // TODO has round => STARTED
+        getHeader( ).setStatus( current );
+    }
+
     private final Tournament _tournament;
     private final ObservableTournamentHeader _header;
+    private final ObservableList<ObservableTeam> _teams = FXCollections.observableArrayList( );
 
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 }

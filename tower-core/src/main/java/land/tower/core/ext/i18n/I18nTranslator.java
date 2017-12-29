@@ -40,5 +40,9 @@ public final class I18nTranslator {
                } );
     }
 
+    public String get( final String key, final Object... args ) {
+        return String.format( get( key ).get( ), args );
+    }
+
     private final Map<String, StringProperty> _texts = Collections.synchronizedMap( Maps.newHashMap( ) );
 }

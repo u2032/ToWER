@@ -12,26 +12,19 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.ext.font;
+package land.tower.core.model.player.suggestion;
+
+import java.util.List;
+import land.tower.data.Player;
 
 /**
- * Created on 10/12/2017
+ * Created on 28/12/2017
  * @author Cédric Longo
  */
-public final class FontAwesome {
+public interface IPlayerSuggestionProvider {
 
-    public static final String FA_STYLE_NAME = "fa";
+    List<Player> getSuggestionsForName( final String name );
 
-    // Icons
+    List<Player> getSuggestionsForNumero( final long numero );
 
-    public static final String HOME = "\uf015";
-    public static final String PLUS = "\uf0fe";
-    public static final String DELETE = "\uf2ed";
-    public static final String OFF = "\uf011";
-    public static final String ABOUT = "\uf059";
-    public static final String INFO = "\uf05a";
-    public static final String OPTIONS = "\uf013";
-    public static final String PLAYER = "\uf007";
-    public static final String PLAYERS = "\uf0c0";
-    public static final String CLOSE = "\uf00d";
 }

@@ -27,6 +27,8 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
+import land.tower.core.view.tournament.detail.enrolment.TournamentEnrolmentTab;
+import land.tower.core.view.tournament.detail.enrolment.TournamentEnrolmentTabModel;
 import land.tower.core.view.tournament.detail.information.TournamentInformationTab;
 import land.tower.core.view.tournament.detail.information.TournamentInformationTabModel;
 
@@ -54,14 +56,17 @@ public final class TournamentViewModel {
                                 final EventBus eventBus,
                                 final Provider<HomepageView> homeviewProvider,
                                 final I18nTranslator i18n,
-                                final TournamentInformationTabModel.Factory informationTabFactory ) {
+                                final TournamentInformationTabModel.Factory informationTabFactory,
+                                final TournamentEnrolmentTabModel.Factory enrolmentTabFactory ) {
         _tournament = tournament;
         _eventBus = eventBus;
         _homeviewProvider = homeviewProvider;
         _i18n = i18n;
         _informationTabFactory = informationTabFactory;
+        _enrolmentTabFactory = enrolmentTabFactory;
 
         _tabViews.add( new TournamentInformationTab( _informationTabFactory.forTournament( _tournament ) ) );
+        _tabViews.add( new TournamentEnrolmentTab( _enrolmentTabFactory.forTournament( _tournament ) ) );
     }
 
     void fireHomeButton( ) {
@@ -79,4 +84,5 @@ public final class TournamentViewModel {
 
     private final ObservableList<Tab> _tabViews = FXCollections.observableArrayList( );
     private final TournamentInformationTabModel.Factory _informationTabFactory;
+    private final TournamentEnrolmentTabModel.Factory _enrolmentTabFactory;
 }

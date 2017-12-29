@@ -22,6 +22,7 @@ public enum TournamentStatus {
 
     NOT_CONFIGURED,
     PLANNED,
+    ENROLMENT,
     STARTED,
     CLOSED
 

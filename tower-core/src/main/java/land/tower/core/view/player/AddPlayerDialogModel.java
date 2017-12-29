@@ -21,6 +21,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.player.PlayerNumeroValidator;
 import land.tower.data.PlayerNationality;
@@ -33,9 +34,11 @@ final class AddPlayerDialogModel {
 
     @Inject
     public AddPlayerDialogModel( final I18nTranslator translator,
-                                 final PlayerNumeroValidator playerNumeroValidator ) {
+                                 final PlayerNumeroValidator playerNumeroValidator,
+                                 final Configuration config ) {
         _playerNumeroValidator = playerNumeroValidator;
         _i18n = translator;
+        _config = config;
 
         _playerNumero.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
         _playerLastname.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
@@ -147,6 +150,10 @@ final class AddPlayerDialogModel {
         return _i18n;
     }
 
+    public Configuration getConfig( ) {
+        return _config;
+    }
+
     private final SimpleBooleanProperty _isValid = new SimpleBooleanProperty( );
 
     private final SimpleObjectProperty<Long> _playerNumero = new SimpleObjectProperty<Long>( );
@@ -159,4 +166,5 @@ final class AddPlayerDialogModel {
 
     private final PlayerNumeroValidator _playerNumeroValidator;
     private final I18nTranslator _i18n;
+    private final Configuration _config;
 }

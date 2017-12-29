@@ -51,6 +51,8 @@ import land.tower.data.PlayerNationality;
 final class AddPlayerDialog extends Dialog<Player> {
 
     public AddPlayerDialog( final AddPlayerDialogModel model ) {
+        getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
+
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "player.add.title" ) );
         headerTextProperty( ).bind( model.getI18n( ).get( "player.information" ) );
