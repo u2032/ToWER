@@ -44,6 +44,7 @@ final class AddPlayerDialogModel {
         _playerLastname.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
         _playerFirstname.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
         _playerBirthday.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
+        _playerNationality.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
         _playerNumeroValidity.addListener( ( observable, oldValue, newValue ) -> checkValidty( ) );
 
         _playerNumeroValidator.generate( ).ifPresent( _playerNumero::set );
@@ -82,7 +83,7 @@ final class AddPlayerDialogModel {
             return;
         }
 
-        if ( _nationality.get( ) == null ) {
+        if ( _playerNationality.get( ) == null ) {
             _isValid.set( false );
             return;
         }
@@ -138,12 +139,12 @@ final class AddPlayerDialogModel {
         return _playerNumeroValidity;
     }
 
-    public PlayerNationality getNationality( ) {
-        return _nationality.get( );
+    public PlayerNationality getPlayerNationality( ) {
+        return _playerNationality.get( );
     }
 
-    public SimpleObjectProperty<PlayerNationality> nationalityProperty( ) {
-        return _nationality;
+    public SimpleObjectProperty<PlayerNationality> playerNationalityProperty( ) {
+        return _playerNationality;
     }
 
     public I18nTranslator getI18n( ) {
@@ -161,7 +162,7 @@ final class AddPlayerDialogModel {
     private final SimpleStringProperty _playerFirstname = new SimpleStringProperty( );
     private final SimpleObjectProperty<LocalDate> _playerBirthday = new SimpleObjectProperty<>( LocalDate.of( 2000, 1,
                                                                                                               1 ) );
-    private final SimpleObjectProperty<PlayerNationality> _nationality = new SimpleObjectProperty<>( );
+    private final SimpleObjectProperty<PlayerNationality> _playerNationality = new SimpleObjectProperty<>( );
     private final SimpleBooleanProperty _playerNumeroValidity = new SimpleBooleanProperty( );
 
     private final PlayerNumeroValidator _playerNumeroValidator;

@@ -118,7 +118,7 @@ final class AddPlayerDialog extends Dialog<Player> {
 
         final ComboBox<PlayerNationality> nationalityBox = new ComboBox<>( );
         nationalityBox.setVisibleRowCount( 10 );
-        nationalityBox.valueProperty( ).bindBidirectional( model.nationalityProperty( ) );
+        nationalityBox.valueProperty( ).bindBidirectional( model.playerNationalityProperty( ) );
         nationalityBox.itemsProperty( )
                       .bind( new SimpleObjectProperty<>( FXCollections.observableArrayList(
                           Stream.of( PlayerNationality.values( ) )
@@ -188,7 +188,7 @@ final class AddPlayerDialog extends Dialog<Player> {
                                    _model.getPlayerFirstname( ),
                                    _model.getPlayerLastname( ),
                                    _model.getPlayerBirthday( ).toString( ),
-                                   _model.getNationality( ) );
+                                   _model.getPlayerNationality( ) );
             }
             return null;
         } );
