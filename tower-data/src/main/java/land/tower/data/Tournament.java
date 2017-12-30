@@ -38,7 +38,9 @@ public final class Tournament {
     @SerializedName( "teams" )
     private List<Team> _teams = new ArrayList<>( );
 
-    // TODO Round information
+    @SerializedName( "rounds" )
+    private List<Round> _rounds = new ArrayList<>( 3 );
+
     // TODO Final ranking
 
     public Tournament( ) {
@@ -73,4 +75,7 @@ public final class Tournament {
         return _teams;
     }
 
+    public List<Round> getRounds( ) {
+        return _rounds;
+    }
 }
