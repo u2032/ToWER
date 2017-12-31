@@ -15,7 +15,9 @@
 package land.tower.core.view.main;
 
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
@@ -27,6 +29,8 @@ import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
 import land.tower.core.view.tournament.detail.TournamentView;
 import land.tower.core.view.tournament.detail.TournamentViewModelProvider;
+import land.tower.core.view.tournament.detail.round.ResetRoundDialogModel;
+import land.tower.core.view.tournament.detail.round.ResetRoundDialogModel.Factory;
 
 /**
  * Created on 18/12/2017
@@ -39,8 +43,11 @@ final class ApplicationMenuBarModel {
                              final Provider<HomepageView> homepageViewProvider,
                              final TournamentRepository tournamentRepository,
                              final TournamentViewModelProvider tournamentViewModelProvider,
-                             final Provider<AboutDialog> aboutDialogProvider ) {
+                             final Provider<AboutDialog> aboutDialogProvider,
+                             final Factory resertRoundDialogFactory ) {
         _eventBus = eventBus;
+        _resertRoundDialogFactory = resertRoundDialogFactory;
+        _eventBus.register( this );
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
         _tournamentRepository = tournamentRepository;
@@ -70,6 +77,28 @@ final class ApplicationMenuBarModel {
         _aboutDialogProvider.get( ).show( );
     }
 
+    @Subscribe
+    private void sceneRequested( final SceneRequestedEvent event ) {
+        if ( event.getView( ) instanceof TournamentView ) {
+            final TournamentView view = ( (TournamentView) event.getView( ) );
+            _currentTournament.set( view.getModel( ).getTournament( ) );
+        } else {
+            _currentTournament.set( null );
+        }
+    }
+
+    ResetRoundDialogModel createResetRoundDialogModel( ) {
+        return _resertRoundDialogFactory.forTournament( _currentTournament.get( ) );
+    }
+
+    public ObservableTournament getCurrentTournament( ) {
+        return _currentTournament.get( );
+    }
+
+    public SimpleObjectProperty<ObservableTournament> currentTournamentProperty( ) {
+        return _currentTournament;
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
     private final Provider<HomepageView> _homepageViewProvider;
@@ -77,4 +106,7 @@ final class ApplicationMenuBarModel {
 
     private final TournamentViewModelProvider _tournamentViewModelProvider;
     private final Provider<AboutDialog> _aboutDialogProvider;
+
+    private final SimpleObjectProperty<ObservableTournament> _currentTournament = new SimpleObjectProperty<>( );
+    private final Factory _resertRoundDialogFactory;
 }

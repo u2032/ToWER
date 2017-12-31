@@ -79,6 +79,10 @@ public final class TournamentView extends BorderPane {
         setTop( header );
     }
 
+    public TournamentViewModel getModel( ) {
+        return _model;
+    }
+
     private final TournamentViewModel _model;
 
 }

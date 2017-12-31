@@ -209,5 +209,9 @@ public final class TournamentRoundTab extends Tab {
         return hBox;
     }
 
+    public TournamentRoundTabModel getModel( ) {
+        return _model;
+    }
+
     private final TournamentRoundTabModel _model;
 }

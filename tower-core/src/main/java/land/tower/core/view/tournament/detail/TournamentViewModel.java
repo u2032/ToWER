@@ -80,12 +80,23 @@ public final class TournamentViewModel {
             _tabViews.add( new TournamentRoundTab( roundTabModel ) );
         } );
         _tournament.getRounds( ).addListener( (ListChangeListener<ObservableRound>) c -> {
-            if ( c.next( ) && c.wasAdded( ) ) {
-                final TournamentRoundTabModel roundTabModel = _roundTabFactory.create( _tournament,
-                                                                                       c.getAddedSubList( ).get( 0 ) );
-                final TournamentRoundTab roundTab = new TournamentRoundTab( roundTabModel );
-                _tabViews.add( roundTab );
-                _selectedTab.set( roundTab );
+            if ( c.next( ) ) {
+                if ( c.wasAdded( ) ) {
+                    final TournamentRoundTabModel roundTabModel =
+                        _roundTabFactory.create( _tournament, c.getAddedSubList( ).get( 0 ) );
+                    final TournamentRoundTab roundTab = new TournamentRoundTab( roundTabModel );
+                    _tabViews.add( roundTab );
+                    _selectedTab.set( roundTab );
+                }
+                if ( c.wasRemoved( ) ) {
+                    final ObservableRound removedRound = c.getRemoved( ).get( 0 );
+                    _tabViews.removeIf( v -> {
+                        if ( v instanceof TournamentRoundTab ) {
+                            return ( (TournamentRoundTab) v ).getModel( ).getRound( ).equals( removedRound );
+                        }
+                        return false;
+                    } );
+                }
             }
         } );
 
