@@ -36,19 +36,19 @@ public final class SwissPairingSystem implements PairingSystem {
     @Override
     public Round createNewRound( final Tournament tournament ) {
         if ( tournament.getRounds( ).isEmpty( ) ) {
-            return firstRound( tournament.getTeams( ) );
+            return firstRound( tournament );
         }
         throw new UnsupportedOperationException( "Not yet implemented" );
     }
 
-    private Round firstRound( final List<Team> teams ) {
+    private Round firstRound( final Tournament tournament ) {
         final Round round = new Round( );
         round.setNumero( 1 );
         round.setStartDate( ZonedDateTime.now( ) );
 
-        final List<Team> availableTeams = new ArrayList<>( teams.stream( )
-                                                                .filter( Team::isActive )
-                                                                .collect( Collectors.toList( ) ) );
+        final List<Team> availableTeams = new ArrayList<>( tournament.getTeams( ).stream( )
+                                                                     .filter( Team::isActive )
+                                                                     .collect( Collectors.toList( ) ) );
 
         final AtomicInteger position = new AtomicInteger( );
         while ( availableTeams.size( ) > 1 ) {
@@ -67,6 +67,9 @@ public final class SwissPairingSystem implements PairingSystem {
             match.setPosition( position.incrementAndGet( ) );
             match.setLeftTeamId( availableTeams.get( 0 ).getId( ) );
             match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
+            match.setLeftTeamId( tournament.getHeader( ).getWinningGameCount( ) );
+            match.setScoreDraw( 0 );
+            match.setScoreRight( 0 );
             round.getMatches( ).add( match );
         }
 
