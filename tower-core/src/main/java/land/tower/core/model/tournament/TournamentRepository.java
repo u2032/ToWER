@@ -82,7 +82,7 @@ public final class TournamentRepository implements IService {
         header.setDate( ZonedDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ) );
         header.setStatus( TournamentStatus.NOT_CONFIGURED );
         header.setPairingMode( PairingMode.SWISS );
-        header.setkValue( 1 );
+        header.setWinningGameCount( 1 );
         header.setTeamSize( 1 );
         header.setMatchDuration( 30 );
         tournament.setHeader( header );

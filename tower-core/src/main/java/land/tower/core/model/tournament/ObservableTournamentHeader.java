@@ -56,6 +56,11 @@ public final class ObservableTournamentHeader {
         _teamSize.addListener( ( obs, oldValue, newValue ) -> header.setTeamSize( newValue != null ? newValue : 1 ) );
         _teamSize.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
+        _winningGameCount = new SimpleObjectProperty<>( header.getWinningGameCount( ) );
+        _winningGameCount.addListener(
+            ( obs, oldValue, newValue ) -> header.setWinningGameCount( newValue != null ? newValue : 1 ) );
+        _winningGameCount.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
         _address = new ObservableAddress( _header.getAddress( ) );
 
         _dirty.setValue( false );
@@ -136,12 +141,21 @@ public final class ObservableTournamentHeader {
         return _teamSize;
     }
 
+    public Integer getWinningGameCount( ) {
+        return _winningGameCount.get( );
+    }
+
+    public SimpleObjectProperty<Integer> winningGameCountProperty( ) {
+        return _winningGameCount;
+    }
+
     private final SimpleStringProperty _title;
     private final SimpleObjectProperty<ZonedDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
     private final SimpleObjectProperty<PairingMode> _pairingMode;
     private final SimpleObjectProperty<Integer> _matchDuration;
     private final SimpleObjectProperty<Integer> _teamSize;
+    private final SimpleObjectProperty<Integer> _winningGameCount;
     private final ObservableAddress _address;
 
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );

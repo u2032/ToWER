@@ -247,7 +247,8 @@ public final class TournamentInformationTab extends Tab {
                                  c -> {
                                      final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
                                      if ( !c.getControlNewText( ).isEmpty( ) ) {
-                                         if ( Integer.parseInt( c.getControlNewText( ) ) > 20 ) {
+                                         final int count = Integer.parseInt( c.getControlNewText( ) );
+                                         if ( count < 1 || count > 20 ) {
                                              return null;
                                          }
                                      }
@@ -268,6 +269,43 @@ public final class TournamentInformationTab extends Tab {
         teamSizeLabel.setLabelFor( teamSizeField );
         grid.add( teamSizeLabel, 0, line );
         grid.add( teamSizeField, 1, line );
+
+        line++;
+        final TextField winningGameCountField = new TextField( );
+        winningGameCountField.setPrefWidth( 40 );
+        winningGameCountField.setMaxWidth( Pane.USE_PREF_SIZE );
+        winningGameCountField.textProperty( )
+                             .bindBidirectional( _model.getTournament( ).getHeader( ).winningGameCountProperty( ),
+                                                 new IntegerStringConverter( ) );
+        winningGameCountField.setTextFormatter(
+            new TextFormatter<>( new IntegerStringConverter( ),
+                                 _model.getTournament( ).getHeader( ).getWinningGameCount( ),
+                                 c -> {
+                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
+                                     if ( !c.getControlNewText( ).isEmpty( ) ) {
+                                         final int count = Integer.parseInt( c.getControlNewText( ) );
+                                         if ( count < 1 || count > 9 ) {
+                                             return null;
+                                         }
+                                     }
+                                     return matches ? c : null;
+                                 } ) );
+        winningGameCountField.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+            final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
+            switch ( status ) {
+                case NOT_CONFIGURED:
+                case PLANNED:
+                case ENROLMENT:
+                    return false;
+                default:
+                    return true;
+            }
+        }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
+        final Label winningGameCountLabel = new Label( );
+        winningGameCountLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.winningGameCount" ) );
+        winningGameCountLabel.setLabelFor( winningGameCountField );
+        grid.add( winningGameCountLabel, 0, line );
+        grid.add( winningGameCountField, 1, line );
 
         line++;
         final TextField matchDurationField = new TextField( );

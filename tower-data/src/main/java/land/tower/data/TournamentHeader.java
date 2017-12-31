@@ -48,11 +48,11 @@ public final class TournamentHeader {
     @SerializedName( "matchDuration" )
     private int _matchDuration;
 
+    @SerializedName( "winningGameCount" )
+    private int _winningGameCount;
+
     @SerializedName( "teamSize" )
     private int _teamSize;
-
-    @SerializedName( "kValue" )
-    private int _kValue;
 
     public TournamentStatus getStatus( ) {
         return _status;
@@ -110,14 +110,6 @@ public final class TournamentHeader {
         _judges = judges;
     }
 
-    public int getkValue( ) {
-        return _kValue;
-    }
-
-    public void setkValue( final int kValue ) {
-        _kValue = kValue;
-    }
-
     public int getMatchDuration( ) {
         return _matchDuration;
     }
@@ -132,5 +124,13 @@ public final class TournamentHeader {
 
     public void setTeamSize( final int teamSize ) {
         _teamSize = teamSize;
+    }
+
+    public int getWinningGameCount( ) {
+        return _winningGameCount;
+    }
+
+    public void setWinningGameCount( final int winningGameCount ) {
+        _winningGameCount = winningGameCount;
     }
 }
