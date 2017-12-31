@@ -21,6 +21,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 import land.tower.core.view.tournament.detail.enrolment.AddTeamDialogModel;
 import land.tower.core.view.tournament.detail.enrolment.TournamentEnrolmentTabModel;
 import land.tower.core.view.tournament.detail.information.TournamentInformationTabModel;
+import land.tower.core.view.tournament.detail.round.SetScoreDialogModel;
 import land.tower.core.view.tournament.detail.round.TournamentRoundTabModel;
 
 /**
@@ -52,6 +53,10 @@ public final class TournamentViewModule extends AbstractModule {
         install( new FactoryModuleBuilder( )
                      .implement( TournamentRoundTabModel.class, TournamentRoundTabModel.class )
                      .build( TournamentRoundTabModel.Factory.class ) );
+
+        install( new FactoryModuleBuilder( )
+                     .implement( SetScoreDialogModel.class, SetScoreDialogModel.class )
+                     .build( SetScoreDialogModel.Factory.class ) );
 
     }
 }

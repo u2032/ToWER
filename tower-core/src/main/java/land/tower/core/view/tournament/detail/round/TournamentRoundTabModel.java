@@ -30,15 +30,18 @@ public final class TournamentRoundTabModel {
     public interface Factory {
 
         TournamentRoundTabModel create( ObservableTournament tournament, ObservableRound round );
+
     }
 
     @Inject
     public TournamentRoundTabModel( @Assisted ObservableTournament tournament,
                                     @Assisted ObservableRound round,
-                                    final I18nTranslator i18n ) {
+                                    final I18nTranslator i18n,
+                                    final SetScoreDialogModel.Factory setScoreDialogFactory ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
+        _setScoreDialogFactory = setScoreDialogFactory;
     }
 
     public I18nTranslator getI18n( ) {
@@ -53,7 +56,12 @@ public final class TournamentRoundTabModel {
         return _round;
     }
 
+    public SetScoreDialog createSetScoreDialog( ) {
+        return new SetScoreDialog( _setScoreDialogFactory.forRound( _tournament, _round ) );
+    }
+
     private final ObservableTournament _tournament;
     private final ObservableRound _round;
     private final I18nTranslator _i18n;
+    private final SetScoreDialogModel.Factory _setScoreDialogFactory;
 }

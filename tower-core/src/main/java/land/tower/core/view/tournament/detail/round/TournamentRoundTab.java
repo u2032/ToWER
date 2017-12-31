@@ -24,6 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
@@ -140,6 +141,24 @@ public final class TournamentRoundTab extends Tab {
             } );
         tableView.getColumns( ).add( teamRightCol );
 
+        tableView.setRowFactory( tv -> {
+            TableRow<ObservableMatch> row = new TableRow<>( );
+            row.setOnMouseClicked( event -> {
+                if ( event.getClickCount( ) == 2 && ( !row.isEmpty( ) ) ) {
+                    final ObservableMatch match = row.getItem( );
+                    final SetScoreDialog setScoreDialog = _model.createSetScoreDialog( );
+                    setScoreDialog.getModel( ).positionProperty( ).set( match.getPosition( ) );
+                    if ( match.hasScore( ) ) {
+                        setScoreDialog.getModel( ).leftWinsProperty( ).set( match.getScoreLeft( ) );
+                        setScoreDialog.getModel( ).drawsProperty( ).set( match.getScoreDraw( ) );
+                        setScoreDialog.getModel( ).rightWinsProperty( ).set( match.getScoreRight( ) );
+                    }
+                    setScoreDialog.show( );
+                }
+            } );
+            return row;
+        } );
+
         return tableView;
     }
 
@@ -153,6 +172,9 @@ public final class TournamentRoundTab extends Tab {
         setScoreButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.scoring" ) );
         setScoreButton.getStyleClass( ).add( "rich-button" );
         setScoreButton.getStyleClass( ).add( "action-button" );
+        setScoreButton.setOnAction( event -> {
+            _model.createSetScoreDialog( ).show( );
+        } );
         hBox.getChildren( ).add( setScoreButton );
 
         return hBox;
