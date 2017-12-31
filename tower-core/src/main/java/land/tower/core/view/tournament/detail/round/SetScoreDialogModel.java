@@ -14,6 +14,7 @@
 
 package land.tower.core.view.tournament.detail.round;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import javafx.beans.binding.Bindings;
@@ -25,6 +26,7 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.event.TournamentUpdatedEvent;
 
 /**
  * Created on 31/12/2017
@@ -41,11 +43,12 @@ public final class SetScoreDialogModel {
     @Inject
     SetScoreDialogModel( final Configuration config, final I18nTranslator i18n,
                          @Assisted final ObservableTournament tournament,
-                         @Assisted final ObservableRound round ) {
+                         @Assisted final ObservableRound round, final EventBus eventBus ) {
         _config = config;
         _i18n = i18n;
         _tournament = tournament;
         _round = round;
+        _eventBus = eventBus;
 
         _errorInformation.bind( Bindings.createStringBinding( ( ) -> {
             final int leftWins = _leftWins.get( ) == null ? 0 : _leftWins.get( );
@@ -92,6 +95,7 @@ public final class SetScoreDialogModel {
         match.scoreLeftProperty( ).set( _leftWins.get( ) == null ? 0 : _leftWins.getValue( ) );
         match.scoreDrawProperty( ).set( _draws.get( ) == null ? 0 : _draws.getValue( ) );
         match.scoreRightProperty( ).set( _rightWins.get( ) == null ? 0 : _rightWins.getValue( ) );
+        _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
 
     public ObservableTournament getTournament( ) {
@@ -161,4 +165,5 @@ public final class SetScoreDialogModel {
     private final SimpleObjectProperty<Integer> _draws = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _rightWins = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _position = new SimpleObjectProperty<>( );
+    private final EventBus _eventBus;
 }
