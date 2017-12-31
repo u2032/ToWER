@@ -65,9 +65,9 @@ public final class SwissPairingSystem implements PairingSystem {
         if ( !availableTeams.isEmpty( ) ) {
             final Match match = new Match( );
             match.setPosition( position.incrementAndGet( ) );
-            match.setLeftTeamId( availableTeams.get( 0 ).getId( ) );
+            match.setLeftTeamId( availableTeams.remove( 0 ).getId( ) );
             match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
-            match.setLeftTeamId( tournament.getHeader( ).getWinningGameCount( ) );
+            match.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
             match.setScoreDraw( 0 );
             match.setScoreRight( 0 );
             round.getMatches( ).add( match );
