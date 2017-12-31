@@ -18,6 +18,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import land.tower.data.Team;
+import land.tower.data.Teams;
 
 /**
  * Created on 27/12/2017
@@ -95,4 +96,6 @@ public final class ObservableTeam {
     private final SimpleStringProperty _name;
     private final SimpleBooleanProperty _active;
     private final SimpleIntegerProperty _id;
+
+    public static final ObservableTeam BYE_TEAM = new ObservableTeam( Teams.BYE_TEAM );
 }

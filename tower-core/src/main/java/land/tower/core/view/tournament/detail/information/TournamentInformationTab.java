@@ -218,6 +218,17 @@ public final class TournamentInformationTab extends Tab {
         } );
         pairingField.valueProperty( )
                     .bindBidirectional( _model.getTournament( ).getHeader( ).pairingModeProperty( ) );
+        pairingField.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+            final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
+            switch ( status ) {
+                case NOT_CONFIGURED:
+                case PLANNED:
+                case ENROLMENT:
+                    return false;
+                default:
+                    return true;
+            }
+        }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
         final Label pairingModeLabel = new Label( );
         pairingModeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.pairingMode" ) );
         pairingModeLabel.setLabelFor( pairingModeLabel );
@@ -244,7 +255,13 @@ public final class TournamentInformationTab extends Tab {
                                  } ) );
         teamSizeField.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
             final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
-            return status == TournamentStatus.NOT_CONFIGURED || status == TournamentStatus.ENROLMENT;
+            switch ( status ) {
+                case NOT_CONFIGURED:
+                case PLANNED:
+                    return false;
+                default:
+                    return true;
+            }
         }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
         final Label teamSizeLabel = new Label( );
         teamSizeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.teamSize" ) );

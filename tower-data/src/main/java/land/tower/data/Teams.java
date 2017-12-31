@@ -25,7 +25,7 @@ public final class Teams {
     static {
         BYE_TEAM = new Team( );
         BYE_TEAM.setId( 0 );
-        BYE_TEAM.setName( "BYE" );
+        BYE_TEAM.setName( "** BYE **" );
     }
 
 }

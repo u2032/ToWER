@@ -84,6 +84,7 @@ public final class TournamentRoundTab extends Tab {
         scoreCol.setPrefWidth( tableView.widthProperty( ).divide( 3 ).getValue( ) );
         tableView.getColumns( ).add( scoreCol );
 
+        // CODEREVIEW These columns should be not reorderable but available only since Java 9
         final TableColumn<ObservableMatch, String> winsLeftCol = new TableColumn<>( );
         winsLeftCol.setEditable( false );
         winsLeftCol.setPrefWidth( 100 );

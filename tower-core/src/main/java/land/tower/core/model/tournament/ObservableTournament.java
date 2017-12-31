@@ -19,6 +19,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import land.tower.data.Teams;
 import land.tower.data.Tournament;
 import land.tower.data.TournamentStatus;
 
@@ -122,6 +123,9 @@ public final class ObservableTournament {
     }
 
     public ObservableTeam getTeam( final int teamId ) {
+        if ( teamId == Teams.BYE_TEAM.getId( ) ) {
+            return ObservableTeam.BYE_TEAM;
+        }
         return _teams.stream( ).filter( t -> t.getId( ) == teamId ).findAny( )
                      .orElseThrow( IllegalStateException::new );
     }
