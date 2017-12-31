@@ -16,6 +16,7 @@ package land.tower.core.view.tournament.detail.round;
 
 import com.google.inject.assistedinject.Assisted;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableRound;
@@ -32,7 +33,6 @@ public final class TournamentRoundTabModel {
         TournamentRoundTabModel create( ObservableTournament tournament, ObservableRound round );
 
     }
-
     @Inject
     public TournamentRoundTabModel( @Assisted ObservableTournament tournament,
                                     @Assisted ObservableRound round,
@@ -42,6 +42,10 @@ public final class TournamentRoundTabModel {
         _round = round;
         _i18n = i18n;
         _setScoreDialogFactory = setScoreDialogFactory;
+    }
+
+    public SimpleBooleanProperty filterNotEmptyScoreProperty( ) {
+        return _filterNotEmptySource;
     }
 
     public I18nTranslator getI18n( ) {
@@ -64,4 +68,6 @@ public final class TournamentRoundTabModel {
     private final ObservableRound _round;
     private final I18nTranslator _i18n;
     private final SetScoreDialogModel.Factory _setScoreDialogFactory;
+
+    private SimpleBooleanProperty _filterNotEmptySource = new SimpleBooleanProperty( );
 }

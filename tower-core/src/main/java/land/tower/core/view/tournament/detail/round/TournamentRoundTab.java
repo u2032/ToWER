@@ -15,12 +15,16 @@
 package land.tower.core.view.tournament.detail.round;
 
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
+import static javafx.scene.layout.HBox.setHgrow;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
@@ -29,6 +33,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.view.component.FaButton;
@@ -59,7 +64,18 @@ public final class TournamentRoundTab extends Tab {
     private TableView<ObservableMatch> buildMatchList( ) {
         final TableView<ObservableMatch> tableView = new TableView<>( );
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
-        tableView.itemsProperty( ).bind( new SimpleListProperty<>( _model.getRound( ).getMatches( ) ) );
+
+        final FilteredList<ObservableMatch> itemList = new FilteredList<>( _model.getRound( ).getMatches( ) );
+        itemList.predicateProperty( ).bind( Bindings.createObjectBinding( ( ) -> {
+            if ( _model.filterNotEmptyScoreProperty( ).get( ) ) {
+                return m -> !m.hasScore( );
+            }
+            return t -> true;
+        }, _model.filterNotEmptyScoreProperty( ) ) );
+
+        final SortedList<ObservableMatch> sortedList = new SortedList<>( itemList );
+        sortedList.comparatorProperty( ).bind( tableView.comparatorProperty( ) );
+        tableView.itemsProperty( ).bind( new SimpleListProperty<>( sortedList ) );
 
         final TableColumn<ObservableMatch, String> posCol = new TableColumn<>( );
         posCol.setEditable( false );
@@ -159,14 +175,27 @@ public final class TournamentRoundTab extends Tab {
             return row;
         } );
 
+        final Label emptyLabel = new Label( );
+        emptyLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.no.match" ) );
+        tableView.setPlaceholder( emptyLabel );
+
         return tableView;
     }
 
     private HBox buildActionBox( ) {
         final HBox hBox = new HBox( );
+        hBox.setAlignment( Pos.CENTER_LEFT );
         hBox.setSpacing( 20 );
         hBox.setPadding( new Insets( 10 ) );
-        hBox.setAlignment( Pos.CENTER_RIGHT );
+
+        final CheckBox checkBox = new CheckBox( );
+        checkBox.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.filter.not.empty.score" ) );
+        checkBox.selectedProperty( ).bindBidirectional( _model.filterNotEmptyScoreProperty( ) );
+        hBox.getChildren( ).add( checkBox );
+
+        final HBox spacing = new HBox( );
+        setHgrow( spacing, Priority.ALWAYS );
+        hBox.getChildren( ).add( spacing );
 
         final FaButton setScoreButton = new FaButton( FontAwesome.PLUS, "white" );
         setScoreButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.scoring" ) );
