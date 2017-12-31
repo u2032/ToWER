@@ -19,6 +19,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import land.tower.data.Match;
 import land.tower.data.Teams;
 import land.tower.data.Tournament;
 import land.tower.data.TournamentStatus;
@@ -85,6 +86,21 @@ public final class ObservableTournament {
 
     public void registerTeam( final ObservableTeam team ) {
         _teams.add( team );
+        _rounds.forEach( round -> {
+            final int maxPosition = round.getMatches( ).stream( )
+                                         .mapToInt( ObservableMatch::getPosition )
+                                         .max( )
+                                         .orElse( 0 );
+
+            final Match match = new Match( );
+            match.setPosition( maxPosition + 1 );
+            match.setLeftTeamId( team.getId( ) );
+            match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
+            match.setScoreLeft( 0 );
+            match.setScoreDraw( 0 );
+            match.setScoreRight( _tournament.getHeader( ).getWinningGameCount( ) );
+            round.getMatches( ).add( new ObservableMatch( match ) );
+        } );
     }
 
     public ObservableList<ObservableRound> getRounds( ) {
