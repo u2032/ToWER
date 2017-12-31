@@ -16,9 +16,7 @@ package land.tower.core.view.tournament.detail.round;
 
 import com.google.inject.assistedinject.Assisted;
 
-import java.util.Comparator;
 import java.util.Map;
-import java.util.Optional;
 import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
@@ -58,12 +56,10 @@ public final class ResetRoundDialogModel {
     }
 
     public void fireResetRound( ) {
-        final Optional<ObservableRound> lastRound =
-            _tournament.getRounds( ).stream( )
-                       .sorted( Comparator.comparing( ObservableRound::getNumero, Comparator.reverseOrder( ) ) )
-                       .findFirst( );
-
-        lastRound.ifPresent( observableRound -> _tournament.getRounds( ).remove( observableRound ) );
+        final ObservableRound lastRound = _tournament.getCurrentRound( );
+        if ( lastRound != null ) {
+            _tournament.getRounds( ).remove( lastRound );
+        }
 
         final Round newRound = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) )
                                               .createNewRound( _tournament.getTournament( ) );

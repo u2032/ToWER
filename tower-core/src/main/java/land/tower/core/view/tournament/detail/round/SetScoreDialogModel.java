@@ -44,6 +44,7 @@ public final class SetScoreDialogModel {
                          @Assisted final ObservableRound round ) {
         _config = config;
         _i18n = i18n;
+        _tournament = tournament;
         _round = round;
 
         _errorInformation.bind( Bindings.createStringBinding( ( ) -> {
@@ -91,6 +92,14 @@ public final class SetScoreDialogModel {
         match.scoreLeftProperty( ).set( _leftWins.get( ) == null ? 0 : _leftWins.getValue( ) );
         match.scoreDrawProperty( ).set( _draws.get( ) == null ? 0 : _draws.getValue( ) );
         match.scoreRightProperty( ).set( _rightWins.get( ) == null ? 0 : _rightWins.getValue( ) );
+    }
+
+    public ObservableTournament getTournament( ) {
+        return _tournament;
+    }
+
+    public ObservableRound getRound( ) {
+        return _round;
     }
 
     public Configuration getConfig( ) {
@@ -143,6 +152,7 @@ public final class SetScoreDialogModel {
 
     private final Configuration _config;
     private final I18nTranslator _i18n;
+    private final ObservableTournament _tournament;
     private final ObservableRound _round;
 
     private final SimpleStringProperty _errorInformation = new SimpleStringProperty( );

@@ -32,6 +32,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.converter.IntegerStringConverter;
+import land.tower.core.ext.font.FontAwesome;
 
 /**
  * Created on 31/12/2017
@@ -165,6 +166,22 @@ final class SetScoreDialog extends Dialog<Void> {
         errorLabel.setWrapText( true );
         errorLabel.setPrefHeight( 40 );
         grid.add( errorLabel, 0, line, 2, 1 );
+
+        if ( !_model.getTournament( ).getCurrentRound( ).equals( _model.getRound( ) ) ) {
+            line++;
+            final Label warnLabel = new Label( );
+            final Label icon = new Label( FontAwesome.WARNING );
+            icon.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+            warnLabel.setGraphic( icon );
+
+            warnLabel.setStyle( "-fx-text-fill: orange;" );
+            warnLabel.getStyleClass( ).add( "important" );
+            warnLabel.textProperty( )
+                     .bind( _model.getI18n( ).get( "tournament.round.scoring.not.current.round.warning" ) );
+            warnLabel.setWrapText( true );
+            warnLabel.setPrefHeight( 40 );
+            grid.add( warnLabel, 0, line, 2, 1 );
+        }
 
         getDialogPane( ).setContent( grid );
 

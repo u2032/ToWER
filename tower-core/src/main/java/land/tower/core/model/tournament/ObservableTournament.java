@@ -14,8 +14,11 @@
 
 package land.tower.core.model.tournament;
 
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -68,8 +71,20 @@ public final class ObservableTournament {
         } );
         _rounds.addListener( (ListChangeListener<ObservableRound>) c -> _dirty.set( true ) );
         _rounds.addListener( (ListChangeListener<ObservableRound>) c -> updateStatus( ) );
+        _rounds.addListener( (ListChangeListener<ObservableRound>) c -> updateLastRound( ) );
+
+        updateLastRound( );
 
         _dirty.setValue( false );
+    }
+
+    private void updateLastRound( ) {
+        final Optional<ObservableRound> lastRound =
+            getRounds( ).stream( )
+                        .sorted( Comparator.comparing( ObservableRound::getNumero, Comparator.reverseOrder( ) ) )
+                        .findFirst( );
+
+        lastRound.ifPresent( _currentRound::set );
     }
 
     public Tournament getTournament( ) {
@@ -146,10 +161,20 @@ public final class ObservableTournament {
                      .orElseThrow( IllegalStateException::new );
     }
 
+    public ObservableRound getCurrentRound( ) {
+        return _currentRound.get( );
+    }
+
+    public SimpleObjectProperty<ObservableRound> currentRoundProperty( ) {
+        return _currentRound;
+    }
+
     private final Tournament _tournament;
     private final ObservableTournamentHeader _header;
     private final ObservableList<ObservableTeam> _teams = FXCollections.observableArrayList( );
     private final ObservableList<ObservableRound> _rounds = FXCollections.observableArrayList( );
+
+    private final SimpleObjectProperty<ObservableRound> _currentRound = new SimpleObjectProperty<>( );
 
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 }
