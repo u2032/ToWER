@@ -36,6 +36,7 @@ final class ApplicationMenuBar extends MenuBar {
         _model = model;
         getMenus( ).add( fileMenu( ) );
         getMenus( ).add( tournamentMenu( ) );
+        getMenus( ).add( optionMenu( ) );
         getMenus( ).add( aboutMenu( ) );
     }
 
@@ -77,6 +78,19 @@ final class ApplicationMenuBar extends MenuBar {
 
         return tournamentMenu;
     }
+
+    private Menu optionMenu( ) {
+        final Menu optionMenu = new Menu( );
+        optionMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.option" ) );
+
+        final MenuItem languageMenu = new FaMenuItem( FontAwesome.LANGUAGE, "black" );
+        languageMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.option.language" ) );
+        languageMenu.setOnAction( event -> _model.fireLanguageSelection( ) );
+        optionMenu.getItems( ).add( languageMenu );
+
+        return optionMenu;
+    }
+
 
     private Menu aboutMenu( ) {
         final Menu aboutMenu = new FaMenu( FontAwesome.ABOUT, "darkgrey" );

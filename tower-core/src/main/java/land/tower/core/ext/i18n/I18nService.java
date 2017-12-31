@@ -41,21 +41,25 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
     public void start( ) {
         final Locale defaultLocale = Locale.getDefault( );
         _logger.info( "Default Locale is: {}", defaultLocale );
-
-        loadBundle( "i18n", defaultLocale );
-        loadBundle( "nationalities", defaultLocale );
+        loadAllBundles( defaultLocale.getLanguage( ), defaultLocale.getCountry( ) );
     }
 
-    private void loadBundle( final String bundle, final Locale defaultLocale ) {
+    public void loadAllBundles( final String langCode, final String countryCode ) {
+        loadBundle( "i18n", langCode, countryCode );
+        loadBundle( "nationalities", langCode, countryCode );
+    }
+
+    private void loadBundle( final String bundle, final String langCode, final String countryCode ) {
         load( "i18n/" + bundle + "_en.properties" )
             .ifPresent( _i18nTranslator::registerEntries );
 
-        load( "i18n/" + bundle + "_" + defaultLocale.getLanguage( ) + ".properties" )
+        load( "i18n/" + bundle + "_" + langCode + ".properties" )
             .ifPresent( _i18nTranslator::registerEntries );
 
-        load( "i18n/" + bundle + "_" + defaultLocale.getLanguage( )
-              + "_" + defaultLocale.getCountry( ) + ".properties" )
-            .ifPresent( _i18nTranslator::registerEntries );
+        if ( countryCode != null ) {
+            load( "i18n/" + bundle + "_" + langCode + "_" + countryCode + ".properties" )
+                .ifPresent( _i18nTranslator::registerEntries );
+        }
     }
 
     @Override

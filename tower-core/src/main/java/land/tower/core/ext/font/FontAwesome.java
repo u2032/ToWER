@@ -36,4 +36,5 @@ public final class FontAwesome {
     public static final String CLOSE = "\uf00d";
     public static final String LIGHTNING = "\uf0e7";
     public static final String WARNING = "\uf071";
+    public static final String LANGUAGE = "\uf086";
 }
