@@ -12,27 +12,33 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.ext.font;
+package land.tower.core.model.pairing;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+
+import java.util.Map;
+import land.tower.core.model.pairing.swiss.SwissPairingSystem;
+import land.tower.data.PairingMode;
 
 /**
- * Created on 10/12/2017
+ * Created on 30/12/2017
  * @author Cédric Longo
  */
-public final class FontAwesome {
+public final class PairingModule extends AbstractModule {
 
-    public static final String FA_STYLE_NAME = "fa";
+    @Override
+    protected void configure( ) {
 
-    // Icons
+    }
 
-    public static final String HOME = "\uf015";
-    public static final String PLUS = "\uf0fe";
-    public static final String DELETE = "\uf2ed";
-    public static final String OFF = "\uf011";
-    public static final String ABOUT = "\uf059";
-    public static final String INFO = "\uf05a";
-    public static final String OPTIONS = "\uf013";
-    public static final String PLAYER = "\uf007";
-    public static final String PLAYERS = "\uf0c0";
-    public static final String CLOSE = "\uf00d";
-    public static final String LIGHTNING = "\uf0e7";
+    @Provides
+    @Singleton
+    Map<PairingMode, PairingSystem> pairingSystems( final SwissPairingSystem swissPairingSystem ) {
+        return ImmutableMap.<PairingMode, PairingSystem>builder( )
+                   .put( PairingMode.SWISS, swissPairingSystem )
+                   .build( );
+    }
 }

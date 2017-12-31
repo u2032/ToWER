@@ -51,6 +51,22 @@ public final class ObservableTournament {
         _teams.addListener( (ListChangeListener<ObservableTeam>) c -> _dirty.set( true ) );
         _teams.addListener( (ListChangeListener<ObservableTeam>) c -> updateStatus( ) );
 
+        tournament.getRounds( )
+                  .forEach( round -> {
+                      final ObservableRound oRound = new ObservableRound( round );
+                      oRound.dirtyProperty( )
+                            .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
+                      _rounds.add( oRound );
+                  } );
+        _rounds.addListener( (ListChangeListener<ObservableRound>) c -> {
+            _tournament.getRounds( ).clear( );
+            _tournament.getRounds( ).addAll( _rounds.stream( )
+                                                    .map( ObservableRound::getRound )
+                                                    .collect( Collectors.toList( ) ) );
+        } );
+        _rounds.addListener( (ListChangeListener<ObservableRound>) c -> _dirty.set( true ) );
+        _rounds.addListener( (ListChangeListener<ObservableRound>) c -> updateStatus( ) );
+
         _dirty.setValue( false );
     }
 
@@ -68,6 +84,14 @@ public final class ObservableTournament {
 
     public void registerTeam( final ObservableTeam team ) {
         _teams.add( team );
+    }
+
+    public ObservableList<ObservableRound> getRounds( ) {
+        return _rounds;
+    }
+
+    public void registerRound( final ObservableRound round ) {
+        _rounds.add( round );
     }
 
     public boolean isDirty( ) {
@@ -89,13 +113,23 @@ public final class ObservableTournament {
         if ( !_teams.isEmpty( ) ) {
             current = TournamentStatus.ENROLMENT;
         }
-        // TODO has round => STARTED
+
+        if ( !_rounds.isEmpty( ) ) {
+            current = TournamentStatus.STARTED;
+        }
+
         getHeader( ).setStatus( current );
+    }
+
+    public ObservableTeam getTeam( final int teamId ) {
+        return _teams.stream( ).filter( t -> t.getId( ) == teamId ).findAny( )
+                     .orElseThrow( IllegalStateException::new );
     }
 
     private final Tournament _tournament;
     private final ObservableTournamentHeader _header;
     private final ObservableList<ObservableTeam> _teams = FXCollections.observableArrayList( );
+    private final ObservableList<ObservableRound> _rounds = FXCollections.observableArrayList( );
 
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 }

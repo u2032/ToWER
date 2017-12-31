@@ -17,11 +17,16 @@ package land.tower.core.view.tournament.detail.enrolment;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.data.PairingMode;
+import land.tower.data.Round;
 import land.tower.data.Team;
 
 /**
@@ -33,6 +38,7 @@ public final class TournamentEnrolmentTabModel {
     public interface Factory {
 
         TournamentEnrolmentTabModel forTournament( final ObservableTournament tournament );
+
     }
 
     public ObservableTournament getTournament( ) {
@@ -48,12 +54,14 @@ public final class TournamentEnrolmentTabModel {
                    .forEach( t -> t.setId( idGen.incrementAndGet( ) ) );
     }
 
-    public void fireTeamActive( final ObservableTeam team, final boolean selected ) {
-
-    }
-
     public AddTeamDialogModel newAddTeamDialogModel( ) {
         return _addTeamDialogProvider.forTournament( _tournament );
+    }
+
+    public void fireStartTournament( ) {
+        final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        final Round newRound = pairing.createNewRound( _tournament.getTournament( ) );
+        _tournament.getRounds( ).add( new ObservableRound( newRound ) );
     }
 
     public void fireTeamAdded( final Team team ) {
@@ -64,10 +72,12 @@ public final class TournamentEnrolmentTabModel {
 
     @Inject
     TournamentEnrolmentTabModel( final @Assisted ObservableTournament tournament, final I18nTranslator i18n,
-                                 final AddTeamDialogModel.Factory addTeamDialogProvider ) {
+                                 final AddTeamDialogModel.Factory addTeamDialogProvider,
+                                 final Map<PairingMode, PairingSystem> pairingSystems ) {
         _i18n = i18n;
         _tournament = tournament;
         _addTeamDialogProvider = addTeamDialogProvider;
+        _pairingSystems = pairingSystems;
     }
 
     public I18nTranslator getI18n( ) {
@@ -77,4 +87,5 @@ public final class TournamentEnrolmentTabModel {
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
     private final AddTeamDialogModel.Factory _addTeamDialogProvider;
+    private final Map<PairingMode, PairingSystem> _pairingSystems;
 }

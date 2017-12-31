@@ -39,6 +39,7 @@
 
 /* Buttons */
 .rich-button {
+    -fx-cursor: hand;
     -fx-background-insets: 0, 1, 2, 3;
     -fx-background-radius: 3, 2, 2, 2;
     -fx-padding: 6 15 6 15;

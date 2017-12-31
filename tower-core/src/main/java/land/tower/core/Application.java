@@ -50,6 +50,7 @@ import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.ServiceManager;
 import land.tower.core.ext.service.ServiceModule;
 import land.tower.core.ext.thread.ThreadingModule;
+import land.tower.core.model.pairing.PairingModule;
 import land.tower.core.model.player.PlayerModule;
 import land.tower.core.model.player.suggestion.PlayerSuggestionModule;
 import land.tower.core.model.tournament.TournamentModule;
@@ -177,7 +178,8 @@ public final class Application extends javafx.application.Application {
                                            new TournamentModule( ),
                                            new TournamentManagementViewModule( ),
                                            new TournamentViewModule( ),
-                                           new PlayerSuggestionModule( ) );
+                                           new PlayerSuggestionModule( ),
+                                           new PairingModule( ) );
     }
 
     private final AtomicBoolean _ready = new AtomicBoolean( );

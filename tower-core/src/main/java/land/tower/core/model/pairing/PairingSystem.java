@@ -12,27 +12,17 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.ext.font;
+package land.tower.core.model.pairing;
+
+import land.tower.data.Round;
+import land.tower.data.Tournament;
 
 /**
- * Created on 10/12/2017
+ * Created on 30/12/2017
  * @author Cédric Longo
  */
-public final class FontAwesome {
+public interface PairingSystem {
 
-    public static final String FA_STYLE_NAME = "fa";
+    Round createNewRound( Tournament tournament );
 
-    // Icons
-
-    public static final String HOME = "\uf015";
-    public static final String PLUS = "\uf0fe";
-    public static final String DELETE = "\uf2ed";
-    public static final String OFF = "\uf011";
-    public static final String ABOUT = "\uf059";
-    public static final String INFO = "\uf05a";
-    public static final String OPTIONS = "\uf013";
-    public static final String PLAYER = "\uf007";
-    public static final String PLAYERS = "\uf0c0";
-    public static final String CLOSE = "\uf00d";
-    public static final String LIGHTNING = "\uf0e7";
 }

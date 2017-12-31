@@ -74,6 +74,20 @@ public final class TournamentEnrolmentTab extends Tab {
         hBox.setPadding( new Insets( 10 ) );
         hBox.setAlignment( Pos.CENTER_RIGHT );
 
+        final FaButton startTeamButton = new FaButton( FontAwesome.LIGHTNING, "white" );
+        startTeamButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.enrolment.start.tournament" ) );
+        startTeamButton.getStyleClass( ).add( "rich-button" );
+        startTeamButton.getStyleClass( ).add( "action-button" );
+        startTeamButton.setOnAction( event -> _model.fireStartTournament( ) );
+        startTeamButton.disableProperty( )
+                       .bind( new SimpleListProperty<>( _model.getTournament( ).getTeams( ) )
+                                  .sizeProperty( )
+                                  .lessThan( 2 ) );
+        startTeamButton.visibleProperty( )
+                       .bind( new SimpleListProperty<>( _model.getTournament( ).getRounds( ) ).emptyProperty( ) );
+        hBox.getChildren( ).add( startTeamButton );
+
+
         final FaButton addTeamButton = new FaButton( FontAwesome.PLUS, "white" );
         addTeamButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.enrolment.add.team" ) );
         addTeamButton.getStyleClass( ).add( "rich-button" );
@@ -89,7 +103,7 @@ public final class TournamentEnrolmentTab extends Tab {
         return hBox;
     }
 
-    private TableView buildTeamList( ) {
+    private TableView<ObservableTeam> buildTeamList( ) {
         final TableView<ObservableTeam> tableView = new TableView<>( );
         tableView.setEditable( true );
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
