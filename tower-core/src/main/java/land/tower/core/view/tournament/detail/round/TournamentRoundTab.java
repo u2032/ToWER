@@ -206,6 +206,17 @@ public final class TournamentRoundTab extends Tab {
         } );
         hBox.getChildren( ).add( setScoreButton );
 
+        final FaButton startRoundButton = new FaButton( FontAwesome.LIGHTNING, "white" );
+        startRoundButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.start.round" ) );
+        startRoundButton.getStyleClass( ).add( "rich-button" );
+        startRoundButton.getStyleClass( ).add( "action-button" );
+        startRoundButton.setOnAction( event -> _model.fireStartNewRound( ) );
+        startRoundButton.disableProperty( )
+                        .bind( _model.getRound( ).endedProperty( ).not( )
+                                     .or( _model.getTournament( ).currentRoundProperty( )
+                                                .isNotEqualTo( _model.getRound( ) ) ) );
+        hBox.getChildren( ).addAll( startRoundButton );
+
         return hBox;
     }
 

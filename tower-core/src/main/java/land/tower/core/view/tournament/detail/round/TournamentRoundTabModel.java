@@ -14,13 +14,19 @@
 
 package land.tower.core.view.tournament.detail.round;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.event.TournamentUpdatedEvent;
+import land.tower.data.PairingMode;
+import land.tower.data.Round;
 
 /**
  * Created on 30/12/2017
@@ -33,15 +39,27 @@ public final class TournamentRoundTabModel {
         TournamentRoundTabModel create( ObservableTournament tournament, ObservableRound round );
 
     }
+
     @Inject
     public TournamentRoundTabModel( @Assisted ObservableTournament tournament,
                                     @Assisted ObservableRound round,
                                     final I18nTranslator i18n,
-                                    final SetScoreDialogModel.Factory setScoreDialogFactory ) {
+                                    final SetScoreDialogModel.Factory setScoreDialogFactory,
+                                    final EventBus eventBus,
+                                    final Map<PairingMode, PairingSystem> pairingSystems ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
         _setScoreDialogFactory = setScoreDialogFactory;
+        _eventBus = eventBus;
+        _pairingSystems = pairingSystems;
+    }
+
+    public void fireStartNewRound( ) {
+        final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        final Round newRound = pairing.createNewRound( _tournament.getTournament( ) );
+        _tournament.registerRound( new ObservableRound( newRound ) );
+        _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
 
     public SimpleBooleanProperty filterNotEmptyScoreProperty( ) {
@@ -69,5 +87,7 @@ public final class TournamentRoundTabModel {
     private final I18nTranslator _i18n;
     private final SetScoreDialogModel.Factory _setScoreDialogFactory;
 
-    private SimpleBooleanProperty _filterNotEmptySource = new SimpleBooleanProperty( );
+    private final SimpleBooleanProperty _filterNotEmptySource = new SimpleBooleanProperty( );
+    private final EventBus _eventBus;
+    private final Map<PairingMode, PairingSystem> _pairingSystems;
 }
