@@ -40,6 +40,10 @@ public final class ObservableTeam {
         _active = new SimpleBooleanProperty( team.isActive( ) );
         _active.addListener( ( observable, oldValue, newValue ) -> team.setActive( newValue ) );
         _active.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
+
+        _ranking = new ObservableRanking( team.getRanking( ) );
+        _ranking.dirtyProperty( )
+                .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
     }
 
     public Team getTeam( ) {
@@ -90,12 +94,21 @@ public final class ObservableTeam {
         return _id;
     }
 
+    public ObservableRanking getRanking( ) {
+        return _ranking;
+    }
+
+    public boolean isByeTeam( ) {
+        return getId( ) == BYE_TEAM.getId( );
+    }
+
     private final Team _team;
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( false );
 
     private final SimpleStringProperty _name;
     private final SimpleBooleanProperty _active;
     private final SimpleIntegerProperty _id;
+    private final ObservableRanking _ranking;
 
     public static final ObservableTeam BYE_TEAM = new ObservableTeam( Teams.BYE_TEAM );
 }

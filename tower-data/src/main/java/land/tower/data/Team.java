@@ -37,6 +37,9 @@ public final class Team {
     @SerializedName( "players" )
     private List<Player> _players = new ArrayList<>( 1 );
 
+    @SerializedName( "ranking" )
+    private Ranking _ranking = new Ranking( );
+
     public String getName( ) {
         return _name;
     }
@@ -67,6 +70,10 @@ public final class Team {
 
     public void setPlayers( final List<Player> players ) {
         _players = players;
+    }
+
+    public Ranking getRanking( ) {
+        return _ranking;
     }
 
     public boolean hasPlayer( final Player p ) {

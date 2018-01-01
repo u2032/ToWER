@@ -34,6 +34,8 @@ import land.tower.core.view.tournament.detail.enrolment.TournamentEnrolmentTab;
 import land.tower.core.view.tournament.detail.enrolment.TournamentEnrolmentTabModel;
 import land.tower.core.view.tournament.detail.information.TournamentInformationTab;
 import land.tower.core.view.tournament.detail.information.TournamentInformationTabModel;
+import land.tower.core.view.tournament.detail.ladder.TournamentLadderView;
+import land.tower.core.view.tournament.detail.ladder.TournamentLadderViewModel;
 import land.tower.core.view.tournament.detail.round.TournamentRoundTab;
 import land.tower.core.view.tournament.detail.round.TournamentRoundTabModel;
 import land.tower.data.TournamentStatus;
@@ -64,7 +66,8 @@ public final class TournamentViewModel {
                                 final I18nTranslator i18n,
                                 final TournamentInformationTabModel.Factory informationTabFactory,
                                 final TournamentEnrolmentTabModel.Factory enrolmentTabFactory,
-                                final TournamentRoundTabModel.Factory roundTabFactory ) {
+                                final TournamentRoundTabModel.Factory roundTabFactory,
+                                final TournamentLadderViewModel.Factory ladderTabFactory ) {
         _tournament = tournament;
         _eventBus = eventBus;
         _homeviewProvider = homeviewProvider;
@@ -72,6 +75,7 @@ public final class TournamentViewModel {
         _informationTabFactory = informationTabFactory;
         _enrolmentTabFactory = enrolmentTabFactory;
         _roundTabFactory = roundTabFactory;
+        _ladderTabFactory = ladderTabFactory;
 
         _tabViews.add( new TournamentInformationTab( _informationTabFactory.forTournament( _tournament ) ) );
         _tabViews.add( new TournamentEnrolmentTab( _enrolmentTabFactory.forTournament( _tournament ) ) );
@@ -85,7 +89,7 @@ public final class TournamentViewModel {
                     final TournamentRoundTabModel roundTabModel =
                         _roundTabFactory.create( _tournament, c.getAddedSubList( ).get( 0 ) );
                     final TournamentRoundTab roundTab = new TournamentRoundTab( roundTabModel );
-                    _tabViews.add( roundTab );
+                    _tabViews.add( _tabViews.size( ) - 1, roundTab );
                     _selectedTab.set( roundTab );
                 }
                 if ( c.wasRemoved( ) ) {
@@ -99,12 +103,13 @@ public final class TournamentViewModel {
                 }
             }
         } );
+        _tabViews.add( new TournamentLadderView( _ladderTabFactory.forTournament( _tournament ) ) );
 
         // Select default tab according to status
         if ( tournament.getHeader( ).getStatus( ) == TournamentStatus.ENROLMENT ) {
             _selectedTab.set( _tabViews.get( 1 ) );
         } else if ( tournament.getHeader( ).getStatus( ) == TournamentStatus.STARTED ) {
-            _selectedTab.set( _tabViews.get( _tabViews.size( ) - 1 ) );
+            _selectedTab.set( _tabViews.get( _tabViews.size( ) - 2 ) );
         } else {
             _selectedTab.set( _tabViews.get( 0 ) );
         }
@@ -135,6 +140,7 @@ public final class TournamentViewModel {
     private final TournamentInformationTabModel.Factory _informationTabFactory;
     private final TournamentEnrolmentTabModel.Factory _enrolmentTabFactory;
     private final TournamentRoundTabModel.Factory _roundTabFactory;
+    private final TournamentLadderViewModel.Factory _ladderTabFactory;
 
     private final SimpleObjectProperty<Tab> _selectedTab = new SimpleObjectProperty<>( );
 }

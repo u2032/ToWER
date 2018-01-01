@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.model.ranking.IRankingComputer;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -43,12 +44,14 @@ public final class SetScoreDialogModel {
     @Inject
     SetScoreDialogModel( final Configuration config, final I18nTranslator i18n,
                          @Assisted final ObservableTournament tournament,
-                         @Assisted final ObservableRound round, final EventBus eventBus ) {
+                         @Assisted final ObservableRound round, final EventBus eventBus,
+                         final IRankingComputer rankingComputer ) {
         _config = config;
         _i18n = i18n;
         _tournament = tournament;
         _round = round;
         _eventBus = eventBus;
+        _rankingComputer = rankingComputer;
 
         _errorInformation.bind( Bindings.createStringBinding( ( ) -> {
             final int leftWins = _leftWins.get( ) == null ? 0 : _leftWins.get( );
@@ -95,6 +98,12 @@ public final class SetScoreDialogModel {
         match.scoreLeftProperty( ).set( _leftWins.get( ) == null ? 0 : _leftWins.getValue( ) );
         match.scoreDrawProperty( ).set( _draws.get( ) == null ? 0 : _draws.getValue( ) );
         match.scoreRightProperty( ).set( _rightWins.get( ) == null ? 0 : _rightWins.getValue( ) );
+
+        if ( _round.isEnded( ) ) {
+            // If the round is ended, trigger ranking computing
+            _rankingComputer.computeRanking( _tournament );
+        }
+
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
 
@@ -165,5 +174,7 @@ public final class SetScoreDialogModel {
     private final SimpleObjectProperty<Integer> _draws = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _rightWins = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _position = new SimpleObjectProperty<>( );
+
     private final EventBus _eventBus;
+    private final IRankingComputer _rankingComputer;
 }

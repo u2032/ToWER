@@ -125,6 +125,46 @@ public final class ObservableMatch {
         return _hasScore;
     }
 
+    public boolean hasWon( final ObservableTeam team ) {
+        final boolean isLeft = ( _leftTeamId.get( ) == team.getId( ) );
+        final boolean isRight = ( _rightTeamId.get( ) == team.getId( ) );
+        if ( isLeft ) {
+            return _scoreLeft.get( ) > _scoreRight.get( );
+        }
+        if ( isRight ) {
+            return _scoreRight.get( ) > _scoreLeft.get( );
+        }
+        throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
+    }
+
+    public boolean hasLost( final ObservableTeam team ) {
+        final boolean isLeft = ( _leftTeamId.get( ) == team.getId( ) );
+        final boolean isRight = ( _rightTeamId.get( ) == team.getId( ) );
+        if ( isLeft ) {
+            return _scoreLeft.get( ) < _scoreRight.get( );
+        }
+        if ( isRight ) {
+            return _scoreRight.get( ) < _scoreLeft.get( );
+        }
+        throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
+    }
+
+    public boolean isDraw( ) {
+        return _scoreLeft.get( ) == _scoreRight.get( );
+    }
+
+    public int getOpponentId( final ObservableTeam team ) {
+        final boolean isLeft = ( _leftTeamId.get( ) == team.getId( ) );
+        final boolean isRight = ( _rightTeamId.get( ) == team.getId( ) );
+        if ( isLeft ) {
+            return _rightTeamId.get( );
+        }
+        if ( isRight ) {
+            return _leftTeamId.get( );
+        }
+        throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
+    }
+
     private final Match _match;
 
     private final SimpleIntegerProperty _position = new SimpleIntegerProperty( );

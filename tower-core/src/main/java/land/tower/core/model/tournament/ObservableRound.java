@@ -15,6 +15,7 @@
 package land.tower.core.model.tournament;
 
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -45,7 +46,10 @@ public final class ObservableRound {
              .forEach( match -> {
                  final ObservableMatch oMatch = new ObservableMatch( match );
                  oMatch.dirtyProperty( )
-                       .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
+                       .addListener( ( observable, oldValue, newValue ) -> {
+                           _dirty.set( isDirty( ) || newValue );
+                           updateEndedStatus( );
+                       } );
                  _matches.add( oMatch );
              } );
         _matches.addListener( (ListChangeListener<ObservableMatch>) c -> {
@@ -54,7 +58,16 @@ public final class ObservableRound {
                                                  .map( ObservableMatch::getMatch )
                                                  .collect( Collectors.toList( ) ) );
         } );
-        _matches.addListener( (ListChangeListener<ObservableMatch>) c -> _dirty.set( true ) );
+        _matches.addListener( (ListChangeListener<ObservableMatch>) c -> {
+            _dirty.set( true );
+            updateEndedStatus( );
+        } );
+
+        updateEndedStatus( );
+    }
+
+    private void updateEndedStatus( ) {
+        _ended.set( _matches.stream( ).allMatch( ObservableMatch::hasScore ) );
     }
 
     public Round getRound( ) {
@@ -89,11 +102,26 @@ public final class ObservableRound {
         return _dirty;
     }
 
+    public boolean isEnded( ) {
+        return _ended.get( );
+    }
+
+    public SimpleBooleanProperty endedProperty( ) {
+        return _ended;
+    }
+
+    public Optional<ObservableMatch> getMatchFor( final ObservableTeam team ) {
+        return _matches.stream( )
+                       .filter( m -> m.getLeftTeamId( ) == team.getId( ) || m.getRightTeamId( ) == team.getId( ) )
+                       .findAny( );
+    }
+
     private final Round _round;
 
     private final SimpleIntegerProperty _numero = new SimpleIntegerProperty( );
     private final SimpleObjectProperty<ZonedDateTime> _startDate = new SimpleObjectProperty<>( );
     private final ObservableList<ObservableMatch> _matches = FXCollections.observableArrayList( );
 
+    private final SimpleBooleanProperty _ended = new SimpleBooleanProperty( );
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 }
