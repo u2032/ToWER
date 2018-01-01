@@ -23,15 +23,15 @@ import javafx.scene.control.ButtonType;
  * Created on 31/12/2017
  * @author Cédric Longo
  */
-public final class ResetRoundDialog extends Alert {
+public final class DeleteRoundDialog extends Alert {
 
-    public ResetRoundDialog( final ResetRoundDialogModel model ) {
+    public DeleteRoundDialog( final DeleteRoundDialogModel model ) {
         super( AlertType.WARNING );
         getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
 
-        titleProperty( ).bind( model.getI18n( ).get( "tournament.round.reset.title" ) );
-        headerTextProperty( ).bind( model.getI18n( ).get( "tournament.round.reset.title" ) );
-        contentTextProperty( ).bind( model.getI18n( ).get( "tournament.round.reset.message" ) );
+        titleProperty( ).bind( model.getI18n( ).get( "tournament.round.delete.title" ) );
+        headerTextProperty( ).bind( model.getI18n( ).get( "tournament.round.delete.title" ) );
+        contentTextProperty( ).bind( model.getI18n( ).get( "tournament.round.delete.message" ) );
 
         final ButtonType okButtonType =
             new ButtonType( model.getI18n( ).get( "action.ok" ).get( ).toUpperCase( ), ButtonData.OK_DONE );
@@ -46,7 +46,7 @@ public final class ResetRoundDialog extends Alert {
         final Button okButton = (Button) getDialogPane( ).lookupButton( okButtonType );
         okButton.setDefaultButton( false );
         okButton.setOnAction( event -> {
-            model.fireResetRound( );
+            model.fireDeleteRound( );
         } );
     }
 }

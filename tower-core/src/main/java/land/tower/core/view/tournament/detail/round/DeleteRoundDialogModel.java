@@ -17,37 +17,34 @@ package land.tower.core.view.tournament.detail.round;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
-import java.util.Map;
 import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.ranking.IRankingComputer;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.TournamentUpdatedEvent;
-import land.tower.data.PairingMode;
-import land.tower.data.Round;
 
 /**
  * Created on 31/12/2017
  * @author Cédric Longo
  */
-public final class ResetRoundDialogModel {
+public final class DeleteRoundDialogModel {
 
     public interface Factory {
 
-        ResetRoundDialogModel forTournament( ObservableTournament tournament );
+        DeleteRoundDialogModel forTournament( ObservableTournament tournament );
     }
 
     @Inject
-    public ResetRoundDialogModel( final Configuration config, final I18nTranslator i18n,
-                                  final @Assisted ObservableTournament tournament,
-                                  final Map<PairingMode, PairingSystem> pairingSystems,
-                                  final EventBus eventBus ) {
+    public DeleteRoundDialogModel( final Configuration config, final I18nTranslator i18n,
+                                   final @Assisted ObservableTournament tournament,
+                                   final IRankingComputer rankingComputer,
+                                   final EventBus eventBus ) {
         _config = config;
         _i18n = i18n;
         _tournament = tournament;
-        _pairingSystems = pairingSystems;
+        _rankingComputer = rankingComputer;
         _eventBus = eventBus;
     }
 
@@ -59,22 +56,18 @@ public final class ResetRoundDialogModel {
         return _i18n;
     }
 
-    public void fireResetRound( ) {
+    void fireDeleteRound( ) {
         final ObservableRound lastRound = _tournament.getCurrentRound( );
         if ( lastRound != null ) {
             _tournament.getRounds( ).remove( lastRound );
         }
-
-        final Round newRound = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) )
-                                              .createNewRound( _tournament.getTournament( ) );
-        _tournament.registerRound( new ObservableRound( newRound ) );
+        _rankingComputer.computeRanking( _tournament );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
 
     private final Configuration _config;
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
-
-    private final Map<PairingMode, PairingSystem> _pairingSystems;
+    private final IRankingComputer _rankingComputer;
     private final EventBus _eventBus;
 }

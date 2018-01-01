@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.view.component.FaMenu;
 import land.tower.core.view.component.FaMenuItem;
-import land.tower.core.view.tournament.detail.round.ResetRoundDialog;
+import land.tower.core.view.tournament.detail.round.DeleteRoundDialog;
 
 /**
  * Created on 12/11/2017
@@ -70,11 +70,11 @@ final class ApplicationMenuBar extends MenuBar {
 
         tournamentMenu.getItems( ).add( new SeparatorMenuItem( ) );
 
-        final MenuItem resetRound = new FaMenuItem( FontAwesome.WARNING, "black" );
-        resetRound.textProperty( ).bind( _model.getI18n( ).get( "menu.round.reset" ) );
-        resetRound.setOnAction( event -> new ResetRoundDialog( _model.createResetRoundDialogModel( ) ).show( ) );
-        resetRound.disableProperty( ).bind( Bindings.isNull( _model.currentTournamentProperty( ) ) );
-        tournamentMenu.getItems( ).add( resetRound );
+        final MenuItem deleteRound = new FaMenuItem( FontAwesome.WARNING, "black" );
+        deleteRound.textProperty( ).bind( _model.getI18n( ).get( "menu.round.delete" ) );
+        deleteRound.setOnAction( event -> new DeleteRoundDialog( _model.createResetRoundDialogModel( ) ).show( ) );
+        deleteRound.disableProperty( ).bind( _model.currentTournamentProperty( ).isNull( ) );
+        tournamentMenu.getItems( ).add( deleteRound );
 
         return tournamentMenu;
     }
@@ -90,7 +90,6 @@ final class ApplicationMenuBar extends MenuBar {
 
         return optionMenu;
     }
-
 
     private Menu aboutMenu( ) {
         final Menu aboutMenu = new FaMenu( FontAwesome.ABOUT, "darkgrey" );

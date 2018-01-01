@@ -31,8 +31,8 @@ import land.tower.core.view.home.HomepageView;
 import land.tower.core.view.option.LanguageDialog;
 import land.tower.core.view.tournament.detail.TournamentView;
 import land.tower.core.view.tournament.detail.TournamentViewModelProvider;
-import land.tower.core.view.tournament.detail.round.ResetRoundDialogModel;
-import land.tower.core.view.tournament.detail.round.ResetRoundDialogModel.Factory;
+import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel;
+import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel.Factory;
 
 /**
  * Created on 18/12/2017
@@ -93,7 +93,7 @@ final class ApplicationMenuBarModel {
         }
     }
 
-    ResetRoundDialogModel createResetRoundDialogModel( ) {
+    DeleteRoundDialogModel createResetRoundDialogModel( ) {
         return _resertRoundDialogFactory.forTournament( _currentTournament.get( ) );
     }
 
