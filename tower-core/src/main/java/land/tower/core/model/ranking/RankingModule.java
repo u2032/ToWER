@@ -15,7 +15,6 @@
 package land.tower.core.model.ranking;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
 
 /**
  * Created on 01/01/2018
@@ -25,6 +24,5 @@ public final class RankingModule extends AbstractModule {
 
     @Override
     protected void configure( ) {
-        bind( IRankingComputer.class ).to( RankingComputer.class ).in( Scopes.SINGLETON );
     }
 }

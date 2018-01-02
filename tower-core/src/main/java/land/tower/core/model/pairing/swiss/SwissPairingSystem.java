@@ -24,7 +24,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.util.Pair;
+import javax.inject.Inject;
 import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.ranking.DefaultRankingComputer;
+import land.tower.core.model.ranking.IRankingComputer;
+import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Match;
 import land.tower.data.Round;
 import land.tower.data.Team;
@@ -37,19 +41,29 @@ import land.tower.data.Tournament;
  */
 public final class SwissPairingSystem implements PairingSystem {
 
+    @Inject
+    public SwissPairingSystem( final DefaultRankingComputer rankingComputer ) {
+        _rankingComputer = rankingComputer;
+    }
+
     @Override
-    public Round createNewRound( final Tournament tournament ) {
+    public Round createNewRound( final ObservableTournament tournament ) {
         if ( tournament.getRounds( ).isEmpty( ) ) {
-            return firstRound( tournament );
+            return firstRound( tournament.getTournament( ) );
         }
 
         return IntStream.rangeClosed( 1, 10 )
                         .parallel( )
-                        .mapToObj( i -> makePairing( tournament ) )
+                        .mapToObj( i -> makePairing( tournament.getTournament( ) ) )
                         .sorted( Comparator.comparing( Pair::getKey ) )
                         .findFirst( )
                         .map( Pair::getValue )
                         .orElseThrow( IllegalStateException::new );
+    }
+
+    @Override
+    public IRankingComputer getRankingComputer( ) {
+        return _rankingComputer;
     }
 
     private Pair<Integer, Round> makePairing( final Tournament tournament ) {
@@ -211,4 +225,5 @@ public final class SwissPairingSystem implements PairingSystem {
     }
 
     private final Random _random = new Random( );
+    private final IRankingComputer _rankingComputer;
 }

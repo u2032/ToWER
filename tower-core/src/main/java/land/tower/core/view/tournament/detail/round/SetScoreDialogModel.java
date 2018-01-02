@@ -17,17 +17,19 @@ package land.tower.core.view.tournament.detail.round;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import java.util.Map;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.ranking.IRankingComputer;
+import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.TournamentUpdatedEvent;
+import land.tower.data.PairingMode;
 
 /**
  * Created on 31/12/2017
@@ -45,13 +47,13 @@ public final class SetScoreDialogModel {
     SetScoreDialogModel( final Configuration config, final I18nTranslator i18n,
                          @Assisted final ObservableTournament tournament,
                          @Assisted final ObservableRound round, final EventBus eventBus,
-                         final IRankingComputer rankingComputer ) {
+                         final Map<PairingMode, PairingSystem> pairingSystems ) {
         _config = config;
         _i18n = i18n;
         _tournament = tournament;
         _round = round;
         _eventBus = eventBus;
-        _rankingComputer = rankingComputer;
+        _pairingSystems = pairingSystems;
 
         _errorInformation.bind( Bindings.createStringBinding( ( ) -> {
             final int leftWins = _leftWins.get( ) == null ? 0 : _leftWins.get( );
@@ -90,7 +92,7 @@ public final class SetScoreDialogModel {
         }, _leftWins, _draws, _rightWins, _position ) );
     }
 
-    public void fireSaveScore( ) {
+    void fireSaveScore( ) {
         final ObservableMatch match = _round.getMatches( ).stream( )
                                             .filter( m -> m.getPosition( ) == _position.get( ) )
                                             .findAny( )
@@ -101,7 +103,9 @@ public final class SetScoreDialogModel {
 
         if ( _round.isEnded( ) ) {
             // If the round is ended, trigger ranking computing
-            _rankingComputer.computeRanking( _tournament );
+            _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) )
+                           .getRankingComputer( )
+                           .computeRanking( _tournament );
         }
 
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
@@ -176,5 +180,5 @@ public final class SetScoreDialogModel {
     private final SimpleObjectProperty<Integer> _position = new SimpleObjectProperty<>( );
 
     private final EventBus _eventBus;
-    private final IRankingComputer _rankingComputer;
+    private final Map<PairingMode, PairingSystem> _pairingSystems;
 }

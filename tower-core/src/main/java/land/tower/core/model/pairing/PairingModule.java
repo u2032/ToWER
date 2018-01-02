@@ -20,6 +20,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
 import java.util.Map;
+import land.tower.core.model.pairing.direct.DirectEliminationSystem;
 import land.tower.core.model.pairing.swiss.SwissPairingSystem;
 import land.tower.data.PairingMode;
 
@@ -36,9 +37,11 @@ public final class PairingModule extends AbstractModule {
 
     @Provides
     @Singleton
-    Map<PairingMode, PairingSystem> pairingSystems( final SwissPairingSystem swissPairingSystem ) {
+    Map<PairingMode, PairingSystem> pairingSystems( final SwissPairingSystem swissPairingSystem,
+                                                    final DirectEliminationSystem directEliminationSystem ) {
         return ImmutableMap.<PairingMode, PairingSystem>builder( )
                    .put( PairingMode.SWISS, swissPairingSystem )
+                   .put( PairingMode.DIRECT_ELIMINATION, directEliminationSystem )
                    .build( );
     }
 }

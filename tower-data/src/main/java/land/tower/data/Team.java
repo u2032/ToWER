@@ -17,7 +17,9 @@ package land.tower.data;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created on 27/12/2017
@@ -39,6 +41,9 @@ public final class Team {
 
     @SerializedName( "ranking" )
     private Ranking _ranking = new Ranking( );
+
+    @SerializedName( "pairingFlags" )
+    private Map<String, String> _pairingFlags = new HashMap<>( 0 );
 
     public String getName( ) {
         return _name;
@@ -74,6 +79,10 @@ public final class Team {
 
     public Ranking getRanking( ) {
         return _ranking;
+    }
+
+    public Map<String, String> getPairingFlags( ) {
+        return _pairingFlags;
     }
 
     public boolean hasPlayer( final Player p ) {

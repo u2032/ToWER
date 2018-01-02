@@ -17,13 +17,15 @@ package land.tower.core.view.tournament.detail.round;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import java.util.Map;
 import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.ranking.IRankingComputer;
+import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.TournamentUpdatedEvent;
+import land.tower.data.PairingMode;
 
 /**
  * Created on 31/12/2017
@@ -39,12 +41,12 @@ public final class DeleteRoundDialogModel {
     @Inject
     public DeleteRoundDialogModel( final Configuration config, final I18nTranslator i18n,
                                    final @Assisted ObservableTournament tournament,
-                                   final IRankingComputer rankingComputer,
+                                   final Map<PairingMode, PairingSystem> pairingSystem,
                                    final EventBus eventBus ) {
         _config = config;
         _i18n = i18n;
         _tournament = tournament;
-        _rankingComputer = rankingComputer;
+        _pairingSystem = pairingSystem;
         _eventBus = eventBus;
     }
 
@@ -61,13 +63,15 @@ public final class DeleteRoundDialogModel {
         if ( lastRound != null ) {
             _tournament.getRounds( ).remove( lastRound );
         }
-        _rankingComputer.computeRanking( _tournament );
+        _pairingSystem.get( _tournament.getHeader( ).getPairingMode( ) )
+                      .getRankingComputer( )
+                      .computeRanking( _tournament );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
 
     private final Configuration _config;
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
-    private final IRankingComputer _rankingComputer;
+    private final Map<PairingMode, PairingSystem> _pairingSystem;
     private final EventBus _eventBus;
 }

@@ -16,7 +16,11 @@ package land.tower.core.model.tournament;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
+import javafx.collections.ObservableMap;
 import land.tower.data.Team;
 import land.tower.data.Teams;
 
@@ -44,6 +48,11 @@ public final class ObservableTeam {
         _ranking = new ObservableRanking( team.getRanking( ) );
         _ranking.dirtyProperty( )
                 .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
+
+        _pairingFlags.set( FXCollections.observableMap( team.getPairingFlags( ) ) );
+        _pairingFlags.addListener( (MapChangeListener<String, String>) change -> {
+            _dirty.set( true );
+        } );
     }
 
     public Team getTeam( ) {
@@ -102,6 +111,14 @@ public final class ObservableTeam {
         return getId( ) == BYE_TEAM.getId( );
     }
 
+    public ObservableMap<String, String> getPairingFlags( ) {
+        return _pairingFlags.get( );
+    }
+
+    public SimpleMapProperty<String, String> pairingFlagsProperty( ) {
+        return _pairingFlags;
+    }
+
     private final Team _team;
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( false );
 
@@ -109,6 +126,7 @@ public final class ObservableTeam {
     private final SimpleBooleanProperty _active;
     private final SimpleIntegerProperty _id;
     private final ObservableRanking _ranking;
+    private final SimpleMapProperty<String, String> _pairingFlags = new SimpleMapProperty<>( );
 
     public static final ObservableTeam BYE_TEAM = new ObservableTeam( Teams.BYE_TEAM );
 }

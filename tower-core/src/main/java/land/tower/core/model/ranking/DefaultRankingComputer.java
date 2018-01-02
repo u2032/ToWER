@@ -30,16 +30,9 @@ import land.tower.core.model.tournament.ObservableTournament;
  * Created on 01/01/2018
  * @author Cédric Longo
  */
-final class RankingComputer implements IRankingComputer {
+public final class DefaultRankingComputer implements IRankingComputer {
 
-    public RankingComputer( ) {
-        Comparator<ObservableTeam> rankingComparator =
-            Comparator.comparing( t -> t.getRanking( ).getPoints( ), reverseOrder( ) );
-        rankingComparator = rankingComparator.thenComparing( t -> t.getRanking( ).getD1( ), reverseOrder( ) );
-        rankingComparator = rankingComparator.thenComparing( t -> t.getRanking( ).getD2( ), reverseOrder( ) );
-        rankingComparator = rankingComparator.thenComparing( t -> t.getRanking( ).getD3( ), reverseOrder( ) );
-        rankingComparator = rankingComparator.thenComparing( t -> t.getRanking( ).getD4( ), reverseOrder( ) );
-        this._rankingComparator = rankingComparator;
+    public DefaultRankingComputer( ) {
     }
 
     @Override
@@ -71,9 +64,9 @@ final class RankingComputer implements IRankingComputer {
         final AtomicInteger rank = new AtomicInteger( );
         final AtomicReference<ObservableTeam> previous = new AtomicReference<>( );
         teams.stream( )
-             .sorted( _rankingComparator )
+             .sorted( RANKING_COMPARATOR )
              .forEach( team -> {
-                 if ( previous.get( ) != null && _rankingComparator.compare( previous.get( ), team ) == 0 ) {
+                 if ( previous.get( ) != null && RANKING_COMPARATOR.compare( previous.get( ), team ) == 0 ) {
                      team.getRanking( ).setRank( rank.get( ) );
                  } else {
                      team.getRanking( ).setRank( rank.incrementAndGet( ) );
@@ -82,5 +75,15 @@ final class RankingComputer implements IRankingComputer {
              } );
     }
 
-    private final Comparator<ObservableTeam> _rankingComparator;
+    public static final Comparator<ObservableTeam> RANKING_COMPARATOR;
+
+    static {
+        Comparator<ObservableTeam> rankingComparator =
+            Comparator.comparing( t -> t.getRanking( ).getPoints( ), reverseOrder( ) );
+        rankingComparator = rankingComparator.thenComparing( t -> t.getRanking( ).getD1( ), reverseOrder( ) );
+        rankingComparator = rankingComparator.thenComparing( t -> t.getRanking( ).getD2( ), reverseOrder( ) );
+        rankingComparator = rankingComparator.thenComparing( t -> t.getRanking( ).getD3( ), reverseOrder( ) );
+        rankingComparator = rankingComparator.thenComparing( t -> t.getRanking( ).getD4( ), reverseOrder( ) );
+        RANKING_COMPARATOR = rankingComparator;
+    }
 }

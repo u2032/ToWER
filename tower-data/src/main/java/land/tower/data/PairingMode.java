@@ -20,6 +20,7 @@ package land.tower.data;
  */
 public enum PairingMode {
 
-    SWISS
+    SWISS,
+    DIRECT_ELIMINATION
 
 }

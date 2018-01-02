@@ -125,16 +125,21 @@ public final class ObservableMatch {
         return _hasScore;
     }
 
-    public boolean hasWon( final ObservableTeam team ) {
-        final boolean isLeft = ( _leftTeamId.get( ) == team.getId( ) );
-        final boolean isRight = ( _rightTeamId.get( ) == team.getId( ) );
+    public boolean hasWon( final int teamId ) {
+        final boolean isLeft = ( _leftTeamId.get( ) == teamId );
+        final boolean isRight = ( _rightTeamId.get( ) == teamId );
         if ( isLeft ) {
             return _scoreLeft.get( ) > _scoreRight.get( );
         }
         if ( isRight ) {
             return _scoreRight.get( ) > _scoreLeft.get( );
         }
-        throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
+        throw new IllegalArgumentException( "The team " + teamId + " has not played in this match" );
+
+    }
+
+    public boolean hasWon( final ObservableTeam team ) {
+        return hasWon( team.getId( ) );
     }
 
     public boolean hasLost( final ObservableTeam team ) {

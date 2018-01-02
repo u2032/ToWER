@@ -62,7 +62,7 @@ public final class TournamentEnrolmentTabModel {
 
     public void fireStartTournament( ) {
         final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
-        final Round newRound = pairing.createNewRound( _tournament.getTournament( ) );
+        final Round newRound = pairing.createNewRound( _tournament );
         _tournament.registerRound( new ObservableRound( newRound ) );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }

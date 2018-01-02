@@ -211,10 +211,14 @@ public final class TournamentRoundTab extends Tab {
         startRoundButton.getStyleClass( ).add( "rich-button" );
         startRoundButton.getStyleClass( ).add( "action-button" );
         startRoundButton.setOnAction( event -> _model.fireStartNewRound( ) );
-        startRoundButton.disableProperty( )
-                        .bind( _model.getRound( ).endedProperty( ).not( )
-                                     .or( _model.getTournament( ).currentRoundProperty( )
-                                                .isNotEqualTo( _model.getRound( ) ) ) );
+        if ( _model.getRound( ).getRound( ).isFinal( ) ) {
+            startRoundButton.setDisable( true );
+        } else {
+            startRoundButton.disableProperty( )
+                            .bind( _model.getRound( ).endedProperty( ).not( )
+                                         .or( _model.getTournament( ).currentRoundProperty( )
+                                                    .isNotEqualTo( _model.getRound( ) ) ) );
+        }
         hBox.getChildren( ).addAll( startRoundButton );
 
         return hBox;

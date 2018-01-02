@@ -26,6 +26,7 @@ public final class Round {
 
     private int _numero;
     private List<Match> _matches = new ArrayList<>( );
+    private boolean _final;
 
     private ZonedDateTime _startDate;
 
@@ -51,5 +52,13 @@ public final class Round {
 
     public void setStartDate( final ZonedDateTime startDate ) {
         _startDate = startDate;
+    }
+
+    public void setFinal( final boolean aFinal ) {
+        _final = aFinal;
+    }
+
+    public boolean isFinal( ) {
+        return _final;
     }
 }

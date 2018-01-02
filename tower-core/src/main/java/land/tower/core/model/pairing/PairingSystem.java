@@ -14,8 +14,9 @@
 
 package land.tower.core.model.pairing;
 
+import land.tower.core.model.ranking.IRankingComputer;
+import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Round;
-import land.tower.data.Tournament;
 
 /**
  * Created on 30/12/2017
@@ -23,6 +24,8 @@ import land.tower.data.Tournament;
  */
 public interface PairingSystem {
 
-    Round createNewRound( Tournament tournament );
+    Round createNewRound( ObservableTournament tournament );
+
+    IRankingComputer getRankingComputer( );
 
 }
