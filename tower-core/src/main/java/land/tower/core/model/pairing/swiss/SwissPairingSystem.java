@@ -66,7 +66,6 @@ public final class SwissPairingSystem implements PairingSystem {
 
         // Pairing in same group if possible
         final List<List<Team>> groupList = new ArrayList<>( groups.values( ) );
-        final AtomicInteger position = new AtomicInteger( );
         while ( !groupList.isEmpty( ) ) {
             final List<Team> group = new ArrayList<>( groupList.remove( 0 ) );
             while ( group.size( ) > 1 ) {
@@ -74,7 +73,6 @@ public final class SwissPairingSystem implements PairingSystem {
                 final Team right = group.remove( _random.nextInt( group.size( ) ) );
 
                 final Match match = new Match( );
-                match.setPosition( position.incrementAndGet( ) );
                 match.setLeftTeamId( left.getId( ) );
                 match.setRightTeamId( right.getId( ) );
                 matches.add( match );
@@ -88,12 +86,8 @@ public final class SwissPairingSystem implements PairingSystem {
             // The last team is paired with BYE
             if ( !group.isEmpty( ) && groupList.isEmpty( ) ) {
                 final Match match = new Match( );
-                match.setPosition( position.incrementAndGet( ) );
                 match.setLeftTeamId( group.remove( 0 ).getId( ) );
                 match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
-                match.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
-                match.setScoreDraw( 0 );
-                match.setScoreRight( 0 );
                 matches.add( match );
             }
         }
@@ -118,6 +112,27 @@ public final class SwissPairingSystem implements PairingSystem {
             }
         }
 
+        // Initialize score for Bye teams and put them on the end
+        final List<Match> byeMatches = matches.stream( )
+                                              .filter( this::isByeMatch )
+                                              .collect( Collectors.toList( ) );
+        byeMatches.forEach( match -> {
+            if ( match.getLeftTeamId( ) == Teams.BYE_TEAM.getId( ) ) {
+                // We put the bye team on the right
+                match.setLeftTeamId( match.getRightTeamId( ) );
+                match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
+            }
+            match.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
+            match.setScoreDraw( 0 );
+            match.setScoreRight( 0 );
+        } );
+        matches.removeAll( byeMatches );
+        matches.addAll( byeMatches );
+
+        // Set position
+        final AtomicInteger position = new AtomicInteger( );
+        matches.forEach( m -> m.setPosition( position.incrementAndGet( ) ) );
+
         final Round round = new Round( );
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
         round.setStartDate( ZonedDateTime.now( ) );
@@ -126,8 +141,13 @@ public final class SwissPairingSystem implements PairingSystem {
     }
 
     private boolean matchPermutation( final Tournament tournament, final Match match, final Match match2 ) {
+        if ( isByeMatch( match ) && isByeMatch( match2 ) ) {
+            return false;
+        }
+
         if ( !matchAlreadyExists( tournament, match.getLeftTeamId( ), match2.getRightTeamId( ) )
              && !matchAlreadyExists( tournament, match.getRightTeamId( ), match2.getLeftTeamId( ) ) ) {
+
             // Permutation is possible
             final int matchLeftTeamId = match.getLeftTeamId( );
             final int matchRightTeamId = match.getRightTeamId( );
@@ -140,6 +160,10 @@ public final class SwissPairingSystem implements PairingSystem {
             return true;
         }
         return false;
+    }
+
+    private boolean isByeMatch( final Match match ) {
+        return match.getLeftTeamId( ) == Teams.BYE_TEAM.getId( ) || match.getRightTeamId( ) == Teams.BYE_TEAM.getId( );
     }
 
     private Round firstRound( final Tournament tournament ) {
