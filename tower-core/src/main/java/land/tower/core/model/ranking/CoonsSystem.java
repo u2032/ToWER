@@ -37,6 +37,9 @@ final class CoonsSystem {
             round.getMatchFor( team )
                  .ifPresent( m -> {
                      final ObservableTeam opponent = tournament.getTeam( m.getOpponentId( team ) );
+                     if ( opponent.isByeTeam( ) ) {
+                         return;
+                     }
                      if ( m.hasWon( team ) ) {
                          points.addAndGet( opponent.getRanking( ).getPoints( ) );
                      } else if ( m.isDraw( ) ) {

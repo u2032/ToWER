@@ -14,8 +14,13 @@
 
 package land.tower.core.model.ranking;
 
+import com.google.common.collect.Maps;
+
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -27,22 +32,56 @@ import land.tower.core.model.tournament.ObservableTournament;
 final class SolfkoffSystem {
 
     /**
-     * Sum of opponents without first rounds
+     * Sum of opponent scores where a win gives a +1 and a loss a -1
      */
     static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
                         final ObservableTournament tournament ) {
 
+        final Map<Integer, Integer> scores = Maps.newHashMap( );
+
         final AtomicInteger points = new AtomicInteger( );
-        rounds.stream( )
-              .skip( rounds.size( ) >= 8 ? 2 : 1 )
-              .forEach( round -> {
-                  round.getMatchFor( team )
-                       .ifPresent( m -> {
-                           final ObservableTeam opponent = tournament.getTeam( m.getOpponentId( team ) );
-                           points.addAndGet( opponent.getRanking( ).getPoints( ) );
-                       } );
-              } );
+        rounds.forEach( round -> {
+            round.getMatchFor( team )
+                 .ifPresent( m -> {
+                     final ObservableTeam opponent = tournament.getTeam( m.getOpponentId( team ) );
+                     if ( !opponent.isByeTeam( ) ) {
+                         final int opponentScore = scores.computeIfAbsent( opponent.getId( ),
+                                                                           teamId -> computeScore( opponent, rounds ) );
+                         points.addAndGet( opponentScore );
+                     }
+                 } );
+        } );
         return points.get( );
+    }
+
+    private static int computeScore( final ObservableTeam team, final List<ObservableRound> rounds ) {
+        final long winCount = rounds.stream( )
+                                    .filter( r -> {
+                                        final Optional<ObservableMatch> match = r.getMatchFor( team );
+                                        if ( !match.isPresent( ) ) {
+                                            return false;
+                                        }
+                                        if ( match.get( ).getOpponentId( team ) == ObservableTeam.BYE_TEAM.getId( ) ) {
+                                            return false;
+                                        }
+                                        return match.get( ).hasWon( team );
+                                    } )
+                                    .count( );
+
+        final long lossCount = rounds.stream( )
+                                     .filter( r -> {
+                                         final Optional<ObservableMatch> match = r.getMatchFor( team );
+                                         if ( !match.isPresent( ) ) {
+                                             return false;
+                                         }
+                                         if ( match.get( ).getOpponentId( team ) == ObservableTeam.BYE_TEAM.getId( ) ) {
+                                             return false;
+                                         }
+                                         return match.get( ).hasLost( team );
+                                     } )
+                                     .count( );
+
+        return (int) Math.max( winCount - lossCount, rounds.size( ) > 8 ? -4 : -3 );
     }
 
 }

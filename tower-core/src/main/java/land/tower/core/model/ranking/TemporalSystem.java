@@ -21,28 +21,32 @@ import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 
 /**
- * Created on 01/01/2018
+ * Created on 02/01/2018
  * @author Cédric Longo
  */
-final class KoyaSystem {
+final class TemporalSystem {
 
     /**
-     * Sum of opponent scores with >50% score
+     * Sum of squared round numero where the player has loss
      */
     static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
                         final ObservableTournament tournament ) {
 
         final AtomicInteger points = new AtomicInteger( );
-        final int maxPoints = rounds.size( ) * 3;
         rounds.forEach( round -> {
             round.getMatchFor( team )
                  .ifPresent( m -> {
                      final ObservableTeam opponent = tournament.getTeam( m.getOpponentId( team ) );
-                     if ( opponent.getRanking( ).getPoints( ) >= maxPoints * 0.5 ) {
-                         points.addAndGet( opponent.getRanking( ).getPoints( ) );
+                     if ( !opponent.isByeTeam( ) && m.hasLost( team ) ) {
+                         points.addAndGet( round.getNumero( ) * round.getNumero( ) );
                      }
                  } );
         } );
+
+        // If no point = the player has never loss until now, we give him maximum points
+        if ( points.get( ) == 0 ) {
+            points.set( ( rounds.size( ) + 1 ) * ( rounds.size( ) + 1 ) );
+        }
         return points.get( );
     }
 

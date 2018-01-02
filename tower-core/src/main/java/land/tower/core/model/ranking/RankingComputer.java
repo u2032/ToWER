@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import land.tower.core.model.tournament.ObservableRanking;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -55,10 +56,15 @@ final class RankingComputer implements IRankingComputer {
 
         // Compute secondary points
         teams.forEach( team -> {
-            team.getRanking( ).setD1( BaumbachSystem.compute( team, rounds ) );
-            team.getRanking( ).setD2( KoyaSystem.compute( team, rounds, tournament ) );
-            team.getRanking( ).setD3( SolfkoffSystem.compute( team, rounds, tournament ) );
+            team.getRanking( ).setD1( SolfkoffSystem.compute( team, rounds, tournament ) );
+            team.getRanking( ).setD3( TemporalSystem.compute( team, rounds, tournament ) );
             team.getRanking( ).setD4( CoonsSystem.compute( team, rounds, tournament ) );
+        } );
+
+        // D2 needs D1 so it's computed after
+        teams.forEach( team -> {
+            team.getRanking( ).setD2( OpponentRankingAccumulator.compute( team, rounds, tournament,
+                                                                          ObservableRanking::getD1 ) );
         } );
 
         // Set Rank

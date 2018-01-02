@@ -16,25 +16,29 @@ package land.tower.core.model.ranking;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import land.tower.core.model.tournament.ObservableRanking;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
+import land.tower.core.model.tournament.ObservableTournament;
 
 /**
- * Created on 01/01/2018
+ * Created on 02/01/2018
  * @author Cédric Longo
  */
-final class BaumbachSystem {
+final class OpponentRankingAccumulator {
 
-    /**
-     * Wins count
-     */
-    static int compute( final ObservableTeam team, final List<ObservableRound> rounds ) {
+    static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
+                        final ObservableTournament tournament,
+                        final Function<ObservableRanking, Integer> extractor ) {
+
         final AtomicInteger points = new AtomicInteger( );
         rounds.forEach( round -> {
             round.getMatchFor( team )
                  .ifPresent( m -> {
-                     if ( m.hasWon( team ) ) {
-                         points.addAndGet( 1 );
+                     final ObservableTeam opponent = tournament.getTeam( m.getOpponentId( team ) );
+                     if ( !opponent.isByeTeam( ) ) {
+                         points.addAndGet( extractor.apply( opponent.getRanking( ) ) );
                      }
                  } );
         } );
