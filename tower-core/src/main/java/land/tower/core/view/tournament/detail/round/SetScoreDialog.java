@@ -82,7 +82,7 @@ final class SetScoreDialog extends Dialog<Void> {
                                  null,
                                  c -> {
                                      final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
-                                     if ( !c.getControlNewText( ).isEmpty( ) ) {
+                                     if ( matches && !c.getControlNewText( ).isEmpty( ) ) {
                                          final int count = Integer.parseInt( c.getControlNewText( ) );
                                          if ( count > 9 ) {
                                              return null;
@@ -101,7 +101,7 @@ final class SetScoreDialog extends Dialog<Void> {
                                  null,
                                  c -> {
                                      final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
-                                     if ( !c.getControlNewText( ).isEmpty( ) ) {
+                                     if ( matches && !c.getControlNewText( ).isEmpty( ) ) {
                                          final int count = Integer.parseInt( c.getControlNewText( ) );
                                          if ( count > 9 ) {
                                              return null;
@@ -123,7 +123,7 @@ final class SetScoreDialog extends Dialog<Void> {
                                  null,
                                  c -> {
                                      final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
-                                     if ( !c.getControlNewText( ).isEmpty( ) ) {
+                                     if ( matches && !c.getControlNewText( ).isEmpty( ) ) {
                                          final int count = Integer.parseInt( c.getControlNewText( ) );
                                          if ( count > 9 ) {
                                              return null;
