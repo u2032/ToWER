@@ -14,10 +14,12 @@
 
 package land.tower.core.view.tournament.detail.information;
 
+import static javafx.beans.binding.Bindings.createBooleanBinding;
+
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
-import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -71,6 +73,10 @@ public final class TournamentInformationTab extends Tab {
         grid.setVgap( 10 );
         grid.setHgap( 20 );
 
+        final BooleanBinding tournamentOpened = createBooleanBinding(
+            ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
+            _model.getTournament( ).getHeader( ).statusProperty( ) );
+
         int line = 0;
 
         /* General Section */
@@ -88,6 +94,7 @@ public final class TournamentInformationTab extends Tab {
         final Label titleLabel = new Label( );
         titleLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.title" ) );
         titleLabel.setLabelFor( titleField );
+        titleField.disableProperty( ).bind( tournamentOpened.not( ) );
         grid.add( titleLabel, 0, line );
         grid.add( titleField, 1, line );
 
@@ -118,6 +125,7 @@ public final class TournamentInformationTab extends Tab {
             }
         } );
         dateField.setEditable( false );
+        dateField.disableProperty( ).bind( tournamentOpened.not( ) );
 
         final Label dateLabel = new Label( );
         dateLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.date" ) );
@@ -129,6 +137,7 @@ public final class TournamentInformationTab extends Tab {
         final HBox timeCell = new HBox( );
         timeCell.setSpacing( 3 );
         final TextField hourField = new TextField( );
+        hourField.disableProperty( ).bind( tournamentOpened.not( ) );
         hourField.setPrefWidth( 40 );
         final int thour = _model.getTournament( ).getHeader( ).getDate( ).getHour( );
         hourField.textProperty( )
@@ -156,6 +165,7 @@ public final class TournamentInformationTab extends Tab {
 
         final TextField minField = new TextField( );
         minField.setPrefWidth( 40 );
+        minField.disableProperty( ).bind( tournamentOpened.not( ) );
         final int tmin = _model.getTournament( ).getHeader( ).getDate( ).getMinute( );
         minField.textProperty( ).setValue( ( tmin < 10 ? "0" : "" ) + String.valueOf( tmin ) );
         minField.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
@@ -203,6 +213,7 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final ChoiceBox<PairingMode> pairingField = new ChoiceBox<>( );
+        pairingField.disableProperty( ).bind( tournamentOpened.not( ) );
         pairingField.itemsProperty( )
                     .bind( new SimpleListProperty<>( FXCollections.observableArrayList( PairingMode.values( ) ) ) );
         pairingField.setConverter( new StringConverter<PairingMode>( ) {
@@ -218,7 +229,7 @@ public final class TournamentInformationTab extends Tab {
         } );
         pairingField.valueProperty( )
                     .bindBidirectional( _model.getTournament( ).getHeader( ).pairingModeProperty( ) );
-        pairingField.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+        pairingField.disableProperty( ).bind( createBooleanBinding( ( ) -> {
             final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
             switch ( status ) {
                 case NOT_CONFIGURED:
@@ -254,7 +265,7 @@ public final class TournamentInformationTab extends Tab {
                                      }
                                      return matches ? c : null;
                                  } ) );
-        teamSizeField.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+        teamSizeField.disableProperty( ).bind( createBooleanBinding( ( ) -> {
             final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
             switch ( status ) {
                 case NOT_CONFIGURED:
@@ -290,7 +301,7 @@ public final class TournamentInformationTab extends Tab {
                                      }
                                      return matches ? c : null;
                                  } ) );
-        winningGameCountField.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+        winningGameCountField.disableProperty( ).bind( createBooleanBinding( ( ) -> {
             final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
             switch ( status ) {
                 case NOT_CONFIGURED:
@@ -309,6 +320,7 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final TextField matchDurationField = new TextField( );
+        matchDurationField.disableProperty( ).bind( tournamentOpened.not( ) );
         matchDurationField.setPrefWidth( 40 );
         matchDurationField.setMaxWidth( Pane.USE_PREF_SIZE );
         matchDurationField.textProperty( )
@@ -337,6 +349,7 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final TextField addressNameField = new TextField( );
+        addressNameField.disableProperty( ).bind( tournamentOpened.not( ) );
         addressNameField.textProperty( )
                         .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).nameProperty( ) );
         final Label addressNameLabel = new Label( );
@@ -347,6 +360,7 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final TextField addressLine1Field = new TextField( );
+        addressLine1Field.disableProperty( ).bind( tournamentOpened.not( ) );
         addressLine1Field.textProperty( )
                          .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).line1Property( ) );
         final Label addressLine1Label = new Label( );
@@ -357,6 +371,7 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final TextField addressLine2Field = new TextField( );
+        addressLine2Field.disableProperty( ).bind( tournamentOpened.not( ) );
         addressLine2Field.textProperty( )
                          .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).line2Property( ) );
         final Label addressLine2Label = new Label( );
@@ -367,6 +382,7 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final TextField addressPostalCodeField = new TextField( );
+        addressPostalCodeField.disableProperty( ).bind( tournamentOpened.not( ) );
         addressPostalCodeField.setPrefWidth( 100 );
         addressPostalCodeField.setMaxWidth( Pane.USE_PREF_SIZE );
         addressPostalCodeField.textProperty( )
@@ -380,6 +396,7 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final TextField addressCityField = new TextField( );
+        addressCityField.disableProperty( ).bind( tournamentOpened.not( ) );
         addressCityField.textProperty( )
                         .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).cityProperty( ) );
         final Label addressCityLabel = new Label( );
@@ -390,6 +407,7 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final TextField addressCountryField = new TextField( );
+        addressCountryField.disableProperty( ).bind( tournamentOpened.not( ) );
         addressCountryField.textProperty( )
                            .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).countryProperty( ) );
         final Label addressCountryLabel = new Label( );

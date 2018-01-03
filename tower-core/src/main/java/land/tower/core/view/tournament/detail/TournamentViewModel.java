@@ -100,15 +100,19 @@ public final class TournamentViewModel {
                         }
                         return false;
                     } );
+                    selectDefaultTab( );
                 }
             }
         } );
         _tabViews.add( new TournamentLadderView( _ladderTabFactory.forTournament( _tournament ) ) );
+        selectDefaultTab( );
+    }
 
+    private void selectDefaultTab( ) {
         // Select default tab according to status
-        if ( tournament.getHeader( ).getStatus( ) == TournamentStatus.ENROLMENT ) {
+        if ( _tournament.getHeader( ).getStatus( ) == TournamentStatus.ENROLMENT ) {
             _selectedTab.set( _tabViews.get( 1 ) );
-        } else if ( tournament.getHeader( ).getStatus( ) == TournamentStatus.STARTED ) {
+        } else if ( _tournament.getHeader( ).getStatus( ) == TournamentStatus.STARTED ) {
             _selectedTab.set( _tabViews.get( _tabViews.size( ) - 2 ) );
         } else {
             _selectedTab.set( _tabViews.get( 0 ) );

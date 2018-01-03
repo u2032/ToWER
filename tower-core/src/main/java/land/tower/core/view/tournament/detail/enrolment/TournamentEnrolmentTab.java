@@ -14,11 +14,11 @@
 
 package land.tower.core.view.tournament.detail.enrolment;
 
+import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleListProperty;
 import javafx.geometry.Insets;
@@ -80,13 +80,12 @@ public final class TournamentEnrolmentTab extends Tab {
         startTournamentButton.getStyleClass( ).add( "action-button" );
         startTournamentButton.setOnAction( event -> _model.fireStartTournament( ) );
         startTournamentButton.disableProperty( )
-                       .bind( new SimpleListProperty<>( _model.getTournament( ).getTeams( ) )
-                                  .sizeProperty( )
-                                  .lessThan( 2 ) );
+                             .bind( new SimpleListProperty<>( _model.getTournament( ).getTeams( ) )
+                                        .sizeProperty( )
+                                        .lessThan( 2 ) );
         startTournamentButton.visibleProperty( )
                              .bind( new SimpleListProperty<>( _model.getTournament( ).getRounds( ) ).emptyProperty( ) );
         hBox.getChildren( ).add( startTournamentButton );
-
 
         final FaButton addTeamButton = new FaButton( FontAwesome.PLUS, "white" );
         addTeamButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.enrolment.add.team" ) );
@@ -99,6 +98,11 @@ public final class TournamentEnrolmentTab extends Tab {
                 .ifPresent( _model::fireTeamAdded );
         } );
         hBox.getChildren( ).add( addTeamButton );
+
+        hBox.visibleProperty( )
+            .bind( createBooleanBinding(
+                ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
+                _model.getTournament( ).getHeader( ).statusProperty( ) ) );
 
         return hBox;
     }
@@ -125,7 +129,10 @@ public final class TournamentEnrolmentTab extends Tab {
         activeCol.textProperty( ).bind( _model.getI18n( ).get( "team.active" ) );
         activeCol.setCellValueFactory( new PropertyValueFactory<>( "active" ) );
         activeCol.setCellFactory( CheckBoxTableCell.forTableColumn( activeCol ) );
-        activeCol.setEditable( true );
+        activeCol.editableProperty( )
+                 .bind( createBooleanBinding(
+                     ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
+                     _model.getTournament( ).getHeader( ).statusProperty( ) ) );
         tableView.getColumns( ).add( activeCol );
 
         final TableColumn<ObservableTeam, String> nameCol = new TableColumn<>( );
@@ -167,7 +174,7 @@ public final class TournamentEnrolmentTab extends Tab {
             _button.getStyleClass( ).add( "rich-button" );
             _button.getStyleClass( ).add( "dangerous-button" );
             _button.setCursor( Cursor.HAND );
-            _button.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+            _button.disableProperty( ).bind( createBooleanBinding( ( ) -> {
                 final TournamentStatus status = _model.getTournament( ).getHeader( ).getStatus( );
                 switch ( status ) {
                     case NOT_CONFIGURED:

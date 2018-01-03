@@ -24,6 +24,7 @@ import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.view.component.FaMenu;
 import land.tower.core.view.component.FaMenuItem;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialog;
+import land.tower.data.TournamentStatus;
 
 /**
  * Created on 12/11/2017
@@ -73,7 +74,12 @@ final class ApplicationMenuBar extends MenuBar {
         final MenuItem deleteRound = new FaMenuItem( FontAwesome.WARNING, "black" );
         deleteRound.textProperty( ).bind( _model.getI18n( ).get( "menu.round.delete" ) );
         deleteRound.setOnAction( event -> new DeleteRoundDialog( _model.createResetRoundDialogModel( ) ).show( ) );
-        deleteRound.disableProperty( ).bind( _model.currentTournamentProperty( ).isNull( ) );
+
+        _model.currentTournamentProperty( )
+              .addListener( ( observable, oldValue, newValue ) -> {
+                  deleteRound
+                      .setDisable( newValue == null || newValue.getHeader( ).getStatus( ) == TournamentStatus.CLOSED );
+              } );
         tournamentMenu.getItems( ).add( deleteRound );
 
         return tournamentMenu;

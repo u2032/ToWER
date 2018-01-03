@@ -14,6 +14,7 @@
 
 package land.tower.core.view.tournament.detail.ladder;
 
+import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 
 import java.util.stream.Collectors;
@@ -30,6 +31,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableTeam;
+import land.tower.core.view.component.FaButton;
+import land.tower.data.TournamentStatus;
 
 /**
  * Created on 01/01/2018
@@ -136,6 +139,40 @@ public final class TournamentLadderView extends Tab {
         hBox.setSpacing( 20 );
         hBox.setPadding( new Insets( 10 ) );
         hBox.setAlignment( Pos.CENTER_RIGHT );
+
+        final FaButton setScoreButton = new FaButton( FontAwesome.LOCK, "white" );
+        setScoreButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.close" ) );
+        setScoreButton.getStyleClass( ).add( "rich-button" );
+        setScoreButton.getStyleClass( ).add( "dangerous-button" );
+        setScoreButton.setOnAction( event -> {
+            new CloseTournamentDialog( _model.createCloseTournamentViewModel( ) ).show( );
+        } );
+
+        final Runnable updateDisableCloseButton = ( ) -> {
+            setScoreButton.setDisable(
+                _model.getTournament( ).getCurrentRound( ) == null
+                || !_model.getTournament( ).getCurrentRound( ).isEnded( )
+                || _model.getTournament( ).getHeader( ).getStatus( ) == TournamentStatus.CLOSED );
+        };
+        updateDisableCloseButton.run( );
+
+        _model.getTournament( ).getHeader( ).statusProperty( )
+              .addListener( ( observable, oldValue, newValue ) -> updateDisableCloseButton.run( ) );
+
+        _model.getTournament( ).currentRoundProperty( )
+              .addListener( ( observable, oldValue, newValue ) -> {
+                  updateDisableCloseButton.run( );
+                  if ( newValue != null ) {
+                      newValue.endedProperty( )
+                              .addListener( ( observable1, oldValue1, newValue1 ) -> updateDisableCloseButton.run( ) );
+                  }
+              } );
+        hBox.getChildren( ).add( setScoreButton );
+
+        hBox.visibleProperty( )
+            .bind( createBooleanBinding(
+                ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
+                _model.getTournament( ).getHeader( ).statusProperty( ) ) );
 
         return hBox;
     }

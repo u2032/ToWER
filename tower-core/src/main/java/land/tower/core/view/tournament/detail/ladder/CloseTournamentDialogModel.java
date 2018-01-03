@@ -14,46 +14,50 @@
 
 package land.tower.core.view.tournament.detail.ladder;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.data.TournamentStatus;
 
 /**
- * Created on 01/01/2018
+ * Created on 31/12/2017
  * @author Cédric Longo
  */
-public final class TournamentLadderViewModel {
+public final class CloseTournamentDialogModel {
 
     public interface Factory {
 
-        TournamentLadderViewModel forTournament( ObservableTournament tournament );
-
+        CloseTournamentDialogModel forTournament( ObservableTournament tournament );
     }
 
     @Inject
-    public TournamentLadderViewModel( @Assisted final ObservableTournament tournament,
-                                      final I18nTranslator i18n,
-                                      final CloseTournamentDialogModel.Factory closeTournamentDialogModelProvider ) {
-        _tournament = tournament;
+    public CloseTournamentDialogModel( final Configuration config, final I18nTranslator i18n,
+                                       final @Assisted ObservableTournament tournament,
+                                       final EventBus eventBus ) {
+        _config = config;
         _i18n = i18n;
-        _closeTournamentDialogModelProvider = closeTournamentDialogModelProvider;
+        _tournament = tournament;
+        _eventBus = eventBus;
     }
 
-    CloseTournamentDialogModel createCloseTournamentViewModel( ) {
-        return _closeTournamentDialogModelProvider.forTournament( _tournament );
-    }
-
-    public ObservableTournament getTournament( ) {
-        return _tournament;
+    public Configuration getConfig( ) {
+        return _config;
     }
 
     public I18nTranslator getI18n( ) {
         return _i18n;
     }
 
-    private final ObservableTournament _tournament;
+    void fireCloseTournament( ) {
+        _tournament.getHeader( ).setStatus( TournamentStatus.CLOSED );
+    }
+
+    private final Configuration _config;
     private final I18nTranslator _i18n;
-    private final CloseTournamentDialogModel.Factory _closeTournamentDialogModelProvider;
+    private final ObservableTournament _tournament;
+    private final EventBus _eventBus;
 }

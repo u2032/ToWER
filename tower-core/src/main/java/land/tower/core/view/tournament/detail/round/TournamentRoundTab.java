@@ -14,6 +14,7 @@
 
 package land.tower.core.view.tournament.detail.round;
 
+import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 
@@ -37,6 +38,7 @@ import javafx.scene.layout.Priority;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.view.component.FaButton;
+import land.tower.data.TournamentStatus;
 
 /**
  * Created on 30/12/2017
@@ -161,6 +163,10 @@ public final class TournamentRoundTab extends Tab {
             TableRow<ObservableMatch> row = new TableRow<>( );
             row.setOnMouseClicked( event -> {
                 if ( event.getClickCount( ) == 2 && ( !row.isEmpty( ) ) ) {
+                    if ( _model.getTournament( ).getHeader( ).getStatus( ) == TournamentStatus.CLOSED ) {
+                        return;
+                    }
+
                     final ObservableMatch match = row.getItem( );
                     final SetScoreDialog setScoreDialog = _model.createSetScoreDialog( );
                     setScoreDialog.getModel( ).positionProperty( ).set( match.getPosition( ) );
@@ -220,6 +226,11 @@ public final class TournamentRoundTab extends Tab {
                                                     .isNotEqualTo( _model.getRound( ) ) ) );
         }
         hBox.getChildren( ).addAll( startRoundButton );
+
+        hBox.visibleProperty( )
+            .bind( createBooleanBinding(
+                ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
+                _model.getTournament( ).getHeader( ).statusProperty( ) ) );
 
         return hBox;
     }
