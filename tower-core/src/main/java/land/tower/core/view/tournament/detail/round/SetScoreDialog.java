@@ -186,24 +186,27 @@ final class SetScoreDialog extends Dialog<Void> {
         getDialogPane( ).setContent( grid );
 
         // Configure autofocus
-        leftWinsField.textProperty( )
-                     .addListener( ( observable, oldValue, newValue ) -> {
-                         if ( !Strings.isNullOrEmpty( newValue ) ) {
-                             Platform.runLater( drawsField::requestFocus );
-                         }
-                     } );
-        drawsField.textProperty( )
-                  .addListener( ( observable, oldValue, newValue ) -> {
-                      if ( !Strings.isNullOrEmpty( newValue ) ) {
-                          Platform.runLater( rightWinsField::requestFocus );
-                      }
-                  } );
-        rightWinsField.textProperty( )
-                      .addListener( ( observable, oldValue, newValue ) -> {
-                          if ( !Strings.isNullOrEmpty( newValue ) ) {
-                              Platform.runLater( positionField::requestFocus );
-                          }
-                      } );
+        leftWinsField.setOnKeyTyped( event -> {
+            Platform.runLater( ( ) -> {
+                if ( !Strings.isNullOrEmpty( leftWinsField.getText( ) ) ) {
+                    Platform.runLater( drawsField::requestFocus );
+                }
+            } );
+        } );
+        drawsField.setOnKeyTyped( event -> {
+            Platform.runLater( ( ) -> {
+                if ( !Strings.isNullOrEmpty( drawsField.getText( ) ) ) {
+                    Platform.runLater( rightWinsField::requestFocus );
+                }
+            } );
+        } );
+        rightWinsField.setOnKeyTyped( event -> {
+            Platform.runLater( ( ) -> {
+                if ( !Strings.isNullOrEmpty( rightWinsField.getText( ) ) ) {
+                    Platform.runLater( positionField::requestFocus );
+                }
+            } );
+        } );
 
         setOnShowing( e -> Platform.runLater( leftWinsField::requestFocus ) );
     }
