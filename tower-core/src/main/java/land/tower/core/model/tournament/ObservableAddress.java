@@ -112,6 +112,10 @@ public final class ObservableAddress {
         return _dirty;
     }
 
+    public void markAsClean( ) {
+        _dirty.set( false );
+    }
+
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
     private final Address _address;
 

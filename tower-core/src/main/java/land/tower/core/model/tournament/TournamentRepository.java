@@ -64,7 +64,10 @@ public final class TournamentRepository implements IService {
     private synchronized void saveDirtyTournaments( ) {
         _tournaments.stream( )
                     .filter( ObservableTournament::isDirty )
-                    .forEach( t -> _storage.saveTournament( t.getTournament( ) ) );
+                    .forEach( t -> {
+                        t.markAsClean( );
+                        _storage.saveTournament( t );
+                    } );
     }
 
     @Override
@@ -98,7 +101,7 @@ public final class TournamentRepository implements IService {
 
         final ObservableTournament observableTournament = new ObservableTournament( tournament );
         _tournaments.add( observableTournament );
-        _storage.saveTournament( tournament );
+        _storage.saveTournament( observableTournament );
         return observableTournament;
     }
 

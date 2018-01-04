@@ -149,6 +149,11 @@ public final class ObservableTournamentHeader {
         return _winningGameCount;
     }
 
+    public void markAsClean( ) {
+        _dirty.set( false );
+        _address.markAsClean( );
+    }
+
     private final SimpleStringProperty _title;
     private final SimpleObjectProperty<ZonedDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;

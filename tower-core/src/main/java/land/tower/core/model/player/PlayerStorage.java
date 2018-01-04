@@ -14,6 +14,7 @@
 
 package land.tower.core.model.player;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -24,10 +25,9 @@ import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,7 +57,7 @@ final class PlayerStorage implements IPlayerStorage {
             return new ArrayList<>( );
         }
         try {
-            try ( final FileReader fileReader = new FileReader( PLAYER_STORAGE.toFile( ) ) ) {
+            try ( final BufferedReader fileReader = Files.newBufferedReader( PLAYER_STORAGE, UTF_8 ) ) {
                 return new GsonBuilder( ).create( )
                                          .fromJson( fileReader, new TypeToken<List<Player>>( ) {
                                          }.getType( ) );
@@ -79,7 +79,7 @@ final class PlayerStorage implements IPlayerStorage {
                 _logger.error( "Error caught during creating directory: " + PLAYER_STORAGE.toString( ), e );
             }
 
-            try ( final BufferedWriter out = Files.newBufferedWriter( PLAYER_STORAGE_TMP, StandardCharsets.UTF_8 ) ) {
+            try ( final BufferedWriter out = Files.newBufferedWriter( PLAYER_STORAGE_TMP, UTF_8 ) ) {
                 out.write( json );
             } catch ( final IOException e ) {
                 _logger.error( "Error caught during saving storage", e );
@@ -99,7 +99,7 @@ final class PlayerStorage implements IPlayerStorage {
     private final ScheduledExecutorService _scheduledExecutorService;
 
     private static final Path PLAYER_STORAGE = Paths.get( "data", "players.json" );
-    private static final Path PLAYER_STORAGE_TMP = Paths.get( "data", "players.json.tmp" );
+    private static final Path PLAYER_STORAGE_TMP = Paths.get( "data", "players.json._COPYING_" );
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }

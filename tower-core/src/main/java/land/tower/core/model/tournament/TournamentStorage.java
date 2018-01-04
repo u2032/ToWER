@@ -20,8 +20,8 @@ import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -62,7 +62,7 @@ final class TournamentStorage implements ITournamentStorage {
                  .filter( p -> p.getFileName( ).toString( ).endsWith( ".twr" ) )
                  .filter( p -> p.toFile( ).isFile( ) )
                  .forEach( p -> {
-                     try ( final FileReader fileReader = new FileReader( p.toFile( ) ) ) {
+                     try ( final BufferedReader fileReader = Files.newBufferedReader( p, StandardCharsets.UTF_8 ) ) {
                          final Tournament t = new GsonBuilder( ).registerTypeAdapter( ZonedDateTime.class,
                                                                                       new ZonedDateTimeAdapter( ) )
                                                                 .create( )
@@ -81,7 +81,8 @@ final class TournamentStorage implements ITournamentStorage {
     }
 
     @Override
-    public void saveTournament( final Tournament tournament ) {
+    public void saveTournament( final ObservableTournament otournament ) {
+        final Tournament tournament = otournament.getTournament( );
         _scheduledExecutorService.schedule( ( ) -> {
             if ( !Files.exists( TOURNAMENT_STORAGE ) ) {
                 try {
@@ -95,10 +96,11 @@ final class TournamentStorage implements ITournamentStorage {
                                     .registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeAdapter( ) )
                                     .create( )
                                     .toJson( tournament );
-            final Path fileTmp = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr.tmp" );
+            final Path fileTmp = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr._COPYING_" );
             try ( final BufferedWriter out = Files.newBufferedWriter( fileTmp, StandardCharsets.UTF_8 ) ) {
                 out.write( json );
             } catch ( final IOException e ) {
+                otournament.markDirty( );
                 _logger.error( "Error caught during saving tournament" + tournament.getId( ) + " in storage", e );
             }
 
@@ -108,6 +110,7 @@ final class TournamentStorage implements ITournamentStorage {
                 _logger.info( "Tournament saved into: {}", file );
 
             } catch ( IOException e ) {
+                otournament.markDirty( );
                 _logger.error( "Error during saving tournament: " + tournament.getId( ), e );
             }
 

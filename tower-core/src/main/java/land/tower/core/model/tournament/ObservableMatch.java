@@ -170,6 +170,10 @@ public final class ObservableMatch {
         throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
     }
 
+    public void markAsClean( ) {
+        _dirty.set( false );
+    }
+
     private final Match _match;
 
     private final SimpleIntegerProperty _position = new SimpleIntegerProperty( );

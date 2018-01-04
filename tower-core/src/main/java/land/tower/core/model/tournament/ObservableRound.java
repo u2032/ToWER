@@ -116,6 +116,11 @@ public final class ObservableRound {
                        .findAny( );
     }
 
+    public void markAsClean( ) {
+        _matches.forEach( ObservableMatch::markAsClean );
+        _dirty.set( false );
+    }
+
     private final Round _round;
 
     private final SimpleIntegerProperty _numero = new SimpleIntegerProperty( );

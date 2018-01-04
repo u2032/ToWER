@@ -169,6 +169,17 @@ public final class ObservableTournament {
         return _currentRound;
     }
 
+    public void markAsClean( ) {
+        getHeader( ).markAsClean( );
+        getRounds( ).forEach( ObservableRound::markAsClean );
+        getTeams( ).forEach( ObservableTeam::markAsClean );
+        _dirty.set( false );
+    }
+
+    public void markDirty( ) {
+        _dirty.set( true );
+    }
+
     private final Tournament _tournament;
     private final ObservableTournamentHeader _header;
     private final ObservableList<ObservableTeam> _teams = FXCollections.observableArrayList( );

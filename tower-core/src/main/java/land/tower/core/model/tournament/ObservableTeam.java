@@ -119,6 +119,11 @@ public final class ObservableTeam {
         return _pairingFlags;
     }
 
+    public void markAsClean( ) {
+        _ranking.setDirty( false );
+        _dirty.set( false );
+    }
+
     private final Team _team;
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( false );
 
