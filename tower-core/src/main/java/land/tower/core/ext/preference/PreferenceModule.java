@@ -12,32 +12,33 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.option;
+package land.tower.core.ext.preference;
 
-import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
-import land.tower.core.ext.i18n.I18nTranslator;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
+
+import land.tower.core.ext.service.IService;
 
 /**
- * Created on 31/12/2017
+ * Created on 04/01/2018
  * @author Cédric Longo
  */
-public final class LanguageDialogModel {
+public final class PreferenceModule extends AbstractModule {
 
-    @Inject
-    LanguageDialogModel( final I18nTranslator i18n, final Configuration config ) {
-        this.i18n = i18n;
-        _config = config;
+    @Override
+    protected void configure( ) {
+        bind( PreferenceService.class ).in( Scopes.SINGLETON );
+
+        Multibinder.newSetBinder( binder( ), IService.class )
+                   .addBinding( ).to( PreferenceService.class );
     }
 
-    public I18nTranslator getI18n( ) {
-        return i18n;
+    @Provides
+    @Singleton
+    Preferences getPreferences( final PreferenceService service ) {
+        return service.getPreferences( );
     }
-
-    public Configuration getConfig( ) {
-        return _config;
-    }
-
-    private final I18nTranslator i18n;
-    private final Configuration _config;
 }

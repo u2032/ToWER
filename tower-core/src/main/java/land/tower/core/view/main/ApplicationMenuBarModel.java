@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nService;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.ext.preference.Preferences;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.model.tournament.TournamentRepository;
 import land.tower.core.view.about.AboutDialog;
@@ -48,11 +49,13 @@ final class ApplicationMenuBarModel {
                              final Provider<AboutDialog> aboutDialogProvider,
                              final Provider<LanguageDialog> languageDialogProvider,
                              final Factory resertRoundDialogFactory,
-                             final I18nService i18nService ) {
+                             final I18nService i18nService,
+                             final Preferences preferences ) {
         _eventBus = eventBus;
         _languageDialogProvider = languageDialogProvider;
         _resertRoundDialogFactory = resertRoundDialogFactory;
         _i18nService = i18nService;
+        _preferences = preferences;
         _eventBus.register( this );
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
@@ -110,6 +113,7 @@ final class ApplicationMenuBarModel {
                                .showAndWait( )
                                .ifPresent( lang -> {
                                    _i18nService.loadAllBundles( lang.getCode( ), null );
+                                   _preferences.save( "language", lang.getCode( ) );
                                } );
     }
 
@@ -125,4 +129,6 @@ final class ApplicationMenuBarModel {
     private final SimpleObjectProperty<ObservableTournament> _currentTournament = new SimpleObjectProperty<>( );
     private final Factory _resertRoundDialogFactory;
     private final I18nService _i18nService;
+
+    private final Preferences _preferences;
 }

@@ -12,32 +12,33 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.option;
+package land.tower.core.ext.preference;
 
-import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
-import land.tower.core.ext.i18n.I18nTranslator;
+import com.google.common.collect.Maps;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
- * Created on 31/12/2017
+ * Created on 04/01/2018
  * @author Cédric Longo
  */
-public final class LanguageDialogModel {
+public final class Preferences {
 
-    @Inject
-    LanguageDialogModel( final I18nTranslator i18n, final Configuration config ) {
-        this.i18n = i18n;
-        _config = config;
+    public Preferences( ) {
     }
 
-    public I18nTranslator getI18n( ) {
-        return i18n;
+    public Optional<String> getString( final String key ) {
+        return Optional.ofNullable( _items.get( key ) );
     }
 
-    public Configuration getConfig( ) {
-        return _config;
+    public void save( final String key, final Object value ) {
+        _items.put( key, value.toString( ) );
     }
 
-    private final I18nTranslator i18n;
-    private final Configuration _config;
+    public Map<String, String> getItems( ) {
+        return _items;
+    }
+
+    private final Map<String, String> _items = Maps.newConcurrentMap( );
 }

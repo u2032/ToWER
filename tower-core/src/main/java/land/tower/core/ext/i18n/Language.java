@@ -14,6 +14,9 @@
 
 package land.tower.core.ext.i18n;
 
+import java.util.Optional;
+import java.util.stream.Stream;
+
 /**
  * Created on 31/12/2017
  * @author Cédric Longo
@@ -35,6 +38,12 @@ public enum Language {
     @Override
     public String toString( ) {
         return _name;
+    }
+
+    public static Optional<Language> fromCode( final String code ) {
+        return Stream.of( values( ) )
+                     .filter( l -> l.getCode( ).equals( code ) )
+                     .findAny( );
     }
 
     private final String _name;

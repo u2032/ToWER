@@ -18,6 +18,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +46,11 @@ import land.tower.core.ext.config.ConfigurationModule;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.event.EventModule;
 import land.tower.core.ext.i18n.I18nModule;
+import land.tower.core.ext.i18n.I18nService;
 import land.tower.core.ext.inject.ModuleResolver;
 import land.tower.core.ext.logger.Loggers;
+import land.tower.core.ext.preference.PreferenceModule;
+import land.tower.core.ext.preference.Preferences;
 import land.tower.core.ext.service.ServiceManager;
 import land.tower.core.ext.service.ServiceModule;
 import land.tower.core.ext.thread.ThreadingModule;
@@ -58,6 +62,8 @@ import land.tower.core.model.tournament.TournamentModule;
 import land.tower.core.view.home.HomepageViewModule;
 import land.tower.core.view.main.ApplicationScene;
 import land.tower.core.view.main.MainViewModule;
+import land.tower.core.view.option.LanguageDialog;
+import land.tower.core.view.option.LanguageDialogModel;
 import land.tower.core.view.player.PlayerViewModule;
 import land.tower.core.view.tournament.detail.TournamentViewModule;
 import land.tower.core.view.tournament.management.TournamentManagementViewModule;
@@ -85,6 +91,11 @@ public final class Application extends javafx.application.Application {
                 if ( !_ready.get( ) ) {
                     return;
                 }
+
+                executor.schedule( ( ) -> Platform.runLater( ( ) -> askForLanguage( injector ) ),
+                                   5, TimeUnit.SECONDS );
+                executor.shutdown( );
+
                 displayApplicationScene( injector.getInstance( ApplicationScene.class ),
                                          injector.getInstance( ServiceManager.class ),
                                          configuration );
@@ -98,8 +109,6 @@ public final class Application extends javafx.application.Application {
                     primaryStage.close( );
                 } );
                 fadeSplash.play( );
-
-                executor.shutdown( );
             } ), 4, 2, TimeUnit.SECONDS );
 
             /* Start loading app */
@@ -126,6 +135,21 @@ public final class Application extends javafx.application.Application {
         } catch ( final Exception e ) {
             _logger.error( "Exception caught during startup", e );
             System.exit( 1 );
+        }
+    }
+
+    private void askForLanguage( final Injector injector ) {
+        final Preferences preferences = injector.getInstance( Preferences.class );
+        final Provider<LanguageDialogModel> languageDialogModelProvider =
+            injector.getProvider( LanguageDialogModel.class );
+        final I18nService i18n = injector.getInstance( I18nService.class );
+        if ( !preferences.getString( "language" ).isPresent( ) ) {
+            new LanguageDialog( languageDialogModelProvider.get( ) )
+                .showAndWait( )
+                .ifPresent( language -> {
+                    i18n.loadAllBundles( language.getCode( ), null );
+                    preferences.save( "language", language.getCode( ) );
+                } );
         }
     }
 
@@ -168,6 +192,7 @@ public final class Application extends javafx.application.Application {
 
     private static ModuleResolver modules( ) {
         return ModuleResolver.withModules( new ConfigurationModule( "config.properties" ),
+                                           new PreferenceModule( ),
                                            new MainViewModule( ),
                                            new HomepageViewModule( ),
                                            new ThreadingModule( ),

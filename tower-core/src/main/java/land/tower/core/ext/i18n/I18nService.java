@@ -25,6 +25,7 @@ import java.util.Properties;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.logger.Loggers;
+import land.tower.core.ext.preference.Preferences;
 import land.tower.core.ext.service.IService;
 
 /**
@@ -34,14 +35,19 @@ import land.tower.core.ext.service.IService;
 public final class I18nService implements IService, Provider<I18nTranslator> {
 
     @Inject
-    public I18nService( ) {
+    public I18nService( final Preferences preferences ) {
+        _preferences = preferences;
     }
 
     @Override
     public void start( ) {
         final Locale defaultLocale = Locale.getDefault( );
         _logger.info( "Default Locale is: {}", defaultLocale );
+        loadAllBundles( Language.EN.getCode( ), null );
         loadAllBundles( defaultLocale.getLanguage( ), defaultLocale.getCountry( ) );
+        _preferences.getString( "language" )
+                    .ifPresent( langCode -> Language.fromCode( langCode )
+                                                    .ifPresent( lang -> loadAllBundles( lang.getCode( ), null ) ) );
     }
 
     public void loadAllBundles( final String langCode, final String countryCode ) {
@@ -50,9 +56,6 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
     }
 
     private void loadBundle( final String bundle, final String langCode, final String countryCode ) {
-        load( "i18n/" + bundle + "_en.properties" )
-            .ifPresent( _i18nTranslator::registerEntries );
-
         load( "i18n/" + bundle + "_" + langCode + ".properties" )
             .ifPresent( _i18nTranslator::registerEntries );
 
@@ -89,6 +92,7 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
     }
 
     private final I18nTranslator _i18nTranslator = new I18nTranslator( );
+    private final Preferences _preferences;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }
