@@ -14,10 +14,12 @@
 
 package land.tower.core.view.about;
 
+import javafx.geometry.VPos;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
@@ -49,6 +51,18 @@ public final class AboutDialog extends Dialog<Void> {
         final Label info = new Label( );
         info.setText( config.get( "version" ) );
         grid.add( info, 1, 0 );
+
+        final Label licenceLabel = new Label( );
+        licenceLabel.textProperty( ).bind( translator.get( "menu.about.licence" ) );
+        licenceLabel.setStyle( "-fx-font-weight: bold" );
+        GridPane.setValignment( licenceLabel, VPos.TOP );
+        grid.add( licenceLabel, 0, 1 );
+
+        final TextArea licenceText = new TextArea( );
+        licenceText.setWrapText( true );
+        licenceText.setEditable( false );
+        licenceText.setText( translator.get( "about.licence.third.party" ).getValue( ) );
+        grid.add( licenceText, 1, 1 );
 
         getDialogPane( ).setContent( grid );
     }
