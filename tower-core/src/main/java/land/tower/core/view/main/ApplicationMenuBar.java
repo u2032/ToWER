@@ -74,7 +74,7 @@ final class ApplicationMenuBar extends MenuBar {
         final MenuItem deleteRound = new FaMenuItem( FontAwesome.WARNING, "black" );
         deleteRound.textProperty( ).bind( _model.getI18n( ).get( "menu.round.delete" ) );
         deleteRound.setOnAction( event -> new DeleteRoundDialog( _model.createResetRoundDialogModel( ) ).show( ) );
-
+        deleteRound.setDisable( true );
         _model.currentTournamentProperty( )
               .addListener( ( observable, oldValue, newValue ) -> {
                   deleteRound
