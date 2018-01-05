@@ -51,7 +51,10 @@ final class ApplicationStatusBarModel {
 
     @Subscribe
     public void informationEvent( final InformationEvent event ) {
-        Platform.runLater( ( ) -> taskInfoProperty( ).setValue( event.getText( ) ) );
+        Platform.runLater( ( ) -> {
+            taskInfoProperty( ).setValue( "" );
+            taskInfoProperty( ).setValue( event.getText( ) );
+        } );
     }
 
     @Subscribe
