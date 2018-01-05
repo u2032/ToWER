@@ -24,6 +24,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -31,6 +32,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -39,6 +41,7 @@ import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
+import land.tower.core.view.component.FaButton;
 import land.tower.data.PairingMode;
 import land.tower.data.TournamentStatus;
 
@@ -59,6 +62,36 @@ public final class TournamentInformationTab extends Tab {
         icon.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
         setGraphic( icon );
 
+        final BorderPane main = new BorderPane( );
+        main.setTop( buildActionBox( ) );
+        main.setCenter( buildTournamentInfo( ) );
+
+        setContent( main );
+    }
+
+    private HBox buildActionBox( ) {
+        final HBox hBox = new HBox( );
+        hBox.setSpacing( 20 );
+        hBox.setPadding( new Insets( 10 ) );
+        hBox.setAlignment( Pos.CENTER_RIGHT );
+
+        final FaButton startTournamentButton = new FaButton( FontAwesome.SAVE, "white" );
+        startTournamentButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.info.save.as.preference" ) );
+        startTournamentButton.getStyleClass( ).add( "rich-button" );
+        startTournamentButton.getStyleClass( ).add( "action-button" );
+        startTournamentButton.setOnAction( event -> _model.fireSaveAsPreference( ) );
+        hBox.getChildren( ).add( startTournamentButton );
+
+        hBox.visibleProperty( )
+            .bind( createBooleanBinding(
+                ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
+                _model.getTournament( ).getHeader( ).statusProperty( ) ) );
+
+        return hBox;
+    }
+
+    private Node buildTournamentInfo( ) {
+
         final VBox mainPane = new VBox( );
         mainPane.setAlignment( Pos.CENTER );
         mainPane.setSpacing( 10 );
@@ -66,7 +99,6 @@ public final class TournamentInformationTab extends Tab {
 
         final ScrollPane scrollPane = new ScrollPane( mainPane );
         scrollPane.setFitToWidth( true );
-        setContent( scrollPane );
 
         final GridPane grid = new GridPane( );
         grid.setAlignment( Pos.TOP_CENTER );
@@ -418,6 +450,8 @@ public final class TournamentInformationTab extends Tab {
 
         // TODO Judge
         mainPane.getChildren( ).add( grid );
+
+        return scrollPane;
     }
 
     private final TournamentInformationTabModel _model;

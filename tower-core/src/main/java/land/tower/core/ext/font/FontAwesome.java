@@ -39,5 +39,5 @@ public final class FontAwesome {
     public static final String LANGUAGE = "\uf086";
     public static final String LADDER = "\uf091";
     public static final String LOCK = "\uf023";
-
+    public static final String SAVE = "\uf0c7";
 }

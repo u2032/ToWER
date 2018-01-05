@@ -22,12 +22,14 @@ import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
 import land.tower.core.ext.logger.Loggers;
+import land.tower.core.ext.preference.Preferences;
 import land.tower.core.ext.service.IService;
 import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.data.Address;
@@ -44,9 +46,11 @@ public final class TournamentRepository implements IService {
 
     @Inject
     public TournamentRepository( final ITournamentStorage storage,
-                                 final @ApplicationThread ScheduledExecutorService scheduler ) {
+                                 final @ApplicationThread ScheduledExecutorService scheduler,
+                                 final Preferences preferences ) {
         _storage = storage;
         _scheduler = scheduler;
+        _preferences = preferences;
     }
 
     @Override
@@ -76,6 +80,9 @@ public final class TournamentRepository implements IService {
     }
 
     public ObservableTournament create( ) {
+        final Optional<TournamentHeader> pref = _preferences.getFromJson( "tournament.info",
+                                                                          TournamentHeader.class );
+
         final Tournament tournament = new Tournament( );
         tournament.setId( UUID.randomUUID( ) );
         tournament.setKey( UUID.randomUUID( ) );
@@ -84,19 +91,19 @@ public final class TournamentRepository implements IService {
         header.setTitle( "" );
         header.setDate( ZonedDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ) );
         header.setStatus( TournamentStatus.NOT_CONFIGURED );
-        header.setPairingMode( PairingMode.SWISS );
-        header.setWinningGameCount( 1 );
-        header.setTeamSize( 1 );
-        header.setMatchDuration( 30 );
+        header.setPairingMode( pref.map( TournamentHeader::getPairingMode ).orElse( PairingMode.SWISS ) );
+        header.setWinningGameCount( pref.map( TournamentHeader::getWinningGameCount ).orElse( 1 ) );
+        header.setTeamSize( pref.map( TournamentHeader::getTeamSize ).orElse( 1 ) );
+        header.setMatchDuration( pref.map( TournamentHeader::getMatchDuration ).orElse( 30 ) );
         tournament.setHeader( header );
 
         final Address address = new Address( );
-        address.setName( "" );
-        address.setLine1( "" );
-        address.setLine2( "" );
-        address.setPostalCode( "" );
-        address.setCity( "" );
-        address.setCountry( "" );
+        address.setName( pref.map( t -> t.getAddress( ).getName( ) ).orElse( "" ) );
+        address.setLine1( pref.map( t -> t.getAddress( ).getLine1( ) ).orElse( "" ) );
+        address.setLine2( pref.map( t -> t.getAddress( ).getLine2( ) ).orElse( "" ) );
+        address.setPostalCode( pref.map( t -> t.getAddress( ).getPostalCode( ) ).orElse( "" ) );
+        address.setCity( pref.map( t -> t.getAddress( ).getCity( ) ).orElse( "" ) );
+        address.setCountry( pref.map( t -> t.getAddress( ).getCountry( ) ).orElse( "" ) );
         header.setAddress( address );
 
         final ObservableTournament observableTournament = new ObservableTournament( tournament );
@@ -119,6 +126,7 @@ public final class TournamentRepository implements IService {
 
     private final ITournamentStorage _storage;
     private final ScheduledExecutorService _scheduler;
+    private final Preferences _preferences;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }
