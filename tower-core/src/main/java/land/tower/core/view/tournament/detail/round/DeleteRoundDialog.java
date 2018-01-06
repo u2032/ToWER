@@ -18,6 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 
 /**
  * Created on 31/12/2017
@@ -28,6 +29,7 @@ public final class DeleteRoundDialog extends Alert {
     public DeleteRoundDialog( final DeleteRoundDialogModel model ) {
         super( AlertType.WARNING );
         getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
+        model.getConfig( ).setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
 
         titleProperty( ).bind( model.getI18n( ).get( "tournament.round.delete.title" ) );
         headerTextProperty( ).bind( model.getI18n( ).get( "tournament.round.delete.title" ) );

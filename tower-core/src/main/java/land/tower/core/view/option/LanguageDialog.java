@@ -15,6 +15,7 @@
 package land.tower.core.view.option;
 
 import javafx.scene.control.ChoiceDialog;
+import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.Language;
 
@@ -27,6 +28,7 @@ public final class LanguageDialog extends ChoiceDialog<Language> {
     @Inject
     public LanguageDialog( LanguageDialogModel model ) {
         getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
+        model.getConfig( ).setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
 
         titleProperty( ).bind( model.getI18n( ).get( "option.language.title" ) );
         headerTextProperty( ).bind( model.getI18n( ).get( "option.language.message" ) );

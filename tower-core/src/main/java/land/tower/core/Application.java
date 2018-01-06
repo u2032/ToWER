@@ -15,7 +15,6 @@
 package land.tower.core;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -30,12 +29,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.IntStream;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -163,16 +160,16 @@ public final class Application extends javafx.application.Application {
         scene.getStylesheets( ).add( configuration.getApplicationStyle( ) );
 
         stage.setMaximized( true );
-        stage.setTitle( "ToWER" );
+        stage.setTitle( configuration.getTitle( ) );
         stage.setScene( scene );
         stage.setOnCloseRequest( value -> serviceManager.stopAll( ) );
 
-        setIcons( stage );
+        configuration.setIcons( stage );
         stage.show( );
     }
 
     private Pane displaySplashScreen( final Stage stage, final Configuration configuration ) {
-        stage.setTitle( "ToWER - Splashscreen" );
+        stage.setTitle( configuration.getTitle( ) + " - Splashscreen" );
         stage.setResizable( false );
         stage.initStyle( StageStyle.TRANSPARENT );
         stage.setAlwaysOnTop( true );
@@ -183,23 +180,10 @@ public final class Application extends javafx.application.Application {
         pane.setEffect( Effects.dropShadow( ) );
 
         stage.setScene( new Scene( pane, Color.TRANSPARENT ) );
-        setIcons( stage );
+        configuration.setIcons( stage );
         stage.show( );
 
         return pane;
-    }
-
-    private void setIcons( final Stage stage ) {
-        IntStream.of( 16, 24, 32, 48, 64, 96, 128, 256, 512 )
-                 .forEach( size -> {
-                     final InputStream imStream = getClass( ).getClassLoader( )
-                                                             .getResourceAsStream(
-                                                                 format( "img/icons/icon_%1$sx%1$s.png", size ) );
-                     if ( imStream == null ) {
-                         return;
-                     }
-                     stage.getIcons( ).add( new Image( imStream, size, size, true, true ) );
-                 } );
     }
 
     private void loadFont( final String name ) {

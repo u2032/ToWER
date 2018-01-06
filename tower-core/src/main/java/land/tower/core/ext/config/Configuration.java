@@ -14,6 +14,8 @@
 
 package land.tower.core.ext.config;
 
+import static java.lang.String.format;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -21,9 +23,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javafx.scene.image.Image;
+import javafx.stage.Stage;
 import land.tower.core.ext.logger.Loggers;
 
 /**
@@ -70,9 +77,37 @@ public final class Configuration {
         return getClass( ).getClassLoader( ).getResource( get( "application.style" ) ).toExternalForm( );
     }
 
+    public void setIcons( final Stage stage ) {
+        if ( _icons != null ) {
+            stage.getIcons( ).setAll( _icons );
+            return;
+        }
+        _icons = IntStream.of( 16, 24, 32, 48, 64, 96, 128, 256, 512 )
+                          .mapToObj( size -> {
+                              final InputStream imStream = getClass( ).getClassLoader( )
+                                                                      .getResourceAsStream(
+                                                                          format( "img/icons/icon_%1$sx%1$s.png",
+                                                                                  size ) );
+                              if ( imStream == null ) {
+                                  return Optional.<Image>empty( );
+                              }
+                              return Optional.of( new Image( imStream, size, size, true, true ) );
+                          } )
+                          .filter( Optional::isPresent )
+                          .map( Optional::get )
+                          .collect( Collectors.toList( ) );
+
+        stage.getIcons( ).setAll( _icons );
+    }
+
     public String get( final String key ) {
         return _config.get( key );
     }
 
+    public String getTitle( ) {
+        return get( "title" );
+    }
+
     private final Map<String, String> _config = Maps.newHashMap( );
+    private List<Image> _icons;
 }

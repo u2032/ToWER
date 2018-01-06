@@ -21,6 +21,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
@@ -33,6 +34,9 @@ public final class AboutDialog extends Dialog<Void> {
 
     @Inject
     public AboutDialog( final Configuration config, final I18nTranslator translator ) {
+        getDialogPane( ).getStylesheets( ).add( config.getApplicationStyle( ) );
+        config.setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
+
         final ButtonType saveButtonType =
             new ButtonType( translator.get( "action.ok" ).get( ).toUpperCase( ), ButtonData.OK_DONE );
         getDialogPane( ).getButtonTypes( ).addAll( saveButtonType );

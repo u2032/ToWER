@@ -31,6 +31,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import land.tower.core.ext.font.FontAwesome;
 
@@ -42,6 +43,7 @@ final class SetScoreDialog extends Dialog<Void> {
 
     public SetScoreDialog( final SetScoreDialogModel model ) {
         getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
+        model.getConfig( ).setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
 
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "tournament.round.scoring" ) );

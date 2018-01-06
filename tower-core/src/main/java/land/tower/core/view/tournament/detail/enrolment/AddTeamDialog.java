@@ -33,6 +33,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import land.tower.core.ext.font.FontAwesome;
@@ -48,6 +49,7 @@ final class AddTeamDialog extends Dialog<Team> {
 
     public AddTeamDialog( final AddTeamDialogModel model ) {
         getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
+        model.getConfig( ).setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
 
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "team.add.title" ) );
