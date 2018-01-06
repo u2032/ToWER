@@ -185,8 +185,9 @@ final class AddPlayerDialog extends Dialog<Player> {
         setResultConverter( param -> {
             if ( param == saveButtonType ) {
                 return new Player( _model.getPlayerNumero( ),
-                                   _model.getPlayerFirstname( ),
-                                   _model.getPlayerLastname( ),
+                                   _model.getPlayerFirstname( ).trim( ).substring( 0, 1 ).toUpperCase( )
+                                   + _model.getPlayerFirstname( ).trim( ).substring( 1 ).toLowerCase( ),
+                                   _model.getPlayerLastname( ).trim( ).toUpperCase( ),
                                    _model.getPlayerBirthday( ).toString( ),
                                    _model.getPlayerNationality( ) );
             }

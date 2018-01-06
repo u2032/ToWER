@@ -40,18 +40,18 @@ final class AddPlayerDialogModel {
         _i18n = translator;
         _config = config;
 
-        _playerNumero.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
-        _playerLastname.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
-        _playerFirstname.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
-        _playerBirthday.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
-        _playerNationality.addListener( ( observable, oldV, newV ) -> checkValidty( ) );
-        _playerNumeroValidity.addListener( ( observable, oldValue, newValue ) -> checkValidty( ) );
+        _playerNumero.addListener( ( observable, oldV, newV ) -> checkValidity( ) );
+        _playerLastname.addListener( ( observable, oldV, newV ) -> checkValidity( ) );
+        _playerFirstname.addListener( ( observable, oldV, newV ) -> checkValidity( ) );
+        _playerBirthday.addListener( ( observable, oldV, newV ) -> checkValidity( ) );
+        _playerNationality.addListener( ( observable, oldV, newV ) -> checkValidity( ) );
+        _playerNumeroValidity.addListener( ( observable, oldValue, newValue ) -> checkValidity( ) );
 
         _playerNumeroValidator.generate( ).ifPresent( _playerNumero::set );
-        checkValidty( );
+        checkValidity( );
     }
 
-    private void checkValidty( ) {
+    private void checkValidity( ) {
         if ( _playerNumero.get( ) == null ) {
             _isValid.set( false );
             _playerNumeroValidity.set( true );
