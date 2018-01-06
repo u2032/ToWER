@@ -18,6 +18,7 @@ import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -86,6 +87,9 @@ public final class TournamentRoundTab extends Tab {
         posCol.textProperty( ).bind( _model.getI18n( ).get( "match.position" ) );
         posCol.setCellValueFactory( new PropertyValueFactory<>( "position" ) );
         tableView.getColumns( ).add( posCol );
+        tableView.getSortOrder( ).add( posCol );
+        Platform.runLater( tableView::sort );
+
 
         final TableColumn<ObservableMatch, String> teamLeftCol = new TableColumn<>( );
         teamLeftCol.setEditable( false );
