@@ -68,15 +68,12 @@ public final class TournamentRoundTab extends Tab {
         final TableView<ObservableMatch> tableView = new TableView<>( );
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
 
-        final FilteredList<ObservableMatch> itemList = new FilteredList<>( _model.getRound( ).getMatches( ) );
-        itemList.predicateProperty( ).bind( Bindings.createObjectBinding( ( ) -> {
-            if ( _model.filterNotEmptyScoreProperty( ).get( ) ) {
-                return m -> !m.hasScore( );
-            }
-            return t -> true;
-        }, _model.filterNotEmptyScoreProperty( ) ) );
+        _itemList = new FilteredList<>( _model.getRound( ).getMatches( ) );
+        _model.filterNotEmptyScoreProperty( )
+              .addListener( ( observable, oldValue, newValue ) -> resetFilter( ) );
+        resetFilter( );
 
-        final SortedList<ObservableMatch> sortedList = new SortedList<>( itemList );
+        final SortedList<ObservableMatch> sortedList = new SortedList<>( _itemList );
         sortedList.comparatorProperty( ).bind( tableView.comparatorProperty( ) );
         tableView.itemsProperty( ).bind( new SimpleListProperty<>( sortedList ) );
 
@@ -89,7 +86,6 @@ public final class TournamentRoundTab extends Tab {
         tableView.getColumns( ).add( posCol );
         tableView.getSortOrder( ).add( posCol );
         Platform.runLater( tableView::sort );
-
 
         final TableColumn<ObservableMatch, String> teamLeftCol = new TableColumn<>( );
         teamLeftCol.setEditable( false );
@@ -179,6 +175,7 @@ public final class TournamentRoundTab extends Tab {
                         setScoreDialog.getModel( ).drawsProperty( ).set( match.getScoreDraw( ) );
                         setScoreDialog.getModel( ).rightWinsProperty( ).set( match.getScoreRight( ) );
                     }
+                    setScoreDialog.setOnCloseRequest( e -> Platform.runLater( this::resetFilter ) );
                     setScoreDialog.show( );
                 }
             } );
@@ -190,6 +187,16 @@ public final class TournamentRoundTab extends Tab {
         tableView.setPlaceholder( emptyLabel );
 
         return tableView;
+    }
+
+    private void resetFilter( ) {
+        if ( _itemList == null ) {
+            return;
+        }
+        _itemList.setPredicate( m -> true );
+        if ( _model.filterNotEmptyScoreProperty( ).get( ) ) {
+            _itemList.setPredicate( m -> !m.hasScore( ) );
+        }
     }
 
     private HBox buildActionBox( ) {
@@ -212,7 +219,9 @@ public final class TournamentRoundTab extends Tab {
         setScoreButton.getStyleClass( ).add( "rich-button" );
         setScoreButton.getStyleClass( ).add( "action-button" );
         setScoreButton.setOnAction( event -> {
-            _model.createSetScoreDialog( ).show( );
+            final SetScoreDialog setScoreDialog = _model.createSetScoreDialog( );
+            setScoreDialog.setOnCloseRequest( e -> Platform.runLater( this::resetFilter ) );
+            setScoreDialog.show( );
         } );
         hBox.getChildren( ).add( setScoreButton );
 
@@ -244,4 +253,5 @@ public final class TournamentRoundTab extends Tab {
     }
 
     private final TournamentRoundTabModel _model;
+    private FilteredList<ObservableMatch> _itemList;
 }
