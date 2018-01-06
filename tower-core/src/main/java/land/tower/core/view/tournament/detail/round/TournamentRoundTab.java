@@ -17,6 +17,7 @@ package land.tower.core.view.tournament.detail.round;
 import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
+import static land.tower.core.ext.binding.Strings.toUpperCase;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -215,7 +216,7 @@ public final class TournamentRoundTab extends Tab {
         hBox.getChildren( ).add( spacing );
 
         final FaButton setScoreButton = new FaButton( FontAwesome.PLUS, "white" );
-        setScoreButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.scoring" ) );
+        setScoreButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.round.scoring" ) ) );
         setScoreButton.getStyleClass( ).add( "rich-button" );
         setScoreButton.getStyleClass( ).add( "action-button" );
         setScoreButton.setOnAction( event -> {
@@ -226,7 +227,7 @@ public final class TournamentRoundTab extends Tab {
         hBox.getChildren( ).add( setScoreButton );
 
         final FaButton startRoundButton = new FaButton( FontAwesome.LIGHTNING, "white" );
-        startRoundButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.start.round" ) );
+        startRoundButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.round.start.round" ) ) );
         startRoundButton.getStyleClass( ).add( "rich-button" );
         startRoundButton.getStyleClass( ).add( "action-button" );
         startRoundButton.setOnAction( event -> _model.fireStartNewRound( ) );

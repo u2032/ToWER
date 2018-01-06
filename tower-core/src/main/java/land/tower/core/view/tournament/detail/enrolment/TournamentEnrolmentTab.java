@@ -16,6 +16,7 @@ package land.tower.core.view.tournament.detail.enrolment;
 
 import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
+import static land.tower.core.ext.binding.Strings.toUpperCase;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -76,7 +77,8 @@ public final class TournamentEnrolmentTab extends Tab {
         hBox.setAlignment( Pos.CENTER_RIGHT );
 
         final FaButton startTournamentButton = new FaButton( FontAwesome.LIGHTNING, "white" );
-        startTournamentButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.enrolment.start.tournament" ) );
+        startTournamentButton.textProperty( ).bind(
+            toUpperCase( _model.getI18n( ).get( "tournament.enrolment.start.tournament" ) ) );
         startTournamentButton.getStyleClass( ).add( "rich-button" );
         startTournamentButton.getStyleClass( ).add( "action-button" );
         startTournamentButton.setOnAction( event -> _model.fireStartTournament( ) );
@@ -89,7 +91,7 @@ public final class TournamentEnrolmentTab extends Tab {
         hBox.getChildren( ).add( startTournamentButton );
 
         final FaButton addTeamButton = new FaButton( FontAwesome.PLUS, "white" );
-        addTeamButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.enrolment.add.team" ) );
+        addTeamButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.enrolment.add.team" ) ) );
         addTeamButton.getStyleClass( ).add( "rich-button" );
         addTeamButton.getStyleClass( ).add( "action-button" );
         addTeamButton.setOnAction( event -> {

@@ -15,6 +15,7 @@
 package land.tower.core.view.tournament.detail.information;
 
 import static javafx.beans.binding.Bindings.createBooleanBinding;
+import static land.tower.core.ext.binding.Strings.toUpperCase;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -77,7 +78,8 @@ public final class TournamentInformationTab extends Tab {
         hBox.setAlignment( Pos.CENTER_RIGHT );
 
         final FaButton startTournamentButton = new FaButton( FontAwesome.SAVE, "white" );
-        startTournamentButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.info.save.as.preference" ) );
+        startTournamentButton.textProperty( ).bind(
+            toUpperCase( _model.getI18n( ).get( "tournament.info.save.as.preference" ) ) );
         startTournamentButton.getStyleClass( ).add( "rich-button" );
         startTournamentButton.getStyleClass( ).add( "action-button" );
         startTournamentButton.setOnAction( event -> _model.fireSaveAsPreference( ) );

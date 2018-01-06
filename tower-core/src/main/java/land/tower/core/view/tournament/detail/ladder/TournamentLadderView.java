@@ -16,6 +16,7 @@ package land.tower.core.view.tournament.detail.ladder;
 
 import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
+import static land.tower.core.ext.binding.Strings.toUpperCase;
 
 import java.util.stream.Collectors;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -141,7 +142,7 @@ public final class TournamentLadderView extends Tab {
         hBox.setAlignment( Pos.CENTER_RIGHT );
 
         final FaButton chainButton = new FaButton( FontAwesome.CONTINUE, "white" );
-        chainButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.chain" ) );
+        chainButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.round.chain" ) ) );
         chainButton.getStyleClass( ).add( "rich-button" );
         chainButton.getStyleClass( ).add( "action-button" );
         chainButton.setOnAction( event -> {
@@ -152,7 +153,7 @@ public final class TournamentLadderView extends Tab {
         hBox.getChildren( ).add( chainButton );
 
         final FaButton closeButton = new FaButton( FontAwesome.LOCK, "white" );
-        closeButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.close" ) );
+        closeButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.round.close" ) ) );
         closeButton.getStyleClass( ).add( "rich-button" );
         closeButton.getStyleClass( ).add( "dangerous-button" );
         closeButton.setOnAction( event -> {
