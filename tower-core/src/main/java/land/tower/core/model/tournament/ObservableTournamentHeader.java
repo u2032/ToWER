@@ -21,6 +21,7 @@ import javafx.beans.property.SimpleStringProperty;
 import land.tower.data.PairingMode;
 import land.tower.data.TournamentHeader;
 import land.tower.data.TournamentStatus;
+import land.tower.data.TournamentType;
 
 /**
  * Created on 17/12/2017
@@ -60,6 +61,10 @@ public final class ObservableTournamentHeader {
         _winningGameCount.addListener(
             ( obs, oldValue, newValue ) -> header.setWinningGameCount( newValue != null ? newValue : 1 ) );
         _winningGameCount.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
+        _type = new SimpleObjectProperty<>( header.getTournamentType( ) );
+        _type.addListener( ( obs, oldValue, newValue ) -> header.setTournamentType( newValue ) );
+        _type.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
         _address = new ObservableAddress( _header.getAddress( ) );
 
@@ -169,6 +174,17 @@ public final class ObservableTournamentHeader {
         this._winningGameCount.set( winningGameCount );
     }
 
+    public void setType( final TournamentType type ) {
+        this._type.set( type );
+    }
+
+    public TournamentType getType( ) {
+        return _type.get( );
+    }
+
+    public SimpleObjectProperty<TournamentType> typeProperty( ) {
+        return _type;
+    }
 
     public void markAsClean( ) {
         _dirty.set( false );
@@ -178,6 +194,7 @@ public final class ObservableTournamentHeader {
     private final SimpleStringProperty _title;
     private final SimpleObjectProperty<ZonedDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
+    private final SimpleObjectProperty<TournamentType> _type;
     private final SimpleObjectProperty<PairingMode> _pairingMode;
     private final SimpleObjectProperty<Integer> _matchDuration;
     private final SimpleObjectProperty<Integer> _teamSize;

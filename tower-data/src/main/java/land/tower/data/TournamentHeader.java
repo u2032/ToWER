@@ -54,6 +54,9 @@ public final class TournamentHeader {
     @SerializedName( "teamSize" )
     private int _teamSize;
 
+    @SerializedName( "type" )
+    private TournamentType _tournamentType;
+
     public TournamentStatus getStatus( ) {
         return _status;
     }
@@ -132,5 +135,13 @@ public final class TournamentHeader {
 
     public void setWinningGameCount( final int winningGameCount ) {
         _winningGameCount = winningGameCount;
+    }
+
+    public TournamentType getTournamentType( ) {
+        return _tournamentType;
+    }
+
+    public void setTournamentType( final TournamentType tournamentType ) {
+        _tournamentType = tournamentType;
     }
 }

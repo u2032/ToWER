@@ -46,6 +46,7 @@ import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.view.component.FaButton;
 import land.tower.data.PairingMode;
 import land.tower.data.TournamentStatus;
+import land.tower.data.TournamentType;
 
 /**
  * Created on 20/12/2017
@@ -251,6 +252,29 @@ public final class TournamentInformationTab extends Tab {
         configurationTitle.setAlignment( Pos.CENTER );
         configurationTitle.setPrefWidth( WIDTH );
         grid.add( configurationTitle, 0, line, 2, 1 );
+
+        line++;
+        final ChoiceBox<TournamentType> typeField = new ChoiceBox<>( );
+        typeField.disableProperty( ).bind( tournamentOpened.not( ) );
+        typeField.itemsProperty( )
+                 .bind( new SimpleListProperty<>( FXCollections.observableArrayList( TournamentType.values( ) ) ) );
+        typeField.setConverter( new StringConverter<TournamentType>( ) {
+            @Override
+            public String toString( final TournamentType object ) {
+                return _model.getI18n( ).get( "type." + object.name( ) ).get( );
+            }
+
+            @Override
+            public TournamentType fromString( final String string ) {
+                return null;
+            }
+        } );
+        typeField.valueProperty( ).bindBidirectional( _model.getTournament( ).getHeader( ).typeProperty( ) );
+        final Label typeLabel = new Label( );
+        typeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.type" ) );
+        typeLabel.setLabelFor( typeLabel );
+        grid.add( typeLabel, 0, line );
+        grid.add( typeField, 1, line );
 
         line++;
         final ChoiceBox<PairingMode> pairingField = new ChoiceBox<>( );

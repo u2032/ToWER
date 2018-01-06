@@ -37,6 +37,7 @@ import land.tower.data.PairingMode;
 import land.tower.data.Tournament;
 import land.tower.data.TournamentHeader;
 import land.tower.data.TournamentStatus;
+import land.tower.data.TournamentType;
 
 /**
  * Created on 16/12/2017
@@ -89,6 +90,7 @@ public final class TournamentRepository implements IService {
 
         final TournamentHeader header = new TournamentHeader( );
         header.setTitle( "" );
+        header.setTournamentType( TournamentType.LOCAL );
         header.setDate( ZonedDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ) );
         header.setStatus( TournamentStatus.NOT_CONFIGURED );
         header.setPairingMode( pref.map( TournamentHeader::getPairingMode ).orElse( PairingMode.SWISS ) );
