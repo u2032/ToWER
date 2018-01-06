@@ -27,6 +27,7 @@
             <properties>
                 <bundle.executable>${env.JAVA_HOME}/bin/javapackager.exe</bundle.executable>
                 <bundle.native>exe</bundle.native>
+                <bundle.icon>tower.ico</bundle.icon>
             </properties>
         </profile>
 
@@ -94,7 +95,9 @@
                                         <argument>-BappVersion=${deploy.version}</argument>
                                         <argument>-Bidentifier=land.tower.${deploy.name}</argument>
                                         <argument>-BmenuHint=true</argument>
+                                        <argument>-Bwin.menuGroup=${deploy.name}</argument>
                                         <argument>-BshortcutHint=true</argument>
+                                        <argument>-Bicon=${project.basedir}/icons/${bundle.icon}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
