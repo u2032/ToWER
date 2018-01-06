@@ -20,6 +20,7 @@ import static javafx.scene.layout.HBox.setHgrow;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -86,6 +87,7 @@ public final class TournamentManagementView extends BorderPane {
 
         final TableView<ObservableTournament> tableView = new TableView<>( );
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
+        tableView.itemsProperty( ).bind( _model.tournamentListProperty( ) );
 
         final TableColumn<ObservableTournament, String> dateCol = new TableColumn<>( );
         dateCol.textProperty( ).bind( model.getI18n( ).get( "tournament.date" ) );
@@ -94,7 +96,10 @@ public final class TournamentManagementView extends BorderPane {
                                                              .toString( ),
                                                  param.getValue( ).getHeader( ).dateProperty( ) );
         } );
+        dateCol.setComparator( dateCol.getComparator( ).reversed( ) );
         tableView.getColumns( ).add( dateCol );
+        tableView.getSortOrder( ).add( dateCol );
+        Platform.runLater( tableView::sort );
 
         final TableColumn<ObservableTournament, String> nameCol = new TableColumn<>( );
         nameCol.textProperty( ).bind( model.getI18n( ).get( "tournament.title" ) );
@@ -137,8 +142,6 @@ public final class TournamentManagementView extends BorderPane {
         final Label emptyLabel = new Label( );
         emptyLabel.textProperty( ).bind( model.getI18n( ).get( "tournament.management.no.tournament" ) );
         tableView.setPlaceholder( emptyLabel );
-
-        tableView.itemsProperty( ).bind( _model.tournamentListProperty( ) );
 
         setCenter( tableView );
     }
