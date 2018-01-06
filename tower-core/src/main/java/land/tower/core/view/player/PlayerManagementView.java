@@ -20,6 +20,7 @@ import static javafx.scene.layout.HBox.setHgrow;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -92,11 +93,14 @@ public final class PlayerManagementView extends BorderPane {
 
         final TableView<ObservablePlayer> tableView = new TableView<>( );
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
+        tableView.itemsProperty( ).bind( _model.playerListProperty( ) );
 
-        final TableColumn<ObservablePlayer, String> numeroCol = new TableColumn<>( );
+        final TableColumn<ObservablePlayer, Long> numeroCol = new TableColumn<>( );
         numeroCol.textProperty( ).bind( model.getI18n( ).get( "player.numero" ) );
         numeroCol.setCellValueFactory( new PropertyValueFactory<>( "numero" ) );
         tableView.getColumns( ).add( numeroCol );
+        tableView.getSortOrder( ).add( numeroCol );
+        Platform.runLater( tableView::sort );
 
         final TableColumn<ObservablePlayer, Void> nationalityCol = new TableColumn<>( );
         nationalityCol.textProperty( ).bind( model.getI18n( ).get( "player.nationality" ) );
@@ -128,8 +132,6 @@ public final class PlayerManagementView extends BorderPane {
         final Label emptyLabel = new Label( );
         emptyLabel.textProperty( ).bind( model.getI18n( ).get( "player.management.no.player" ) );
         tableView.setPlaceholder( emptyLabel );
-
-        tableView.itemsProperty( ).bind( _model.playerListProperty( ) );
 
         setCenter( tableView );
     }
