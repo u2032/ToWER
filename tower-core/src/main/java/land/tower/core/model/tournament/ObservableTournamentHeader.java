@@ -149,6 +149,27 @@ public final class ObservableTournamentHeader {
         return _winningGameCount;
     }
 
+    public void setTitle( final String title ) {
+        this._title.set( title );
+    }
+
+    public void setPairingMode( final PairingMode pairingMode ) {
+        this._pairingMode.set( pairingMode );
+    }
+
+    public void setMatchDuration( final Integer matchDuration ) {
+        this._matchDuration.set( matchDuration );
+    }
+
+    public void setTeamSize( final Integer teamSize ) {
+        this._teamSize.set( teamSize );
+    }
+
+    public void setWinningGameCount( final Integer winningGameCount ) {
+        this._winningGameCount.set( winningGameCount );
+    }
+
+
     public void markAsClean( ) {
         _dirty.set( false );
         _address.markAsClean( );

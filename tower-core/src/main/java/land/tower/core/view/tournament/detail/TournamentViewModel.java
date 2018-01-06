@@ -109,6 +109,11 @@ public final class TournamentViewModel {
     }
 
     private void selectDefaultTab( ) {
+        if ( _tournament.getHeader( ).titleProperty( ).isEmpty( ).get( ) ) {
+            _selectedTab.set( _tabViews.get( 0 ) );
+            return;
+        }
+
         // Select default tab according to status
         if ( _tournament.getHeader( ).getStatus( ) == TournamentStatus.ENROLMENT ) {
             _selectedTab.set( _tabViews.get( 1 ) );

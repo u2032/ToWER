@@ -29,20 +29,26 @@ public final class TournamentLadderViewModel {
     public interface Factory {
 
         TournamentLadderViewModel forTournament( ObservableTournament tournament );
-
     }
 
     @Inject
     public TournamentLadderViewModel( @Assisted final ObservableTournament tournament,
                                       final I18nTranslator i18n,
-                                      final CloseTournamentDialogModel.Factory closeTournamentDialogModelProvider ) {
+                                      final CloseTournamentDialogModel.Factory closeTournamentDialogModelProvider,
+                                      final ChainTournamentDialogModel.Factory chainTournamentDialogModelProvider ) {
         _tournament = tournament;
         _i18n = i18n;
         _closeTournamentDialogModelProvider = closeTournamentDialogModelProvider;
+        _chainTournamentDialogModelProvider = chainTournamentDialogModelProvider;
     }
 
     CloseTournamentDialogModel createCloseTournamentViewModel( ) {
         return _closeTournamentDialogModelProvider.forTournament( _tournament );
+    }
+
+    void fireChainTournamentDialog( ) {
+        final ChainTournamentDialogModel model = _chainTournamentDialogModelProvider.forTournament( _tournament );
+        new ChainTournamentDialog( model ).show( );
     }
 
     public ObservableTournament getTournament( ) {
@@ -56,4 +62,5 @@ public final class TournamentLadderViewModel {
     private final ObservableTournament _tournament;
     private final I18nTranslator _i18n;
     private final CloseTournamentDialogModel.Factory _closeTournamentDialogModelProvider;
+    private final ChainTournamentDialogModel.Factory _chainTournamentDialogModelProvider;
 }

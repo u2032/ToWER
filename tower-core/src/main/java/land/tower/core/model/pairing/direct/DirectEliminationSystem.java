@@ -106,6 +106,40 @@ public final class DirectEliminationSystem implements PairingSystem {
         return round;
     }
 
+    public Round createFirstRoundFromInitialRanking( ObservableTournament tournament ) {
+        final List<Team> activeTeams = tournament.getTeams( ).stream( )
+                                                 .map( ObservableTeam::getTeam )
+                                                 .filter( Team::isActive )
+                                                 .collect( Collectors.toList( ) );
+
+        double p = Math.floor( Math.log( activeTeams.size( ) ) / Math.log( 2 ) );
+        final int maxTeamCount = (int) Math.pow( 2, p );
+        final Team[] teams = activeTeams.stream( )
+                                        .sorted( Comparator.comparingInt( t -> t.getRanking( ).getRank( ) ) )
+                                        .limit( maxTeamCount )
+                                        .toArray( Team[]::new );
+
+        final List<Match> matches = new ArrayList<>( );
+
+        final AtomicInteger position = new AtomicInteger( );
+        for ( int i = 0; i < teams.length / 2; i++ ) {
+            final Team left = teams[i];
+            final Team right = teams[teams.length - 1 - i];
+
+            final Match match = new Match( );
+            match.setPosition( position.incrementAndGet( ) );
+            match.setLeftTeamId( left.getId( ) );
+            match.setRightTeamId( right.getId( ) );
+            matches.add( match );
+        }
+
+        final Round round = new Round( );
+        round.setNumero( tournament.getRounds( ).size( ) + 1 );
+        round.setStartDate( ZonedDateTime.now( ) );
+        round.getMatches( ).addAll( matches );
+        return round;
+    }
+
     private int getWinningTeam( final ObservableMatch match ) {
         if ( match.hasWon( match.getLeftTeamId( ) ) ) {
             return match.getLeftTeamId( );

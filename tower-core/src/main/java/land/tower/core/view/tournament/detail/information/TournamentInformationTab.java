@@ -19,6 +19,7 @@ import static javafx.beans.binding.Bindings.createBooleanBinding;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
+import javafx.application.Platform;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -129,6 +130,12 @@ public final class TournamentInformationTab extends Tab {
         titleField.disableProperty( ).bind( tournamentOpened.not( ) );
         grid.add( titleLabel, 0, line );
         grid.add( titleField, 1, line );
+
+        setOnSelectionChanged( t -> {
+            if ( isSelected( ) && _model.getTournament( ).getHeader( ).titleProperty( ).isEmpty( ).get( ) ) {
+                Platform.runLater( titleField::requestFocus );
+            }
+        } );
 
         line++;
         final DatePicker dateField = new DatePicker( );

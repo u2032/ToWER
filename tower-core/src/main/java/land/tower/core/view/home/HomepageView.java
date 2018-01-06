@@ -38,7 +38,7 @@ public final class HomepageView extends HBox {
     public HomepageView( final HomepageViewModel model, final Configuration configuration ) {
         setAlignment( Pos.CENTER );
         setPadding( new Insets( 50, 50, 50, 50 ) );
-        setSpacing( 50 );
+        setSpacing( 70 );
 
         final VBox pblock = generateBlock( model.getI18n( ).get( "player.management.title" ),
                                            configuration.getHomePlayerButton( ) );
@@ -53,6 +53,7 @@ public final class HomepageView extends HBox {
 
     private VBox generateBlock( final StringProperty text, final Image image ) {
         final VBox block = new VBox( );
+        block.setSpacing( 15 );
         block.setPrefSize( 200, 450 );
         block.setMinSize( USE_PREF_SIZE, USE_PREF_SIZE );
         block.setMaxSize( USE_PREF_SIZE, USE_PREF_SIZE );
@@ -67,7 +68,7 @@ public final class HomepageView extends HBox {
         label.setWrapText( true );
         label.setAlignment( Pos.CENTER );
         label.setTextAlignment( TextAlignment.CENTER );
-        label.setStyle( "-fx-font-weight: bold;" );
+        label.getStyleClass( ).add( "important" );
         label.setPrefWidth( block.getPrefWidth( ) );
         label.setPadding( new Insets( 5, 0, 0, 0 ) );
         block.getChildren( ).add( label );

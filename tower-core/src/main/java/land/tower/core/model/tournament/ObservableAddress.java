@@ -104,6 +104,30 @@ public final class ObservableAddress {
         return _country;
     }
 
+    public void setName( final String name ) {
+        this._name.set( name );
+    }
+
+    public void setLine1( final String line1 ) {
+        this._line1.set( line1 );
+    }
+
+    public void setLine2( final String line2 ) {
+        this._line2.set( line2 );
+    }
+
+    public void setPostalCode( final String postalCode ) {
+        this._postalCode.set( postalCode );
+    }
+
+    public void setCity( final String city ) {
+        this._city.set( city );
+    }
+
+    public void setCountry( final String country ) {
+        this._country.set( country );
+    }
+
     public boolean isDirty( ) {
         return _dirty.get( );
     }

@@ -99,6 +99,8 @@ public final class ObservableTournament {
     }
 
     public void registerTeam( final ObservableTeam team ) {
+        team.setId( _teams.size( ) + 1 );
+        team.setActive( true );
         _teams.add( team );
     }
 

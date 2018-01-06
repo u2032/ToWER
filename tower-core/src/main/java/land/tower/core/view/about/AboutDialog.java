@@ -53,7 +53,7 @@ public final class AboutDialog extends Dialog<Void> {
         grid.add( info, 1, 0 );
 
         final Label licenceLabel = new Label( );
-        licenceLabel.textProperty( ).bind( translator.get( "menu.about.licence" ) );
+        licenceLabel.textProperty( ).bind( translator.get( "menu.about.credits" ) );
         licenceLabel.setStyle( "-fx-font-weight: bold" );
         GridPane.setValignment( licenceLabel, VPos.TOP );
         grid.add( licenceLabel, 0, 1 );

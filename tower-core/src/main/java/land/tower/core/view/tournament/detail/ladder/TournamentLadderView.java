@@ -140,16 +140,31 @@ public final class TournamentLadderView extends Tab {
         hBox.setPadding( new Insets( 10 ) );
         hBox.setAlignment( Pos.CENTER_RIGHT );
 
-        final FaButton setScoreButton = new FaButton( FontAwesome.LOCK, "white" );
-        setScoreButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.close" ) );
-        setScoreButton.getStyleClass( ).add( "rich-button" );
-        setScoreButton.getStyleClass( ).add( "dangerous-button" );
-        setScoreButton.setOnAction( event -> {
+        final FaButton chainButton = new FaButton( FontAwesome.CONTINUE, "white" );
+        chainButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.chain" ) );
+        chainButton.getStyleClass( ).add( "rich-button" );
+        chainButton.getStyleClass( ).add( "action-button" );
+        chainButton.setOnAction( event -> {
+            _model.fireChainTournamentDialog( );
+        } );
+        chainButton.visibleProperty( ).bind( _model.getTournament( ).getHeader( ).statusProperty( )
+                                                   .isEqualTo( TournamentStatus.CLOSED ) );
+        hBox.getChildren( ).add( chainButton );
+
+        final FaButton closeButton = new FaButton( FontAwesome.LOCK, "white" );
+        closeButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.close" ) );
+        closeButton.getStyleClass( ).add( "rich-button" );
+        closeButton.getStyleClass( ).add( "dangerous-button" );
+        closeButton.setOnAction( event -> {
             new CloseTournamentDialog( _model.createCloseTournamentViewModel( ) ).show( );
         } );
+        closeButton.visibleProperty( )
+                   .bind( createBooleanBinding(
+                       ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
+                       _model.getTournament( ).getHeader( ).statusProperty( ) ) );
 
         final Runnable updateDisableCloseButton = ( ) -> {
-            setScoreButton.setDisable(
+            closeButton.setDisable(
                 _model.getTournament( ).getCurrentRound( ) == null
                 || !_model.getTournament( ).getCurrentRound( ).isEnded( )
                 || _model.getTournament( ).getHeader( ).getStatus( ) == TournamentStatus.CLOSED );
@@ -167,12 +182,7 @@ public final class TournamentLadderView extends Tab {
                               .addListener( ( observable1, oldValue1, newValue1 ) -> updateDisableCloseButton.run( ) );
                   }
               } );
-        hBox.getChildren( ).add( setScoreButton );
-
-        hBox.visibleProperty( )
-            .bind( createBooleanBinding(
-                ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
-                _model.getTournament( ).getHeader( ).statusProperty( ) ) );
+        hBox.getChildren( ).add( closeButton );
 
         return hBox;
     }

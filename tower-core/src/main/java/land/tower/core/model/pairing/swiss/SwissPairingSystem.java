@@ -62,6 +62,11 @@ public final class SwissPairingSystem implements PairingSystem {
     }
 
     @Override
+    public Round createFirstRoundFromInitialRanking( ObservableTournament tournament ) {
+        return firstRound( tournament.getTournament( ) );
+    }
+
+    @Override
     public IRankingComputer getRankingComputer( ) {
         return _rankingComputer;
     }

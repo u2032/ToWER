@@ -68,8 +68,6 @@ public final class TournamentEnrolmentTabModel {
     }
 
     public void fireTeamAdded( final Team team ) {
-        team.setId( _tournament.getTeams( ).size( ) + 1 );
-        team.setActive( true );
         _tournament.registerTeam( new ObservableTeam( team ) );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
