@@ -61,6 +61,13 @@ final class PreferenceService implements IService {
     public void stop( ) {
         final Path path = Paths.get( "data", "preferences.json._COPYING_" );
         final Path finalPath = Paths.get( "data", "preferences.json" );
+
+        try {
+            Files.createDirectories( path.getParent( ) );
+        } catch ( IOException e ) {
+            _logger.error( "Can't create directories: " + path.getParent( ).toAbsolutePath( ), e );
+        }
+
         try ( final FileWriter out = new FileWriter( path.toFile( ) ) ) {
             new Gson( ).toJson( _preferences.getItems( ), out );
             out.close( );
