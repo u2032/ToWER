@@ -19,6 +19,7 @@ import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleListProperty;
 import javafx.geometry.Insets;
@@ -113,7 +114,7 @@ public final class TournamentEnrolmentTab extends Tab {
         tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
         tableView.itemsProperty( ).bind( new SimpleListProperty<>( _model.getTournament( ).getTeams( ) ) );
 
-        final TableColumn<ObservableTeam, String> idCol = new TableColumn<>( );
+        final TableColumn<ObservableTeam, Integer> idCol = new TableColumn<>( );
         idCol.setEditable( false );
         idCol.setMaxWidth( 50 );
         idCol.setMinWidth( 50 );
@@ -121,6 +122,8 @@ public final class TournamentEnrolmentTab extends Tab {
         idCol.textProperty( ).bind( _model.getI18n( ).get( "team.id" ) );
         idCol.setCellValueFactory( new PropertyValueFactory<>( "id" ) );
         tableView.getColumns( ).add( idCol );
+        tableView.getSortOrder( ).add( idCol );
+        Platform.runLater( tableView::sort );
 
         final TableColumn<ObservableTeam, Boolean> activeCol = new TableColumn<>( );
         activeCol.setMaxWidth( 50 );
