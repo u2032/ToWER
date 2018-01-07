@@ -43,7 +43,8 @@ public final class FromPlayerRepositorySuggestionProvider implements IPlayerSugg
                                     final String ref =
                                         p.getLastname( )
                                          .substring( 0, Math.min( p.getLastname( ).length( ), name.length( ) ) );
-                                    return new Pair<>( p.getPlayer( ), _levenshteinDistance.apply( ref, name ) );
+                                    return new Pair<>( p.getPlayer( ),
+                                                       _levenshteinDistance.apply( ref, name.toUpperCase( ) ) );
                                 } )
                                 .filter( p -> p.getValue( ) >= 0 )
                                 .sorted( Comparator.comparing( Pair::getValue ) )
