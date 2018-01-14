@@ -45,6 +45,14 @@
     -fx-padding: 6 15 6 15;
 }
 
+.rich-button:hover {
+    -fx-opacity: 0.8;
+}
+
+.rich-button:pressed {
+    -fx-opacity: 0.5;
+}
+
 .rich-button Text {
     -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.8), 0, 0.0, 0, 1);
 }
