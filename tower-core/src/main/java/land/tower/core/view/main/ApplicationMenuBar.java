@@ -100,6 +100,11 @@ final class ApplicationMenuBar extends MenuBar {
     private Menu aboutMenu( ) {
         final Menu aboutMenu = new FaMenu( FontAwesome.ABOUT, "darkgrey" );
 
+        final MenuItem documentation = new FaMenuItem( FontAwesome.BOOK, "black" );
+        documentation.textProperty( ).bind( Bindings.concat( _model.getI18n( ).get( "menu.about.documentation" ) ) );
+        documentation.setOnAction( event -> _model.fireOpenDocumentation( ) );
+        aboutMenu.getItems( ).add( documentation );
+
         final MenuItem about = new FaMenuItem( FontAwesome.INFO, "black" );
         about.textProperty( ).bind( Bindings.concat( _model.getI18n( ).get( "menu.about.about" ) ) );
         about.setOnAction( event -> _model.fireAboutDialog( ) );

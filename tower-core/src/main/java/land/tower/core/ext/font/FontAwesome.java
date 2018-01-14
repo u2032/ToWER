@@ -41,4 +41,5 @@ public final class FontAwesome {
     public static final String LOCK = "\uf023";
     public static final String SAVE = "\uf0c7";
     public static final String CONTINUE = "\uf35a";
+    public static final String BOOK = "\uf02d";
 }

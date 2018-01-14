@@ -17,9 +17,11 @@ package land.tower.core.view.main;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import javafx.application.HostServices;
 import javafx.beans.property.SimpleObjectProperty;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nService;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
@@ -50,12 +52,15 @@ final class ApplicationMenuBarModel {
                              final Provider<LanguageDialog> languageDialogProvider,
                              final Factory resertRoundDialogFactory,
                              final I18nService i18nService,
-                             final Preferences preferences ) {
+                             final Preferences preferences,
+                             final Configuration configuration, final HostServices hostServices ) {
         _eventBus = eventBus;
         _languageDialogProvider = languageDialogProvider;
         _resertRoundDialogFactory = resertRoundDialogFactory;
         _i18nService = i18nService;
         _preferences = preferences;
+        _configuration = configuration;
+        _hostServices = hostServices;
         _eventBus.register( this );
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
@@ -117,6 +122,10 @@ final class ApplicationMenuBarModel {
                                } );
     }
 
+    public void fireOpenDocumentation( ) {
+        _hostServices.showDocument( _configuration.get( "documentation.url" ) );
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
     private final Provider<HomepageView> _homepageViewProvider;
@@ -131,4 +140,6 @@ final class ApplicationMenuBarModel {
     private final I18nService _i18nService;
 
     private final Preferences _preferences;
+    private final Configuration _configuration;
+    private final HostServices _hostServices;
 }

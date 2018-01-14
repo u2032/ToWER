@@ -16,8 +16,10 @@ package land.tower.core;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.Provider;
 
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.animation.FadeTransition;
+import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -81,7 +84,9 @@ public final class Application extends javafx.application.Application {
     @Override
     public void start( final Stage primaryStage ) throws Exception {
         try {
-            final Injector injector = Guice.createInjector( modules( ).getModules( ) );
+            final Injector injector = Guice.createInjector( modules( )
+                                                                .with( hostServiceModule( getHostServices( ) ) )
+                                                                .getModules( ) );
             final Configuration configuration = injector.getInstance( Configuration.class );
 
             /* Display a splashscreen */
@@ -209,6 +214,15 @@ public final class Application extends javafx.application.Application {
                                            new PlayerSuggestionModule( ),
                                            new PairingModule( ),
                                            new RankingModule( ) );
+    }
+
+    private Module hostServiceModule( final HostServices hostServices ) {
+        return new AbstractModule( ) {
+            @Override
+            protected void configure( ) {
+                bind( HostServices.class ).toInstance( hostServices );
+            }
+        };
     }
 
     private final AtomicBoolean _ready = new AtomicBoolean( );
