@@ -19,6 +19,7 @@ import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 
 import java.util.stream.Collectors;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleListProperty;
 import javafx.geometry.Insets;
@@ -26,6 +27,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
@@ -73,6 +75,7 @@ public final class TournamentLadderView extends Tab {
         setOnSelectionChanged( t -> {
             if ( isSelected( ) ) {
                 tableView.sort( );
+                resetRowFactory( tableView );
             }
         } );
 
@@ -132,7 +135,33 @@ public final class TournamentLadderView extends Tab {
         emptyLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.ranking.no.team" ) );
         tableView.setPlaceholder( emptyLabel );
 
+        resetRowFactory( tableView );
+        tableView.setOnSort( e -> resetRowFactory( tableView ) );
         return tableView;
+    }
+
+    private void resetRowFactory( final TableView<ObservableTeam> tableView ) {
+        tableView.setRowFactory( null );
+        tableView.setRowFactory( tv -> {
+            final TableRow<ObservableTeam> row = new TableRow<>( );
+            row.styleProperty( )
+               .bind( Bindings.createStringBinding(
+                   ( ) -> {
+                       final int index = row.indexProperty( ).intValue( );
+                       if ( index >= 0 && index < row.getTableView( ).getItems( ).size( ) ) {
+                           final ObservableTeam item = row.getTableView( ).getItems( ).get( index );
+                           if ( item.getRanking( ).getRank( ) == 1 ) {
+                               return "-fx-background-color: #ffd700";
+                           } else if ( item.getRanking( ).getRank( ) == 2 ) {
+                               return "-fx-background-color: #c0c0c0";
+                           } else if ( item.getRanking( ).getRank( ) == 3 ) {
+                               return "-fx-background-color: #cd7f32";
+                           }
+                       }
+                       return null;
+                   }, row.indexProperty( ) ) );
+            return row;
+        } );
     }
 
     private HBox buildActionBox( ) {

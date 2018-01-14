@@ -66,6 +66,11 @@ public final class DefaultRankingComputer implements IRankingComputer {
         teams.stream( )
              .sorted( RANKING_COMPARATOR )
              .forEach( team -> {
+                 if ( rounds.isEmpty( ) ) {
+                     team.getRanking( ).setRank( 0 );
+                     return;
+                 }
+
                  if ( previous.get( ) != null && RANKING_COMPARATOR.compare( previous.get( ), team ) == 0 ) {
                      team.getRanking( ).setRank( rank.get( ) );
                  } else {
