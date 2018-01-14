@@ -63,9 +63,9 @@ public final class TournamentLadderView extends Tab {
         tableView.itemsProperty( ).bind( new SimpleListProperty<>( _model.getTournament( ).getTeams( ) ) );
 
         final TableColumn<ObservableTeam, Integer> rankCol = new TableColumn<>( );
-        rankCol.setMaxWidth( 50 );
+        rankCol.setPrefWidth( 50 );
         rankCol.setMinWidth( 50 );
-        rankCol.setResizable( false );
+        rankCol.setMaxWidth( 100 );
         rankCol.textProperty( ).bind( _model.getI18n( ).get( "ranking.rank" ) );
         rankCol.setCellValueFactory( param -> param.getValue( ).getRanking( ).rankProperty( ) );
         tableView.getColumns( ).add( rankCol );
