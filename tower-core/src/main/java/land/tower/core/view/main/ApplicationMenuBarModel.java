@@ -25,17 +25,23 @@ import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nService;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
+import land.tower.core.model.player.PlayerRepository;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.model.tournament.TournamentRepository;
 import land.tower.core.view.about.AboutDialog;
 import land.tower.core.view.event.CloseRequestEvent;
+import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
 import land.tower.core.view.option.LanguageDialog;
+import land.tower.core.view.player.AddPlayerDialogModel;
+import land.tower.core.view.player.PlayerManagementView;
 import land.tower.core.view.tournament.detail.TournamentView;
 import land.tower.core.view.tournament.detail.TournamentViewModelProvider;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel.Factory;
+import land.tower.core.view.tournament.management.TournamentManagementView;
+import land.tower.data.Player;
 
 /**
  * Created on 18/12/2017
@@ -46,21 +52,29 @@ final class ApplicationMenuBarModel {
     @Inject
     ApplicationMenuBarModel( final EventBus eventBus, final I18nTranslator i18n,
                              final Provider<HomepageView> homepageViewProvider,
+                             final Provider<TournamentManagementView> tournamentManagementViewProvider,
+                             final Provider<PlayerManagementView> playerManagementViewProvider,
                              final TournamentRepository tournamentRepository,
                              final TournamentViewModelProvider tournamentViewModelProvider,
                              final Provider<AboutDialog> aboutDialogProvider,
                              final Provider<LanguageDialog> languageDialogProvider,
+                             final Provider<AddPlayerDialogModel> addPlayerDialogModelProvider,
                              final Factory resertRoundDialogFactory,
                              final I18nService i18nService,
                              final Preferences preferences,
-                             final Configuration configuration, final HostServices hostServices ) {
+                             final Configuration configuration, final HostServices hostServices,
+                             final PlayerRepository playerRepository ) {
         _eventBus = eventBus;
+        _tournamentManagementViewProvider = tournamentManagementViewProvider;
+        _playerManagementViewProvider = playerManagementViewProvider;
         _languageDialogProvider = languageDialogProvider;
+        _addPlayerDialogModelProvider = addPlayerDialogModelProvider;
         _resertRoundDialogFactory = resertRoundDialogFactory;
         _i18nService = i18nService;
         _preferences = preferences;
         _configuration = configuration;
         _hostServices = hostServices;
+        _playerRepository = playerRepository;
         _eventBus.register( this );
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
@@ -126,14 +140,36 @@ final class ApplicationMenuBarModel {
         _hostServices.showDocument( _configuration.get( "documentation.url" ) );
     }
 
+    public void fireTournamentManagement( ) {
+        _eventBus.post( new SceneRequestedEvent( _tournamentManagementViewProvider.get( ) ) );
+    }
+
+    public void firePlayerManagement( ) {
+        _eventBus.post( new SceneRequestedEvent( _playerManagementViewProvider.get( ) ) );
+    }
+
+    public AddPlayerDialogModel newAddPlayerDialogModel( ) {
+        return _addPlayerDialogModelProvider.get( );
+    }
+
+    public void firePlayerCreated( final Player player ) {
+        _playerRepository.registerPlayer( player );
+        _eventBus.post( new InformationEvent( _i18n.get( "player.created" ) ) );
+        _preferences.save( "player.nationality", player.getNationality( ).name( ) );
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
     private final Provider<HomepageView> _homepageViewProvider;
+    private final Provider<TournamentManagementView> _tournamentManagementViewProvider;
+    private final Provider<PlayerManagementView> _playerManagementViewProvider;
     private final TournamentRepository _tournamentRepository;
 
     private final TournamentViewModelProvider _tournamentViewModelProvider;
     private final Provider<AboutDialog> _aboutDialogProvider;
     private final Provider<LanguageDialog> _languageDialogProvider;
+
+    private final Provider<AddPlayerDialogModel> _addPlayerDialogModelProvider;
 
     private final SimpleObjectProperty<ObservableTournament> _currentTournament = new SimpleObjectProperty<>( );
     private final Factory _resertRoundDialogFactory;
@@ -142,4 +178,5 @@ final class ApplicationMenuBarModel {
     private final Preferences _preferences;
     private final Configuration _configuration;
     private final HostServices _hostServices;
+    private final PlayerRepository _playerRepository;
 }

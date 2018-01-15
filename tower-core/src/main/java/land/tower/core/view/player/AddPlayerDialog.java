@@ -49,7 +49,7 @@ import land.tower.data.PlayerNationality;
  * Created on 10/12/2017
  * @author Cédric Longo
  */
-final class AddPlayerDialog extends Dialog<Player> {
+public final class AddPlayerDialog extends Dialog<Player> {
 
     public AddPlayerDialog( final AddPlayerDialogModel model ) {
         getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );

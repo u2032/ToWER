@@ -31,7 +31,7 @@ import land.tower.data.PlayerNationality;
  * Created on 10/12/2017
  * @author Cédric Longo
  */
-final class AddPlayerDialogModel {
+public final class AddPlayerDialogModel {
 
     @Inject
     public AddPlayerDialogModel( final I18nTranslator translator,

@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.view.component.FaMenu;
 import land.tower.core.view.component.FaMenuItem;
+import land.tower.core.view.player.AddPlayerDialog;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialog;
 import land.tower.data.TournamentStatus;
 
@@ -36,6 +37,7 @@ final class ApplicationMenuBar extends MenuBar {
     public ApplicationMenuBar( final ApplicationMenuBarModel model ) {
         _model = model;
         getMenus( ).add( fileMenu( ) );
+        getMenus( ).add( playerMenu( ) );
         getMenus( ).add( tournamentMenu( ) );
         getMenus( ).add( optionMenu( ) );
         getMenus( ).add( aboutMenu( ) );
@@ -64,10 +66,15 @@ final class ApplicationMenuBar extends MenuBar {
         final Menu tournamentMenu = new Menu( );
         tournamentMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.tournament" ) );
 
-        final MenuItem homepageMenu = new FaMenuItem( FontAwesome.PLUS, "black" );
-        homepageMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.add.tournament" ) );
-        homepageMenu.setOnAction( event -> _model.fireTournamentCreation( ) );
-        tournamentMenu.getItems( ).add( homepageMenu );
+        final MenuItem addMenu = new FaMenuItem( FontAwesome.PLUS, "black" );
+        addMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.add.tournament" ) );
+        addMenu.setOnAction( event -> _model.fireTournamentCreation( ) );
+        tournamentMenu.getItems( ).add( addMenu );
+
+        final MenuItem listMenu = new FaMenuItem( FontAwesome.LIST, "black" );
+        listMenu.textProperty( ).bind( _model.getI18n( ).get( "tournament.management.title" ) );
+        listMenu.setOnAction( event -> _model.fireTournamentManagement( ) );
+        tournamentMenu.getItems( ).add( listMenu );
 
         tournamentMenu.getItems( ).add( new SeparatorMenuItem( ) );
 
@@ -83,6 +90,25 @@ final class ApplicationMenuBar extends MenuBar {
         tournamentMenu.getItems( ).add( deleteRound );
 
         return tournamentMenu;
+    }
+
+    private Menu playerMenu( ) {
+        final Menu playerMenu = new Menu( );
+        playerMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.player" ) );
+
+        final MenuItem addMenu = new FaMenuItem( FontAwesome.PLUS, "black" );
+        addMenu.textProperty( ).bind( _model.getI18n( ).get( "menu.add.player" ) );
+        addMenu.setOnAction( event -> new AddPlayerDialog( _model.newAddPlayerDialogModel( ) )
+                                          .showAndWait( )
+                                          .ifPresent( _model::firePlayerCreated ) );
+        playerMenu.getItems( ).add( addMenu );
+
+        final MenuItem listMenu = new FaMenuItem( FontAwesome.LIST, "black" );
+        listMenu.textProperty( ).bind( _model.getI18n( ).get( "player.management.title" ) );
+        listMenu.setOnAction( event -> _model.firePlayerManagement( ) );
+        playerMenu.getItems( ).add( listMenu );
+
+        return playerMenu;
     }
 
     private Menu optionMenu( ) {
