@@ -56,17 +56,31 @@ public final class AboutDialog extends Dialog<Void> {
         info.setText( config.get( "version" ) );
         grid.add( info, 1, 0 );
 
-        final Label licenceLabel = new Label( );
-        licenceLabel.textProperty( ).bind( translator.get( "menu.about.credits" ) );
-        licenceLabel.setStyle( "-fx-font-weight: bold" );
-        GridPane.setValignment( licenceLabel, VPos.TOP );
-        grid.add( licenceLabel, 0, 1 );
+        final Label creditLabel = new Label( );
+        creditLabel.textProperty( ).bind( translator.get( "menu.about.credits" ) );
+        creditLabel.setStyle( "-fx-font-weight: bold" );
+        GridPane.setValignment( creditLabel, VPos.TOP );
+        grid.add( creditLabel, 0, 1 );
 
-        final TextArea licenceText = new TextArea( );
-        licenceText.setWrapText( true );
-        licenceText.setEditable( false );
-        licenceText.setText( translator.get( "about.licence.third.party" ).getValue( ) );
-        grid.add( licenceText, 1, 1 );
+        final TextArea creditText = new TextArea( );
+        creditText.setWrapText( true );
+        creditText.setEditable( false );
+        creditText.setText( translator.get( "about.credits" ).getValue( ) );
+        grid.add( creditText, 1, 1 );
+
+        final Label licenseLabel = new Label( );
+        licenseLabel.textProperty( ).bind( translator.get( "menu.about.license" ) );
+        licenseLabel.setStyle( "-fx-font-weight: bold" );
+        GridPane.setValignment( licenseLabel, VPos.TOP );
+        grid.add( licenseLabel, 0, 2 );
+
+        final TextArea licenseText = new TextArea( );
+        licenseText.setWrapText( true );
+        licenseText.setEditable( false );
+        licenseText.setText( translator.get( "about.license.third.party" ).getValue( ) );
+        licenseText.setPrefHeight( 20 );
+        grid.add( licenseText, 1, 2 );
+
 
         getDialogPane( ).setContent( grid );
     }
