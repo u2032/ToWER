@@ -19,14 +19,17 @@ import static javafx.scene.layout.HBox.setHgrow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.util.StringConverter;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
+import land.tower.core.model.tournament.ObservableTournament;
 
 /**
  * Created on 19/12/2017
@@ -61,6 +64,26 @@ public final class TournamentView extends BorderPane {
         homeButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
         homeButton.getStyleClass( ).add( "rich-button" );
 
+        final ChoiceBox<ObservableTournament> tournamentList = new ChoiceBox<>( );
+        tournamentList.itemsProperty( ).bind( _model.getOpenedTournaments( ) );
+        tournamentList.setValue( _model.getTournament( ) );
+        tournamentList.setConverter( new StringConverter<ObservableTournament>( ) {
+            @Override
+            public String toString( final ObservableTournament object ) {
+                return object.getHeader( ).getTitle( );
+            }
+
+            @Override
+            public ObservableTournament fromString( final String string ) {
+                return null;
+            }
+        } );
+        tournamentList.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+            if ( newValue != null ) {
+                _model.fireTournamentSelection( newValue );
+            }
+        } );
+
         final HBox spacing = new HBox( );
         setHgrow( spacing, Priority.ALWAYS );
         getChildren( ).add( spacing );
@@ -72,7 +95,7 @@ public final class TournamentView extends BorderPane {
         title.textProperty( ).bind( _model.getTournament( ).getHeader( ).titleProperty( ) );
         title.setEffect( Effects.dropShadow( ) );
 
-        final HBox header = new HBox( homeButton, spacing, title );
+        final HBox header = new HBox( homeButton, tournamentList, spacing, title );
         header.setPadding( new Insets( 10, 20, 10, 10 ) );
         header.setSpacing( 10 );
         header.setAlignment( Pos.CENTER_LEFT );

@@ -17,17 +17,22 @@ package land.tower.core.view.tournament.detail;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import java.util.Comparator;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.control.Tab;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.model.tournament.TournamentRepository;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
 import land.tower.core.view.tournament.detail.enrolment.TournamentEnrolmentTab;
@@ -67,7 +72,9 @@ public final class TournamentViewModel {
                                 final TournamentInformationTabModel.Factory informationTabFactory,
                                 final TournamentEnrolmentTabModel.Factory enrolmentTabFactory,
                                 final TournamentRoundTabModel.Factory roundTabFactory,
-                                final TournamentLadderViewModel.Factory ladderTabFactory ) {
+                                final TournamentLadderViewModel.Factory ladderTabFactory,
+                                final TournamentRepository tournamentRepository,
+                                final TournamentViewModelProvider tournamentViewProvider ) {
         _tournament = tournament;
         _eventBus = eventBus;
         _homeviewProvider = homeviewProvider;
@@ -76,6 +83,8 @@ public final class TournamentViewModel {
         _enrolmentTabFactory = enrolmentTabFactory;
         _roundTabFactory = roundTabFactory;
         _ladderTabFactory = ladderTabFactory;
+        _tournamentRepository = tournamentRepository;
+        _tournamentViewProvider = tournamentViewProvider;
 
         _tabViews.add( new TournamentInformationTab( _informationTabFactory.forTournament( _tournament ) ) );
         _tabViews.add( new TournamentEnrolmentTab( _enrolmentTabFactory.forTournament( _tournament ) ) );
@@ -140,6 +149,23 @@ public final class TournamentViewModel {
         return _selectedTab;
     }
 
+    public ObservableValue<ObservableList<ObservableTournament>> getOpenedTournaments( ) {
+        final ObservableList<ObservableTournament> tournamentList = _tournamentRepository.getTournamentList( );
+
+        final FilteredList<ObservableTournament> filteredTournaments = new FilteredList<>( tournamentList );
+        filteredTournaments.setPredicate( t -> t.getHeader( ).getStatus( ) != TournamentStatus.CLOSED );
+
+        final SortedList<ObservableTournament> sortedTournaments = new SortedList<>( filteredTournaments );
+        sortedTournaments.setComparator( Comparator.comparing( t -> t.getHeader( ).getDate( ) ) );
+
+        return new SimpleListProperty<>( sortedTournaments );
+    }
+
+    public void fireTournamentSelection( final ObservableTournament tournament ) {
+        _eventBus.post( new SceneRequestedEvent(
+            new TournamentView( _tournamentViewProvider.forTournament( tournament ) ) ) );
+    }
+
     private final ObservableTournament _tournament;
     private final EventBus _eventBus;
     private final Provider<HomepageView> _homeviewProvider;
@@ -152,4 +178,7 @@ public final class TournamentViewModel {
     private final TournamentLadderViewModel.Factory _ladderTabFactory;
 
     private final SimpleObjectProperty<Tab> _selectedTab = new SimpleObjectProperty<>( );
+    private final TournamentRepository _tournamentRepository;
+
+    private final TournamentViewModelProvider _tournamentViewProvider;
 }
