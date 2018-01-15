@@ -65,10 +65,6 @@ public final class SetScoreDialogModel {
                 return _i18n.get( "tournament.round.scoring.error.too.high", leftWins );
             }
 
-            if ( draws > tournament.getHeader( ).getWinningGameCount( ) ) {
-                return _i18n.get( "tournament.round.scoring.error.too.high", draws );
-            }
-
             if ( rightWins > tournament.getHeader( ).getWinningGameCount( ) ) {
                 return _i18n.get( "tournament.round.scoring.error.too.high", rightWins );
             }
