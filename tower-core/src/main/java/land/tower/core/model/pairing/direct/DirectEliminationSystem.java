@@ -119,12 +119,21 @@ public final class DirectEliminationSystem implements PairingSystem {
                                         .limit( maxTeamCount )
                                         .toArray( Team[]::new );
 
+        final boolean isFinal = teams.length == 2;
+
         final List<Match> matches = new ArrayList<>( );
 
         final AtomicInteger position = new AtomicInteger( );
         for ( int i = 0; i < teams.length / 2; i++ ) {
             final Team left = teams[i];
+            if ( isFinal ) {
+                left.getPairingFlags( ).put( "final", String.valueOf( true ) );
+            }
+
             final Team right = teams[teams.length - 1 - i];
+            if ( isFinal ) {
+                right.getPairingFlags( ).put( "final", String.valueOf( true ) );
+            }
 
             final Match match = new Match( );
             match.setPosition( position.incrementAndGet( ) );
@@ -137,6 +146,7 @@ public final class DirectEliminationSystem implements PairingSystem {
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
         round.setStartDate( ZonedDateTime.now( ) );
         round.getMatches( ).addAll( matches );
+        round.setFinal( isFinal );
         return round;
     }
 
@@ -163,12 +173,20 @@ public final class DirectEliminationSystem implements PairingSystem {
                                             .limit( maxTeamCount )
                                             .collect( Collectors.toList( ) );
 
+        final boolean isFinal = teams.size( ) == 2;
+
         final List<Match> matches = new ArrayList<>( );
 
         final AtomicInteger position = new AtomicInteger( );
         while ( teams.size( ) > 1 ) {
             final Team left = teams.remove( _random.nextInt( teams.size( ) ) );
+            if ( isFinal ) {
+                left.getPairingFlags( ).put( "final", String.valueOf( true ) );
+            }
             final Team right = teams.remove( _random.nextInt( teams.size( ) ) );
+            if ( isFinal ) {
+                right.getPairingFlags( ).put( "final", String.valueOf( true ) );
+            }
 
             final Match match = new Match( );
             match.setPosition( position.incrementAndGet( ) );
@@ -181,6 +199,7 @@ public final class DirectEliminationSystem implements PairingSystem {
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
         round.setStartDate( ZonedDateTime.now( ) );
         round.getMatches( ).addAll( matches );
+        round.setFinal( isFinal );
         return round;
     }
 
