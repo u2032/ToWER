@@ -30,6 +30,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -78,12 +79,13 @@ public final class TournamentRoundTab extends Tab {
         sortedList.comparatorProperty( ).bind( tableView.comparatorProperty( ) );
         tableView.itemsProperty( ).bind( new SimpleListProperty<>( sortedList ) );
 
-        final TableColumn<ObservableMatch, String> posCol = new TableColumn<>( );
+        final TableColumn<ObservableMatch, Integer> posCol = new TableColumn<>( );
         posCol.setEditable( false );
         posCol.setMinWidth( 100 );
         posCol.setMaxWidth( 100 );
         posCol.textProperty( ).bind( _model.getI18n( ).get( "match.position" ) );
         posCol.setCellValueFactory( new PropertyValueFactory<>( "position" ) );
+        posCol.setCellFactory( param -> new PositionCell( ) );
         tableView.getColumns( ).add( posCol );
         tableView.getSortOrder( ).add( posCol );
         Platform.runLater( tableView::sort );
@@ -251,6 +253,36 @@ public final class TournamentRoundTab extends Tab {
 
     public TournamentRoundTabModel getModel( ) {
         return _model;
+    }
+
+    private class PositionCell extends TableCell<ObservableMatch, Integer> {
+
+        @Override
+        protected void updateItem( final Integer item, final boolean empty ) {
+            super.updateItem( item, empty );
+            if ( empty ) {
+                setGraphic( null );
+                return;
+            }
+            final ObservableMatch match = getTableView( ).getItems( ).get( getIndex( ) );
+            if ( _model.getRound( ).getRound( ).isFinal( ) ) {
+                if ( _model.getTournament( ).getTeam( match.getLeftTeamId( ) )
+                           .getPairingFlags( ).containsKey( "final" ) ) {
+
+                    final HBox hbox = new HBox( );
+                    hbox.setAlignment( Pos.CENTER );
+                    hbox.setSpacing( 10 );
+
+                    final Label icon = new Label( FontAwesome.LADDER );
+                    icon.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+                    hbox.getChildren( ).add( icon );
+
+                    setGraphic( hbox );
+                    return;
+                }
+            }
+            setGraphic( new Label( String.valueOf( item ) ) );
+        }
     }
 
     private final TournamentRoundTabModel _model;
