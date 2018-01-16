@@ -33,6 +33,8 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -91,12 +93,15 @@ final class AddTeamDialog extends Dialog<Team> {
         grid.add( nameField, 1, line );
 
         line++;
-        final Label errorLabel = new Label( );
-        errorLabel.setStyle( "-fx-text-fill: red;" );
+        final Text errorLabel = new Text( );
+        errorLabel.setFill( Color.RED );
         errorLabel.textProperty( ).bind( _model.errorInformationProperty( ) );
-        errorLabel.setWrapText( true );
-        errorLabel.setPrefHeight( 40 );
+        errorLabel.wrappingWidthProperty( ).bind( getDialogPane( ).widthProperty( ).subtract( 40 ) );
         grid.add( errorLabel, 0, line, 2, 1 );
+
+        errorLabel.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+            getDialogPane( ).getScene( ).getWindow( ).sizeToScene( );
+        } );
 
         getDialogPane( ).setContent( grid );
 
