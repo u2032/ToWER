@@ -101,6 +101,11 @@ public final class TournamentManagementView extends BorderPane {
         tableView.getSortOrder( ).add( dateCol );
         Platform.runLater( tableView::sort );
 
+        final TableColumn<ObservableTournament, String> gameCol = new TableColumn<>( );
+        gameCol.textProperty( ).bind( model.getI18n( ).get( "tournament.game" ) );
+        gameCol.setCellValueFactory( param -> param.getValue( ).getHeader( ).gameProperty( ) );
+        tableView.getColumns( ).add( gameCol );
+
         final TableColumn<ObservableTournament, String> nameCol = new TableColumn<>( );
         nameCol.textProperty( ).bind( model.getI18n( ).get( "tournament.title" ) );
         nameCol.setCellValueFactory( param -> param.getValue( ).getHeader( ).titleProperty( ) );

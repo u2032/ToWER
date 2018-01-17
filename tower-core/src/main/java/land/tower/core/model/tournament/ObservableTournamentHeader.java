@@ -36,6 +36,10 @@ public final class ObservableTournamentHeader {
         _title.addListener( ( obs, oldValue, newValue ) -> header.setTitle( newValue ) );
         _title.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
+        _game = new SimpleStringProperty( header.getGame( ) );
+        _game.addListener( ( obs, oldValue, newValue ) -> header.setGame( newValue ) );
+        _game.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
         _date = new SimpleObjectProperty<>( header.getDate( ) );
         _date.addListener( ( obs, oldV, newV ) -> header.setDate( newV ) );
         _date.addListener( ( obs, oldV, newV ) -> _dirty.set( true ) );
@@ -170,6 +174,18 @@ public final class ObservableTournamentHeader {
         this._teamSize.set( teamSize );
     }
 
+    public String getGame( ) {
+        return _game.get( );
+    }
+
+    public SimpleStringProperty gameProperty( ) {
+        return _game;
+    }
+
+    public void setGame( final String game ) {
+        this._game.set( game );
+    }
+
     public void setWinningGameCount( final Integer winningGameCount ) {
         this._winningGameCount.set( winningGameCount );
     }
@@ -192,6 +208,7 @@ public final class ObservableTournamentHeader {
     }
 
     private final SimpleStringProperty _title;
+    private final SimpleStringProperty _game;
     private final SimpleObjectProperty<ZonedDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
     private final SimpleObjectProperty<TournamentType> _type;

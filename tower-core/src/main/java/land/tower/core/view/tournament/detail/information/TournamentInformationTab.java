@@ -141,6 +141,16 @@ public final class TournamentInformationTab extends Tab {
         } );
 
         line++;
+        final TextField gameField = new TextField( );
+        gameField.textProperty( ).bindBidirectional( _model.getTournament( ).getHeader( ).gameProperty( ) );
+        final Label gameLabel = new Label( );
+        gameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.game" ) );
+        gameLabel.setLabelFor( gameField );
+        gameField.disableProperty( ).bind( tournamentOpened.not( ) );
+        grid.add( gameLabel, 0, line );
+        grid.add( gameField, 1, line );
+
+        line++;
         final DatePicker dateField = new DatePicker( );
         dateField.setPromptText( "yyyy-mm-dd" );
         dateField.setShowWeekNumbers( false );

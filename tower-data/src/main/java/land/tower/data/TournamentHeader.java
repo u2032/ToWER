@@ -17,6 +17,8 @@ package land.tower.data;
 import com.google.gson.annotations.SerializedName;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created on 16/12/2017
@@ -43,7 +45,10 @@ public final class TournamentHeader {
     private Player _mainJudge;
 
     @SerializedName( "judges" )
-    private Player _judges;
+    private List<Player> _judges = new ArrayList<>( 0 );
+
+    @SerializedName( "game" )
+    private String _game;
 
     @SerializedName( "matchDuration" )
     private int _matchDuration;
@@ -105,12 +110,20 @@ public final class TournamentHeader {
         _mainJudge = mainJudge;
     }
 
-    public Player getJudges( ) {
+    public List<Player> getJudges( ) {
         return _judges;
     }
 
-    public void setJudges( final Player judges ) {
+    public void setJudges( final List<Player> judges ) {
         _judges = judges;
+    }
+
+    public String getGame( ) {
+        return _game;
+    }
+
+    public void setGame( final String game ) {
+        _game = game;
     }
 
     public int getMatchDuration( ) {

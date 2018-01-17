@@ -90,6 +90,7 @@ public final class TournamentRepository implements IService {
 
         final TournamentHeader header = new TournamentHeader( );
         header.setTitle( "" );
+        header.setGame( pref.map( TournamentHeader::getGame ).orElse( "" ) );
         header.setTournamentType( TournamentType.LOCAL );
         header.setDate( ZonedDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ) );
         header.setStatus( TournamentStatus.NOT_CONFIGURED );
