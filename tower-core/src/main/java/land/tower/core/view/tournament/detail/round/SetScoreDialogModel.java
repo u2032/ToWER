@@ -18,6 +18,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.Map;
+import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,6 +28,7 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
+import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.TournamentUpdatedEvent;
 import land.tower.data.PairingMode;
@@ -86,6 +88,26 @@ public final class SetScoreDialogModel {
 
             return null;
         }, _leftWins, _draws, _rightWins, _position ) );
+
+        _teamInfo.bind( Bindings.createStringBinding( ( ) -> {
+            if ( _position.get( ) == null || _position.get( ) == 0 ) {
+                return null;
+            }
+
+            final Optional<ObservableMatch> match = _round.getMatches( ).stream( )
+                                                          .filter( m -> m.getPosition( ) == _position.get( ) )
+                                                          .findAny( );
+
+            if ( !match.isPresent( ) ) {
+                return null;
+            }
+
+            final ObservableTeam left = _tournament.getTeam( match.get( ).getLeftTeamId( ) );
+            final ObservableTeam right = _tournament.getTeam( match.get( ).getRightTeamId( ) );
+
+            return String.format( "%s / %s", left.getName( ), right.getName( ) );
+
+        }, _position ) );
     }
 
     void fireSaveScore( ) {
@@ -163,12 +185,17 @@ public final class SetScoreDialogModel {
         return _position;
     }
 
+    public SimpleStringProperty teamInfoProperty( ) {
+        return _teamInfo;
+    }
+
     private final Configuration _config;
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
     private final ObservableRound _round;
 
     private final SimpleStringProperty _errorInformation = new SimpleStringProperty( );
+    private final SimpleStringProperty _teamInfo = new SimpleStringProperty( );
 
     private final SimpleObjectProperty<Integer> _leftWins = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _draws = new SimpleObjectProperty<>( );

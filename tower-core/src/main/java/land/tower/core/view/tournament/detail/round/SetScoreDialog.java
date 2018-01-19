@@ -158,8 +158,20 @@ final class SetScoreDialog extends Dialog<Void> {
         positionLabel.getStyleClass( ).add( "important" );
         positionLabel.textProperty( ).bind( _model.getI18n( ).get( "match.position" ) );
         positionLabel.setLabelFor( positionField );
+
+        final HBox positionLine = new HBox( );
+        positionLine.setAlignment( Pos.CENTER_LEFT );
+        positionLine.setSpacing( 15 );
+        positionLine.getChildren( ).add( positionField );
+
+        final Label teamNameLabel = new Label( );
+        teamNameLabel.setStyle( "-fx-font-style: italic" );
+        teamNameLabel.textProperty( )
+                     .bind( _model.teamInfoProperty( ) );
+        positionLine.getChildren( ).add( teamNameLabel );
+
         grid.add( positionLabel, 0, line );
-        grid.add( positionField, 1, line );
+        grid.add( positionLine, 1, line );
 
         line++;
         final Label errorLabel = new Label( );
