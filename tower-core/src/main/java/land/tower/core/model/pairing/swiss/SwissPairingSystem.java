@@ -141,7 +141,7 @@ public final class SwissPairingSystem implements PairingSystem {
                 match.setLeftTeamId( match.getRightTeamId( ) );
                 match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
             }
-            match.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
+            match.setScoreLeft( tournament.getHeader( ).getScoreMax( ) );
             match.setScoreDraw( 0 );
             match.setScoreRight( 0 );
         } );
@@ -211,7 +211,7 @@ public final class SwissPairingSystem implements PairingSystem {
             match.setPosition( position.incrementAndGet( ) );
             match.setLeftTeamId( availableTeams.remove( 0 ).getId( ) );
             match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
-            match.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
+            match.setScoreLeft( tournament.getHeader( ).getScoreMax( ) );
             match.setScoreDraw( 0 );
             match.setScoreRight( 0 );
             round.getMatches( ).add( match );

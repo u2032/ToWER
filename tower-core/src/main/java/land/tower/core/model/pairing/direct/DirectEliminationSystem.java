@@ -108,9 +108,9 @@ public final class DirectEliminationSystem implements PairingSystem {
         final boolean byeLeft = match.getLeftTeamId( ) == Teams.BYE_TEAM.getId( );
         final boolean byeRight = match.getRightTeamId( ) == Teams.BYE_TEAM.getId( );
         if ( byeLeft || byeRight ) {
-            match.setScoreLeft( byeRight ? tournament.getHeader( ).getWinningGameCount( ) : 0 );
+            match.setScoreLeft( byeRight ? tournament.getHeader( ).getScoreMax( ) : 0 );
             match.setScoreDraw( 0 );
-            match.setScoreRight( byeLeft ? tournament.getHeader( ).getWinningGameCount( ) : 0 );
+            match.setScoreRight( byeLeft ? tournament.getHeader( ).getScoreMax( ) : 0 );
         }
     }
 

@@ -63,11 +63,11 @@ public final class SetScoreDialogModel {
             final int rightWins = _rightScore.get( ) == null ? 0 : _rightScore.get( );
             final int position = _position.get( ) == null ? 0 : _position.get( );
 
-            if ( leftWins > tournament.getHeader( ).getWinningGameCount( ) ) {
+            if ( leftWins > tournament.getHeader( ).getScoreMax( ) ) {
                 return _i18n.get( "tournament.round.scoring.error.too.high", leftWins );
             }
 
-            if ( rightWins > tournament.getHeader( ).getWinningGameCount( ) ) {
+            if ( rightWins > tournament.getHeader( ).getScoreMax( ) ) {
                 return _i18n.get( "tournament.round.scoring.error.too.high", rightWins );
             }
 

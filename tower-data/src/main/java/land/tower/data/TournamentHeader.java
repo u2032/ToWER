@@ -53,8 +53,8 @@ public final class TournamentHeader {
     @SerializedName( "matchDuration" )
     private int _matchDuration;
 
-    @SerializedName( "winningGameCount" )
-    private int _winningGameCount;
+    @SerializedName( "scoreMax" )
+    private int _scoreMax = 1;
 
     @SerializedName( "teamSize" )
     private int _teamSize;
@@ -145,12 +145,12 @@ public final class TournamentHeader {
         _teamSize = teamSize;
     }
 
-    public int getWinningGameCount( ) {
-        return _winningGameCount;
+    public int getScoreMax( ) {
+        return _scoreMax;
     }
 
-    public void setWinningGameCount( final int winningGameCount ) {
-        _winningGameCount = winningGameCount;
+    public void setScoreMax( final int scoreMax ) {
+        _scoreMax = scoreMax;
     }
 
     public TournamentType getTournamentType( ) {

@@ -16,11 +16,13 @@ package land.tower.core.view.tournament.detail.information;
 
 import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
+import static land.tower.data.TournamentScoringMode.BY_POINTS;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -393,18 +395,19 @@ public final class TournamentInformationTab extends Tab {
         grid.add( scoringModeBox, 1, line );
 
         line++;
-        final TextField winningGameCountField = new TextField( );
-        winningGameCountField.setPrefWidth( 40 );
-        winningGameCountField.setMaxWidth( Pane.USE_PREF_SIZE );
-        winningGameCountField.textProperty( )
-                             .bindBidirectional( _model.getTournament( ).getHeader( ).winningGameCountProperty( ),
-                                                 new IntegerStringConverter( ) );
-        winningGameCountField.setTextFormatter(
+        final TextField scoreMaxField = new TextField( );
+        scoreMaxField.setPrefWidth( 40 );
+        scoreMaxField.setMaxWidth( Pane.USE_PREF_SIZE );
+        scoreMaxField.textProperty( )
+                     .bindBidirectional( _model.getTournament( ).getHeader( ).scoreMaxProperty( ),
+                                         new IntegerStringConverter( ) );
+        scoreMaxField.setTextFormatter(
             new TextFormatter<>( new IntegerStringConverter( ),
-                                 _model.getTournament( ).getHeader( ).getWinningGameCount( ),
+                                 _model.getTournament( ).getHeader( ).getScoreMax( ),
                                  c -> {
                                      final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
-                                     if ( !c.getControlNewText( ).isEmpty( ) ) {
+                                     if ( !c.getControlNewText( ).isEmpty( )
+                                          && _model.getTournament( ).getHeader( ).getScoringMode( ) != BY_POINTS ) {
                                          final int count = Integer.parseInt( c.getControlNewText( ) );
                                          if ( count < 1 || count > 9 ) {
                                              return null;
@@ -412,7 +415,7 @@ public final class TournamentInformationTab extends Tab {
                                      }
                                      return matches ? c : null;
                                  } ) );
-        winningGameCountField.disableProperty( ).bind( createBooleanBinding( ( ) -> {
+        scoreMaxField.disableProperty( ).bind( createBooleanBinding( ( ) -> {
             final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
             switch ( status ) {
                 case NOT_CONFIGURED:
@@ -423,11 +426,14 @@ public final class TournamentInformationTab extends Tab {
                     return true;
             }
         }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
-        final Label winningGameCountLabel = new Label( );
-        winningGameCountLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.winningGameCount" ) );
-        winningGameCountLabel.setLabelFor( winningGameCountField );
-        grid.add( winningGameCountLabel, 0, line );
-        grid.add( winningGameCountField, 1, line );
+        final Label scoreMaxLabel = new Label( );
+        scoreMaxLabel.textProperty( )
+                     .bind( Bindings.createStringBinding( ( ) -> {
+                         return _model.getI18n( ).get( "tournament.scoreMax." + scoringModeBox.getValue( ) ).get( );
+                     }, scoringModeBox.valueProperty( ) ) );
+        scoreMaxLabel.setLabelFor( scoreMaxField );
+        grid.add( scoreMaxLabel, 0, line );
+        grid.add( scoreMaxField, 1, line );
 
         line++;
         final TextField matchDurationField = new TextField( );

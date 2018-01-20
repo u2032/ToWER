@@ -155,7 +155,7 @@ public final class ChainTournamentDialogModel {
         newTournament.getHeader( ).setDate( _tournament.getHeader( ).getDate( ) );
         newTournament.getHeader( ).setMatchDuration( _tournament.getHeader( ).getMatchDuration( ) );
         newTournament.getHeader( ).setTeamSize( _tournament.getHeader( ).getTeamSize( ) );
-        newTournament.getHeader( ).setWinningGameCount( _tournament.getHeader( ).getWinningGameCount( ) );
+        newTournament.getHeader( ).setScoreMax( _tournament.getHeader( ).getScoreMax( ) );
         newTournament.getHeader( ).setType( _tournament.getHeader( ).getType( ) );
         newTournament.getHeader( ).setPairingMode( _pairingMode.get( ) );
 

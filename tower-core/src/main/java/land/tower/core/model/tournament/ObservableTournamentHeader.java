@@ -62,10 +62,10 @@ public final class ObservableTournamentHeader {
         _teamSize.addListener( ( obs, oldValue, newValue ) -> header.setTeamSize( newValue != null ? newValue : 1 ) );
         _teamSize.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
-        _winningGameCount = new SimpleObjectProperty<>( header.getWinningGameCount( ) );
-        _winningGameCount.addListener(
-            ( obs, oldValue, newValue ) -> header.setWinningGameCount( newValue != null ? newValue : 1 ) );
-        _winningGameCount.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+        _scoreMax = new SimpleObjectProperty<>( header.getScoreMax( ) );
+        _scoreMax.addListener(
+            ( obs, oldValue, newValue ) -> header.setScoreMax( newValue != null ? newValue : 1 ) );
+        _scoreMax.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
         _type = new SimpleObjectProperty<>( header.getTournamentType( ) );
         _type.addListener( ( obs, oldValue, newValue ) -> header.setTournamentType( newValue ) );
@@ -155,12 +155,12 @@ public final class ObservableTournamentHeader {
         return _teamSize;
     }
 
-    public Integer getWinningGameCount( ) {
-        return _winningGameCount.get( );
+    public Integer getScoreMax( ) {
+        return _scoreMax.get( );
     }
 
-    public SimpleObjectProperty<Integer> winningGameCountProperty( ) {
-        return _winningGameCount;
+    public SimpleObjectProperty<Integer> scoreMaxProperty( ) {
+        return _scoreMax;
     }
 
     public void setTitle( final String title ) {
@@ -191,8 +191,8 @@ public final class ObservableTournamentHeader {
         this._game.set( game );
     }
 
-    public void setWinningGameCount( final Integer winningGameCount ) {
-        this._winningGameCount.set( winningGameCount );
+    public void setScoreMax( final Integer scoreMax ) {
+        this._scoreMax.set( scoreMax );
     }
 
     public void setType( final TournamentType type ) {
@@ -229,7 +229,7 @@ public final class ObservableTournamentHeader {
     private final SimpleObjectProperty<PairingMode> _pairingMode;
     private final SimpleObjectProperty<Integer> _matchDuration;
     private final SimpleObjectProperty<Integer> _teamSize;
-    private final SimpleObjectProperty<Integer> _winningGameCount;
+    private final SimpleObjectProperty<Integer> _scoreMax;
     private final ObservableAddress _address;
 
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );

@@ -97,7 +97,7 @@ public final class TournamentRepository implements IService {
         header.setTournamentType( pref.map( TournamentHeader::getTournamentType ).orElse( TournamentType.LOCAL ) );
         header.setScoringMode( pref.map( TournamentHeader::getScoringMode ).orElse( TournamentScoringMode.BY_WINS ) );
         header.setPairingMode( pref.map( TournamentHeader::getPairingMode ).orElse( PairingMode.SWISS ) );
-        header.setWinningGameCount( pref.map( TournamentHeader::getWinningGameCount ).orElse( 1 ) );
+        header.setScoreMax( pref.map( TournamentHeader::getScoreMax ).orElse( 1 ) );
         header.setTeamSize( pref.map( TournamentHeader::getTeamSize ).orElse( 1 ) );
         header.setMatchDuration( pref.map( TournamentHeader::getMatchDuration ).orElse( 30 ) );
         tournament.setHeader( header );
