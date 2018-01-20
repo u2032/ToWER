@@ -209,6 +209,7 @@ public final class TournamentRoundTab extends Tab {
         hBox.setPadding( new Insets( 10 ) );
 
         final CheckBox checkBox = new CheckBox( );
+        checkBox.setStyle( "-fx-font-size: smaller" );
         checkBox.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.filter.not.empty.score" ) );
         checkBox.selectedProperty( ).bindBidirectional( _model.filterNotEmptyScoreProperty( ) );
         hBox.getChildren( ).add( checkBox );

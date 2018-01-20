@@ -20,6 +20,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import land.tower.data.PairingMode;
 import land.tower.data.TournamentHeader;
+import land.tower.data.TournamentScoringMode;
 import land.tower.data.TournamentStatus;
 import land.tower.data.TournamentType;
 
@@ -69,6 +70,10 @@ public final class ObservableTournamentHeader {
         _type = new SimpleObjectProperty<>( header.getTournamentType( ) );
         _type.addListener( ( obs, oldValue, newValue ) -> header.setTournamentType( newValue ) );
         _type.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
+        _scoringMode = new SimpleObjectProperty<>( header.getScoringMode( ) );
+        _scoringMode.addListener( ( obs, oldValue, newValue ) -> header.setScoringMode( newValue ) );
+        _scoringMode.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
         _address = new ObservableAddress( _header.getAddress( ) );
 
@@ -202,6 +207,14 @@ public final class ObservableTournamentHeader {
         return _type;
     }
 
+    public TournamentScoringMode getScoringMode( ) {
+        return _scoringMode.get( );
+    }
+
+    public SimpleObjectProperty<TournamentScoringMode> scoringModeProperty( ) {
+        return _scoringMode;
+    }
+
     public void markAsClean( ) {
         _dirty.set( false );
         _address.markAsClean( );
@@ -212,6 +225,7 @@ public final class ObservableTournamentHeader {
     private final SimpleObjectProperty<ZonedDateTime> _date;
     private final SimpleObjectProperty<TournamentStatus> _status;
     private final SimpleObjectProperty<TournamentType> _type;
+    private final SimpleObjectProperty<TournamentScoringMode> _scoringMode;
     private final SimpleObjectProperty<PairingMode> _pairingMode;
     private final SimpleObjectProperty<Integer> _matchDuration;
     private final SimpleObjectProperty<Integer> _teamSize;

@@ -36,6 +36,7 @@ import land.tower.data.Address;
 import land.tower.data.PairingMode;
 import land.tower.data.Tournament;
 import land.tower.data.TournamentHeader;
+import land.tower.data.TournamentScoringMode;
 import land.tower.data.TournamentStatus;
 import land.tower.data.TournamentType;
 
@@ -90,10 +91,11 @@ public final class TournamentRepository implements IService {
 
         final TournamentHeader header = new TournamentHeader( );
         header.setTitle( "" );
-        header.setGame( pref.map( TournamentHeader::getGame ).orElse( "" ) );
-        header.setTournamentType( TournamentType.LOCAL );
-        header.setDate( ZonedDateTime.now( ).truncatedTo( ChronoUnit.MINUTES ) );
+        header.setDate( ZonedDateTime.now( ).truncatedTo( ChronoUnit.HOURS ) );
         header.setStatus( TournamentStatus.NOT_CONFIGURED );
+        header.setGame( pref.map( TournamentHeader::getGame ).orElse( "" ) );
+        header.setTournamentType( pref.map( TournamentHeader::getTournamentType ).orElse( TournamentType.LOCAL ) );
+        header.setScoringMode( pref.map( TournamentHeader::getScoringMode ).orElse( TournamentScoringMode.BY_WINS ) );
         header.setPairingMode( pref.map( TournamentHeader::getPairingMode ).orElse( PairingMode.SWISS ) );
         header.setWinningGameCount( pref.map( TournamentHeader::getWinningGameCount ).orElse( 1 ) );
         header.setTeamSize( pref.map( TournamentHeader::getTeamSize ).orElse( 1 ) );

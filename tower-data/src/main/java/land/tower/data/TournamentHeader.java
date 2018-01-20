@@ -62,6 +62,9 @@ public final class TournamentHeader {
     @SerializedName( "type" )
     private TournamentType _tournamentType;
 
+    @SerializedName( "scoringMode" )
+    private TournamentScoringMode _scoringMode = TournamentScoringMode.BY_WINS;
+
     public TournamentStatus getStatus( ) {
         return _status;
     }
@@ -156,5 +159,13 @@ public final class TournamentHeader {
 
     public void setTournamentType( final TournamentType tournamentType ) {
         _tournamentType = tournamentType;
+    }
+
+    public TournamentScoringMode getScoringMode( ) {
+        return _scoringMode;
+    }
+
+    public void setScoringMode( final TournamentScoringMode scoringMode ) {
+        _scoringMode = scoringMode;
     }
 }

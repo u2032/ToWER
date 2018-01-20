@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.view.component.FaButton;
 import land.tower.data.PairingMode;
+import land.tower.data.TournamentScoringMode;
 import land.tower.data.TournamentStatus;
 import land.tower.data.TournamentType;
 
@@ -355,6 +356,41 @@ public final class TournamentInformationTab extends Tab {
         teamSizeLabel.setLabelFor( teamSizeField );
         grid.add( teamSizeLabel, 0, line );
         grid.add( teamSizeField, 1, line );
+
+        line++;
+        final ChoiceBox<TournamentScoringMode> scoringModeBox = new ChoiceBox<>( );
+        scoringModeBox.itemsProperty( )
+                      .bind( new SimpleListProperty<>(
+                          FXCollections.observableArrayList( TournamentScoringMode.values( ) ) ) );
+        scoringModeBox.setConverter( new StringConverter<TournamentScoringMode>( ) {
+            @Override
+            public String toString( final TournamentScoringMode object ) {
+                return _model.getI18n( ).get( "scoringMode." + object.name( ) ).get( );
+            }
+
+            @Override
+            public TournamentScoringMode fromString( final String string ) {
+                return null;
+            }
+        } );
+        scoringModeBox.valueProperty( )
+                      .bindBidirectional( _model.getTournament( ).getHeader( ).scoringModeProperty( ) );
+        scoringModeBox.disableProperty( ).bind( createBooleanBinding( ( ) -> {
+            final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
+            switch ( status ) {
+                case NOT_CONFIGURED:
+                case PLANNED:
+                case ENROLMENT:
+                    return false;
+                default:
+                    return true;
+            }
+        }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
+        final Label scoringModeLabel = new Label( );
+        scoringModeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.scoringMode" ) );
+        scoringModeLabel.setLabelFor( scoringModeLabel );
+        grid.add( scoringModeLabel, 0, line );
+        grid.add( scoringModeBox, 1, line );
 
         line++;
         final TextField winningGameCountField = new TextField( );
