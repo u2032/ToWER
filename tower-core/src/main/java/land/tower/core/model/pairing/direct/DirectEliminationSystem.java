@@ -18,6 +18,7 @@ import static java.util.Comparator.reverseOrder;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -32,7 +33,6 @@ import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Match;
 import land.tower.data.Round;
-import land.tower.data.Team;
 import land.tower.data.Teams;
 
 /**
@@ -107,47 +107,90 @@ public final class DirectEliminationSystem implements PairingSystem {
     }
 
     public Round createFirstRoundFromInitialRanking( ObservableTournament tournament ) {
-        final List<Team> activeTeams = tournament.getTeams( ).stream( )
-                                                 .map( ObservableTeam::getTeam )
-                                                 .filter( Team::isActive )
-                                                 .collect( Collectors.toList( ) );
+        final List<ObservableTeam> activeTeams =
+            tournament.getTeams( ).stream( )
+                      .filter( ObservableTeam::isActive )
+                      .sorted( Comparator.comparingInt( t -> t.getRanking( ).getRank( ) ) )
+                      .collect( Collectors.toList( ) );
 
         double p = Math.floor( Math.log( activeTeams.size( ) ) / Math.log( 2 ) );
-        final int maxTeamCount = (int) Math.pow( 2, p );
-        final Team[] teams = activeTeams.stream( )
-                                        .sorted( Comparator.comparingInt( t -> t.getRanking( ).getRank( ) ) )
-                                        .limit( maxTeamCount )
-                                        .toArray( Team[]::new );
+        final int maxTeamCountLower = (int) Math.pow( 2, p );
+        final int maxTeamCountUpper =
+            activeTeams.size( ) > maxTeamCountLower ? (int) Math.pow( 2, p + 1 ) : maxTeamCountLower;
 
-        final boolean isFinal = teams.length == 2;
+        final int initialTeamCount = activeTeams.size( );
 
-        final List<Match> matches = new ArrayList<>( );
+        final boolean isFinal = initialTeamCount == 2;
+        final ObservableTeam[] teams = Arrays.copyOf( activeTeams.toArray( new ObservableTeam[activeTeams.size( )] ),
+                                                      maxTeamCountUpper );
 
-        final AtomicInteger position = new AtomicInteger( );
-        for ( int i = 0; i < teams.length / 2; i++ ) {
-            final Team left = teams[i];
-            if ( isFinal ) {
-                left.getPairingFlags( ).put( "final", String.valueOf( true ) );
+        final Match match0 = new Match( );
+        match0.setPosition( 1 );
+        match0.setLeftTeamId( teams[0].getId( ) );
+        match0.setRightTeamId( teams[1].getId( ) );
+        Match[] matches = new Match[] { match0 };
+
+        while ( matches.length < maxTeamCountUpper / 2 ) {
+            final Match[] previous = matches;
+            matches = new Match[previous.length * 2];
+            for ( int i = 0; i < previous.length; i++ ) {
+                final Match match1 = new Match( );
+                match1.setPosition( i * 2 + 1 );
+                match1.setLeftTeamId( previous[i].getLeftTeamId( ) );
+                match1.setRightTeamId( opponentTeam( teams, match1.getLeftTeamId( ), matches.length * 2 ) );
+                if ( match1.getRightTeamId( ) == Teams.BYE_TEAM.getId( ) ) {
+                    match1.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
+                    match1.setScoreDraw( 0 );
+                    match1.setScoreRight( 0 );
+                }
+                matches[i * 2] = match1;
+
+                final Match match2 = new Match( );
+                match2.setPosition( i * 2 + 2 );
+                match2.setLeftTeamId( previous[i].getRightTeamId( ) );
+                match2.setRightTeamId( opponentTeam( teams, match2.getLeftTeamId( ), matches.length * 2 ) );
+                if ( match2.getRightTeamId( ) == Teams.BYE_TEAM.getId( ) ) {
+                    match2.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
+                    match2.setScoreDraw( 0 );
+                    match2.setScoreRight( 0 );
+                }
+                matches[i * 2 + 1] = match2;
             }
+        }
 
-            final Team right = teams[teams.length - 1 - i];
-            if ( isFinal ) {
-                right.getPairingFlags( ).put( "final", String.valueOf( true ) );
+        if ( isFinal ) {
+            for ( final Match m : matches ) {
+                final ObservableTeam left = tournament.getTeam( m.getLeftTeamId( ) );
+                if ( left.getId( ) != Teams.BYE_TEAM.getId( ) ) {
+                    left.getPairingFlags( ).put( "final", String.valueOf( true ) );
+                }
+                final ObservableTeam right = tournament.getTeam( m.getRightTeamId( ) );
+                if ( right.getId( ) != Teams.BYE_TEAM.getId( ) ) {
+                    right.getPairingFlags( ).put( "final", String.valueOf( true ) );
+                }
             }
-
-            final Match match = new Match( );
-            match.setPosition( position.incrementAndGet( ) );
-            match.setLeftTeamId( left.getId( ) );
-            match.setRightTeamId( right.getId( ) );
-            matches.add( match );
         }
 
         final Round round = new Round( );
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
         round.setStartDate( ZonedDateTime.now( ) );
-        round.getMatches( ).addAll( matches );
+        round.getMatches( ).addAll( Arrays.asList( matches ) );
         round.setFinal( isFinal );
         return round;
+    }
+
+    private int indexOf( ObservableTeam[] array, int teamId ) {
+        for ( int i = 0; i < array.length; i++ ) {
+            if ( array[i] != null && teamId == array[i].getId( ) ) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int opponentTeam( ObservableTeam[] array, int teamId, int max ) {
+        int index = indexOf( array, teamId );
+        return array[max - 1 - index] == null ? Teams.BYE_TEAM.getId( ) : array[max - 1 - index].getId( );
     }
 
     private int getWinningTeam( final ObservableMatch match ) {
@@ -162,28 +205,29 @@ public final class DirectEliminationSystem implements PairingSystem {
     }
 
     private Round firstRound( final ObservableTournament tournament ) {
-        final List<Team> activeTeams = tournament.getTeams( ).stream( )
-                                                 .map( ObservableTeam::getTeam )
-                                                 .filter( Team::isActive )
-                                                 .collect( Collectors.toList( ) );
+        final List<ObservableTeam> teams = tournament.getTeams( ).stream( )
+                                                     .filter( ObservableTeam::isActive )
+                                                     .collect( Collectors.toList( ) );
 
-        double p = Math.floor( Math.log( activeTeams.size( ) ) / Math.log( 2 ) );
-        final int maxTeamCount = (int) Math.pow( 2, p );
-        final List<Team> teams = activeTeams.stream( )
-                                            .limit( maxTeamCount )
-                                            .collect( Collectors.toList( ) );
+        double p = Math.floor( Math.log( teams.size( ) ) / Math.log( 2 ) );
+        final int maxTeamCountLower = (int) Math.pow( 2, p );
+        final int maxTeamCountUpper =
+            teams.size( ) > maxTeamCountLower ? (int) Math.pow( 2, p + 1 ) : maxTeamCountLower;
+
+        final int initialTeamCount = teams.size( );
+        final int byeCount = maxTeamCountUpper - initialTeamCount;
 
         final boolean isFinal = teams.size( ) == 2;
 
         final List<Match> matches = new ArrayList<>( );
 
         final AtomicInteger position = new AtomicInteger( );
-        while ( teams.size( ) > 1 ) {
-            final Team left = teams.remove( _random.nextInt( teams.size( ) ) );
+        while ( teams.size( ) > 1 && matches.size( ) * 2 < initialTeamCount - byeCount ) {
+            final ObservableTeam left = teams.remove( _random.nextInt( teams.size( ) ) );
             if ( isFinal ) {
                 left.getPairingFlags( ).put( "final", String.valueOf( true ) );
             }
-            final Team right = teams.remove( _random.nextInt( teams.size( ) ) );
+            final ObservableTeam right = teams.remove( _random.nextInt( teams.size( ) ) );
             if ( isFinal ) {
                 right.getPairingFlags( ).put( "final", String.valueOf( true ) );
             }
@@ -192,6 +236,22 @@ public final class DirectEliminationSystem implements PairingSystem {
             match.setPosition( position.incrementAndGet( ) );
             match.setLeftTeamId( left.getId( ) );
             match.setRightTeamId( right.getId( ) );
+            matches.add( match );
+        }
+
+        while ( !teams.isEmpty( ) ) {
+            final ObservableTeam left = teams.remove( _random.nextInt( teams.size( ) ) );
+            if ( isFinal ) {
+                left.getPairingFlags( ).put( "final", String.valueOf( true ) );
+            }
+
+            final Match match = new Match( );
+            match.setPosition( position.incrementAndGet( ) );
+            match.setLeftTeamId( left.getId( ) );
+            match.setRightTeamId( ObservableTeam.BYE_TEAM.getId( ) );
+            match.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
+            match.setScoreDraw( 0 );
+            match.setScoreRight( 0 );
             matches.add( match );
         }
 
