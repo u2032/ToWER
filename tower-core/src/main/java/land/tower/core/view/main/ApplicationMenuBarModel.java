@@ -37,7 +37,7 @@ import land.tower.core.view.option.LanguageDialog;
 import land.tower.core.view.player.AddPlayerDialogModel;
 import land.tower.core.view.player.PlayerManagementView;
 import land.tower.core.view.tournament.detail.TournamentView;
-import land.tower.core.view.tournament.detail.TournamentViewModelProvider;
+import land.tower.core.view.tournament.detail.TournamentViewProvider;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel.Factory;
 import land.tower.core.view.tournament.management.TournamentManagementView;
@@ -55,7 +55,7 @@ final class ApplicationMenuBarModel {
                              final Provider<TournamentManagementView> tournamentManagementViewProvider,
                              final Provider<PlayerManagementView> playerManagementViewProvider,
                              final TournamentRepository tournamentRepository,
-                             final TournamentViewModelProvider tournamentViewModelProvider,
+                             final TournamentViewProvider tournamentViewProvider,
                              final Provider<AboutDialog> aboutDialogProvider,
                              final Provider<LanguageDialog> languageDialogProvider,
                              final Provider<AddPlayerDialogModel> addPlayerDialogModelProvider,
@@ -79,7 +79,7 @@ final class ApplicationMenuBarModel {
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
         _tournamentRepository = tournamentRepository;
-        _tournamentViewModelProvider = tournamentViewModelProvider;
+        _tournamentViewProvider = tournamentViewProvider;
         _aboutDialogProvider = aboutDialogProvider;
     }
 
@@ -97,7 +97,7 @@ final class ApplicationMenuBarModel {
 
     void fireTournamentCreation( ) {
         final ObservableTournament tournament = _tournamentRepository.create( );
-        final TournamentView view = new TournamentView( _tournamentViewModelProvider.forTournament( tournament ) );
+        final TournamentView view = _tournamentViewProvider.forTournament( tournament );
         _eventBus.post( new SceneRequestedEvent( view ) );
     }
 
@@ -165,7 +165,7 @@ final class ApplicationMenuBarModel {
     private final Provider<PlayerManagementView> _playerManagementViewProvider;
     private final TournamentRepository _tournamentRepository;
 
-    private final TournamentViewModelProvider _tournamentViewModelProvider;
+    private final TournamentViewProvider _tournamentViewProvider;
     private final Provider<AboutDialog> _aboutDialogProvider;
     private final Provider<LanguageDialog> _languageDialogProvider;
 

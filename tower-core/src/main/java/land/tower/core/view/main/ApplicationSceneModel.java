@@ -24,6 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javax.inject.Inject;
+import land.tower.core.view.component.Displayable;
 import land.tower.core.view.event.CloseRequestEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
@@ -43,7 +44,12 @@ final class ApplicationSceneModel {
 
     @Subscribe
     void sceneRequested( final SceneRequestedEvent event ) {
-        Platform.runLater( ( ) -> _current.setValue( event.getView( ) ) );
+        Platform.runLater( ( ) -> {
+            _current.setValue( event.getView( ) );
+            if ( event.getView( ) instanceof Displayable ) {
+                ( (Displayable) event.getView( ) ).onDisplay( );
+            }
+        } );
     }
 
     @Subscribe

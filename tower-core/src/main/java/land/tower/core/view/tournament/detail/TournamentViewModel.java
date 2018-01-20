@@ -74,7 +74,7 @@ public final class TournamentViewModel {
                                 final TournamentRoundTabModel.Factory roundTabFactory,
                                 final TournamentLadderViewModel.Factory ladderTabFactory,
                                 final TournamentRepository tournamentRepository,
-                                final TournamentViewModelProvider tournamentViewProvider ) {
+                                final TournamentViewProvider tournamentViewProvider ) {
         _tournament = tournament;
         _eventBus = eventBus;
         _homeviewProvider = homeviewProvider;
@@ -99,7 +99,7 @@ public final class TournamentViewModel {
                         _roundTabFactory.create( _tournament, c.getAddedSubList( ).get( 0 ) );
                     final TournamentRoundTab roundTab = new TournamentRoundTab( roundTabModel );
                     _tabViews.add( _tabViews.size( ) - 1, roundTab );
-                    _selectedTab.set( roundTab );
+                    selectDefaultTab( );
                 }
                 if ( c.wasRemoved( ) ) {
                     final ObservableRound removedRound = c.getRemoved( ).get( 0 );
@@ -118,6 +118,7 @@ public final class TournamentViewModel {
     }
 
     private void selectDefaultTab( ) {
+        _selectedTab.set( null );
         if ( _tournament.getHeader( ).titleProperty( ).isEmpty( ).get( ) ) {
             _selectedTab.set( _tabViews.get( 0 ) );
             return;
@@ -162,8 +163,7 @@ public final class TournamentViewModel {
     }
 
     public void fireTournamentSelection( final ObservableTournament tournament ) {
-        _eventBus.post( new SceneRequestedEvent(
-            new TournamentView( _tournamentViewProvider.forTournament( tournament ) ) ) );
+        _eventBus.post( new SceneRequestedEvent( _tournamentViewProvider.forTournament( tournament ) ) );
     }
 
     private final ObservableTournament _tournament;
@@ -180,5 +180,5 @@ public final class TournamentViewModel {
     private final SimpleObjectProperty<Tab> _selectedTab = new SimpleObjectProperty<>( );
     private final TournamentRepository _tournamentRepository;
 
-    private final TournamentViewModelProvider _tournamentViewProvider;
+    private final TournamentViewProvider _tournamentViewProvider;
 }

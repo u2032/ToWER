@@ -36,7 +36,7 @@ public final class TournamentViewModule extends AbstractModule {
 
     @Override
     protected void configure( ) {
-        bind( TournamentViewModelProvider.class ).in( Scopes.SINGLETON );
+        bind( TournamentViewProvider.class ).in( Scopes.SINGLETON );
 
         install( new FactoryModuleBuilder( )
                      .implement( TournamentViewModel.class, TournamentViewModel.class )

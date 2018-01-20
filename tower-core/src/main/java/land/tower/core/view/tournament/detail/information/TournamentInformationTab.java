@@ -136,10 +136,7 @@ public final class TournamentInformationTab extends Tab {
 
         setOnSelectionChanged( t -> {
             if ( isSelected( ) && _model.getTournament( ).getHeader( ).titleProperty( ).isEmpty( ).get( ) ) {
-                Platform.runLater( ( ) -> {
-                    getTabPane( ).getSelectionModel( ).select( this );
-                    titleField.requestFocus( );
-                } );
+                Platform.runLater( titleField::requestFocus );
             }
         } );
 

@@ -30,12 +30,13 @@ import javafx.util.StringConverter;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.component.Displayable;
 
 /**
  * Created on 19/12/2017
  * @author Cédric Longo
  */
-public final class TournamentView extends BorderPane {
+public final class TournamentView extends BorderPane implements Displayable {
 
     public TournamentView( final TournamentViewModel model ) {
         _model = model;
@@ -64,10 +65,10 @@ public final class TournamentView extends BorderPane {
         homeButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
         homeButton.getStyleClass( ).add( "rich-button" );
 
-        final ChoiceBox<ObservableTournament> tournamentList = new ChoiceBox<>( );
-        tournamentList.itemsProperty( ).bind( _model.getOpenedTournaments( ) );
-        tournamentList.setValue( _model.getTournament( ) );
-        tournamentList.setConverter( new StringConverter<ObservableTournament>( ) {
+        _tournamentList = new ChoiceBox<>( );
+        _tournamentList.itemsProperty( ).bind( _model.getOpenedTournaments( ) );
+        _tournamentList.setValue( _model.getTournament( ) );
+        _tournamentList.setConverter( new StringConverter<ObservableTournament>( ) {
             @Override
             public String toString( final ObservableTournament object ) {
                 return object.getHeader( ).getTitle( );
@@ -78,7 +79,7 @@ public final class TournamentView extends BorderPane {
                 return null;
             }
         } );
-        tournamentList.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+        _tournamentList.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {
             if ( newValue != null ) {
                 _model.fireTournamentSelection( newValue );
             }
@@ -95,7 +96,7 @@ public final class TournamentView extends BorderPane {
         title.textProperty( ).bind( _model.getTournament( ).getHeader( ).titleProperty( ) );
         title.setEffect( Effects.dropShadow( ) );
 
-        final HBox header = new HBox( homeButton, tournamentList, spacing, title );
+        final HBox header = new HBox( homeButton, _tournamentList, spacing, title );
         header.setPadding( new Insets( 10, 20, 10, 10 ) );
         header.setSpacing( 10 );
         header.setAlignment( Pos.CENTER_LEFT );
@@ -106,6 +107,12 @@ public final class TournamentView extends BorderPane {
         return _model;
     }
 
+    @Override
+    public void onDisplay( ) {
+        _tournamentList.setValue( _model.getTournament( ) );
+    }
+
     private final TournamentViewModel _model;
 
+    private ChoiceBox<ObservableTournament> _tournamentList;
 }

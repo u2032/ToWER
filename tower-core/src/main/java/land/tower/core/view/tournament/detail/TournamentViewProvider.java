@@ -26,19 +26,19 @@ import land.tower.core.view.tournament.detail.TournamentViewModel.Factory;
  * Created on 20/12/2017
  * @author Cédric Longo
  */
-public final class TournamentViewModelProvider {
+public final class TournamentViewProvider {
 
     @Inject
-    public TournamentViewModelProvider( final Factory factory ) {
+    public TournamentViewProvider( final Factory factory ) {
         _factory = factory;
     }
 
-    public TournamentViewModel forTournament( ObservableTournament tournament ) {
+    public TournamentView forTournament( ObservableTournament tournament ) {
         return _viewModels.computeIfAbsent( tournament.getTournament( ).getId( ),
-                                            id -> _factory.forTournament( tournament ) );
+                                            id -> new TournamentView( _factory.forTournament( tournament ) ) );
     }
 
-    private final Map<UUID, TournamentViewModel> _viewModels = Maps.newConcurrentMap( );
+    private final Map<UUID, TournamentView> _viewModels = Maps.newConcurrentMap( );
 
     private final TournamentViewModel.Factory _factory;
 

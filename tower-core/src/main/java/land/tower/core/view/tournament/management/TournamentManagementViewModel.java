@@ -28,7 +28,7 @@ import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
 import land.tower.core.view.tournament.detail.TournamentView;
-import land.tower.core.view.tournament.detail.TournamentViewModelProvider;
+import land.tower.core.view.tournament.detail.TournamentViewProvider;
 import land.tower.data.Tournament;
 
 /**
@@ -41,12 +41,12 @@ final class TournamentManagementViewModel {
     TournamentManagementViewModel( final EventBus eventBus, final I18nTranslator i18n,
                                    final Provider<HomepageView> homepageViewProvider,
                                    final TournamentRepository tournamentRepository,
-                                   final TournamentViewModelProvider tournamentViewModelProvider ) {
+                                   final TournamentViewProvider tournamentViewProvider ) {
         _i18n = i18n;
         _eventBus = eventBus;
         _homepageViewProvider = homepageViewProvider;
         _tournamentRepository = tournamentRepository;
-        _tournamentViewModelProvider = tournamentViewModelProvider;
+        _tournamentViewProvider = tournamentViewProvider;
         _eventBus.register( this );
     }
 
@@ -73,7 +73,7 @@ final class TournamentManagementViewModel {
     }
 
     void fireTournamentDisplay( final ObservableTournament tournament ) {
-        final TournamentView view = new TournamentView( _tournamentViewModelProvider.forTournament( tournament ) );
+        final TournamentView view = _tournamentViewProvider.forTournament( tournament );
         _eventBus.post( new SceneRequestedEvent( view ) );
     }
 
@@ -82,5 +82,5 @@ final class TournamentManagementViewModel {
 
     private final Provider<HomepageView> _homepageViewProvider;
     private final TournamentRepository _tournamentRepository;
-    private final TournamentViewModelProvider _tournamentViewModelProvider;
+    private final TournamentViewProvider _tournamentViewProvider;
 }
