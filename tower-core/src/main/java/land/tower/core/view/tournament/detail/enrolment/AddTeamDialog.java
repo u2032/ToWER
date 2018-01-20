@@ -18,6 +18,7 @@ import org.controlsfx.control.textfield.AutoCompletionBinding.AutoCompletionEven
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 import java.util.regex.Pattern;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -124,6 +125,10 @@ final class AddTeamDialog extends Dialog<Team> {
             new TextFormatter<>( new IntegerStringConverter( ),
                                  null,
                                  c -> Pattern.matches( "\\d*", c.getControlNewText( ) ) ? c : null ) );
+
+        if ( line == 0 ) {
+            Platform.runLater( numeroField::requestFocus );
+        }
 
         final TextField lastnameField = new TextField( );
         lastnameField.promptTextProperty( ).bind( _model.getI18n( ).get( "player.lastname" ) );
