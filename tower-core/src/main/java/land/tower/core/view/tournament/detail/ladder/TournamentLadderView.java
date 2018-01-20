@@ -212,6 +212,12 @@ public final class TournamentLadderView extends Tab {
                               .addListener( ( observable1, oldValue1, newValue1 ) -> updateDisableCloseButton.run( ) );
                   }
               } );
+
+        if ( _model.getTournament( ).getCurrentRound( ) != null ) {
+            _model.getTournament( ).getCurrentRound( ).endedProperty( )
+                  .addListener( ( observable1, oldValue1, newValue1 ) -> updateDisableCloseButton.run( ) );
+        }
+
         hBox.getChildren( ).add( closeButton );
 
         return hBox;
