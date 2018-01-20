@@ -70,6 +70,9 @@ public final class TournamentEnrolmentTabModel {
     public void fireTeamAdded( final Team team ) {
         _tournament.registerTeam( new ObservableTeam( team ) );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
+        // Recompute ranking
+        final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        pairing.getRankingComputer( ).computeRanking( _tournament );
     }
 
     @Inject
