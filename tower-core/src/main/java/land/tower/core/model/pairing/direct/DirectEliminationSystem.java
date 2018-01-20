@@ -14,8 +14,6 @@
 
 package land.tower.core.model.pairing.direct;
 
-import static java.util.Comparator.reverseOrder;
-
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,9 +53,7 @@ public final class DirectEliminationSystem implements PairingSystem {
         tournament.getTeams( ).forEach( team -> team.getPairingFlags( ).remove( "final" ) );
 
         final ObservableRound lastRound = tournament.getRounds( ).stream( )
-                                                    .sorted( Comparator.comparing( ObservableRound::getNumero,
-                                                                                   reverseOrder( ) ) )
-                                                    .findFirst( )
+                                                    .max( Comparator.comparing( ObservableRound::getNumero ) )
                                                     .orElseThrow( IllegalStateException::new );
 
         // Last round has 2 matches, so this round is the final
@@ -83,6 +79,7 @@ public final class DirectEliminationSystem implements PairingSystem {
             match.setPosition( position.incrementAndGet( ) );
             match.setLeftTeamId( winningT1.isActive( ) ? winningT1.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
             match.setRightTeamId( winningT2.isActive( ) ? winningT2.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
+            setDefaultByeScore( match, tournament );
             matches.add( match );
 
             if ( isFinal ) {
@@ -94,6 +91,7 @@ public final class DirectEliminationSystem implements PairingSystem {
 
                 m.setLeftTeamId( loosingT1.isActive( ) ? loosingT1.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
                 m.setRightTeamId( loosingT2.isActive( ) ? loosingT2.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
+                setDefaultByeScore( m, tournament );
                 matches.add( m );
             }
         }
@@ -104,6 +102,16 @@ public final class DirectEliminationSystem implements PairingSystem {
         round.getMatches( ).addAll( matches );
         round.setFinal( isFinal );
         return round;
+    }
+
+    private void setDefaultByeScore( final Match match, final ObservableTournament tournament ) {
+        final boolean byeLeft = match.getLeftTeamId( ) == Teams.BYE_TEAM.getId( );
+        final boolean byeRight = match.getRightTeamId( ) == Teams.BYE_TEAM.getId( );
+        if ( byeLeft || byeRight ) {
+            match.setScoreLeft( byeRight ? tournament.getHeader( ).getWinningGameCount( ) : 0 );
+            match.setScoreDraw( 0 );
+            match.setScoreRight( byeLeft ? tournament.getHeader( ).getWinningGameCount( ) : 0 );
+        }
     }
 
     public Round createFirstRoundFromInitialRanking( ObservableTournament tournament ) {
@@ -138,22 +146,14 @@ public final class DirectEliminationSystem implements PairingSystem {
                 match1.setPosition( i * 2 + 1 );
                 match1.setLeftTeamId( previous[i].getLeftTeamId( ) );
                 match1.setRightTeamId( opponentTeam( teams, match1.getLeftTeamId( ), matches.length * 2 ) );
-                if ( match1.getRightTeamId( ) == Teams.BYE_TEAM.getId( ) ) {
-                    match1.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
-                    match1.setScoreDraw( 0 );
-                    match1.setScoreRight( 0 );
-                }
+                setDefaultByeScore( match1, tournament );
                 matches[i * 2] = match1;
 
                 final Match match2 = new Match( );
                 match2.setPosition( i * 2 + 2 );
                 match2.setLeftTeamId( previous[i].getRightTeamId( ) );
                 match2.setRightTeamId( opponentTeam( teams, match2.getLeftTeamId( ), matches.length * 2 ) );
-                if ( match2.getRightTeamId( ) == Teams.BYE_TEAM.getId( ) ) {
-                    match2.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
-                    match2.setScoreDraw( 0 );
-                    match2.setScoreRight( 0 );
-                }
+                setDefaultByeScore( match2, tournament );
                 matches[i * 2 + 1] = match2;
             }
         }
@@ -249,9 +249,7 @@ public final class DirectEliminationSystem implements PairingSystem {
             match.setPosition( position.incrementAndGet( ) );
             match.setLeftTeamId( left.getId( ) );
             match.setRightTeamId( ObservableTeam.BYE_TEAM.getId( ) );
-            match.setScoreLeft( tournament.getHeader( ).getWinningGameCount( ) );
-            match.setScoreDraw( 0 );
-            match.setScoreRight( 0 );
+            setDefaultByeScore( match, tournament );
             matches.add( match );
         }
 
