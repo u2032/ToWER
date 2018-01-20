@@ -84,7 +84,14 @@ public final class TournamentRoundTabModel {
     }
 
     public SetScoreDialog createSetScoreDialog( ) {
-        return new SetScoreDialog( _setScoreDialogFactory.forRound( _tournament, _round ) );
+        switch ( _tournament.getHeader( ).getScoringMode( ) ) {
+            case BY_WINS:
+                return new SetScoreDialog( _setScoreDialogFactory.forRound( _tournament, _round ) );
+            case BY_POINTS:
+                return new SetScoreByPointsDialog( _setScoreDialogFactory.forRound( _tournament, _round ) );
+        }
+        throw new UnsupportedOperationException( "Scoring dialog for scoring mode " +
+                                                 _tournament.getHeader( ).getScoringMode( ) + " is not defined" );
     }
 
     private final ObservableTournament _tournament;

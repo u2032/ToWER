@@ -58,9 +58,9 @@ public final class SetScoreDialogModel {
         _pairingSystems = pairingSystems;
 
         _errorInformation.bind( Bindings.createStringBinding( ( ) -> {
-            final int leftWins = _leftWins.get( ) == null ? 0 : _leftWins.get( );
+            final int leftWins = _leftScore.get( ) == null ? 0 : _leftScore.get( );
             final int draws = _draws.get( ) == null ? 0 : _draws.get( );
-            final int rightWins = _rightWins.get( ) == null ? 0 : _rightWins.get( );
+            final int rightWins = _rightScore.get( ) == null ? 0 : _rightScore.get( );
             final int position = _position.get( ) == null ? 0 : _position.get( );
 
             if ( leftWins > tournament.getHeader( ).getWinningGameCount( ) ) {
@@ -87,7 +87,7 @@ public final class SetScoreDialogModel {
             }
 
             return null;
-        }, _leftWins, _draws, _rightWins, _position ) );
+        }, _leftScore, _draws, _rightScore, _position ) );
 
         _teamInfo.bind( Bindings.createStringBinding( ( ) -> {
             if ( _position.get( ) == null || _position.get( ) == 0 ) {
@@ -115,9 +115,9 @@ public final class SetScoreDialogModel {
                                             .filter( m -> m.getPosition( ) == _position.get( ) )
                                             .findAny( )
                                             .orElseThrow( IllegalArgumentException::new );
-        match.scoreLeftProperty( ).set( _leftWins.get( ) == null ? 0 : _leftWins.getValue( ) );
+        match.scoreLeftProperty( ).set( _leftScore.get( ) == null ? 0 : _leftScore.getValue( ) );
         match.scoreDrawProperty( ).set( _draws.get( ) == null ? 0 : _draws.getValue( ) );
-        match.scoreRightProperty( ).set( _rightWins.get( ) == null ? 0 : _rightWins.getValue( ) );
+        match.scoreRightProperty( ).set( _rightScore.get( ) == null ? 0 : _rightScore.getValue( ) );
 
         if ( _round.isEnded( ) ) {
             // If the round is ended, trigger ranking computing
@@ -153,12 +153,12 @@ public final class SetScoreDialogModel {
         return _errorInformation;
     }
 
-    public Integer getLeftWins( ) {
-        return _leftWins.get( );
+    public Integer getLeftScore( ) {
+        return _leftScore.get( );
     }
 
-    public SimpleObjectProperty<Integer> leftWinsProperty( ) {
-        return _leftWins;
+    public SimpleObjectProperty<Integer> leftScoreProperty( ) {
+        return _leftScore;
     }
 
     public Integer getDraws( ) {
@@ -169,12 +169,12 @@ public final class SetScoreDialogModel {
         return _draws;
     }
 
-    public Integer getRightWins( ) {
-        return _rightWins.get( );
+    public Integer getRightScore( ) {
+        return _rightScore.get( );
     }
 
-    public SimpleObjectProperty<Integer> rightWinsProperty( ) {
-        return _rightWins;
+    public SimpleObjectProperty<Integer> rightScoreProperty( ) {
+        return _rightScore;
     }
 
     public Integer getPosition( ) {
@@ -197,9 +197,9 @@ public final class SetScoreDialogModel {
     private final SimpleStringProperty _errorInformation = new SimpleStringProperty( );
     private final SimpleStringProperty _teamInfo = new SimpleStringProperty( );
 
-    private final SimpleObjectProperty<Integer> _leftWins = new SimpleObjectProperty<>( );
+    private final SimpleObjectProperty<Integer> _leftScore = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _draws = new SimpleObjectProperty<>( );
-    private final SimpleObjectProperty<Integer> _rightWins = new SimpleObjectProperty<>( );
+    private final SimpleObjectProperty<Integer> _rightScore = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _position = new SimpleObjectProperty<>( );
 
     private final EventBus _eventBus;

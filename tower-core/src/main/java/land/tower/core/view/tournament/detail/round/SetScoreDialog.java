@@ -19,6 +19,8 @@ import com.google.common.base.Strings;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableStringValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -39,7 +41,7 @@ import land.tower.core.ext.font.FontAwesome;
  * Created on 31/12/2017
  * @author Cédric Longo
  */
-final class SetScoreDialog extends Dialog<Void> {
+class SetScoreDialog extends Dialog<Void> {
 
     public SetScoreDialog( final SetScoreDialogModel model ) {
         getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
@@ -73,68 +75,20 @@ final class SetScoreDialog extends Dialog<Void> {
         final HBox scoreBox = new HBox( );
         scoreBox.setSpacing( 20 );
 
-        final TextField leftWinsField = new TextField( );
-        leftWinsField.setAlignment( Pos.CENTER );
-        leftWinsField.promptTextProperty( )
-                     .bind( Bindings.concat( _model.getI18n( ).get( "match.score.wins" ),
-                                             " ",
-                                             _model.getI18n( ).get( "match.team.left" ) ) );
-        leftWinsField.setTextFormatter(
-            new TextFormatter<>( new IntegerStringConverter( ),
-                                 null,
-                                 c -> {
-                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
-                                     if ( matches && !c.getControlNewText( ).isEmpty( ) ) {
-                                         final int count = Integer.parseInt( c.getControlNewText( ) );
-                                         if ( count > 9 ) {
-                                             return null;
-                                         }
-                                     }
-                                     return matches ? c : null;
-                                 } ) );
-        leftWinsField.textProperty( ).bindBidirectional( _model.leftWinsProperty( ), new IntegerStringConverter( ) );
-        scoreBox.getChildren( ).add( leftWinsField );
+        final TextField leftWinsField = getLeftWinsField( );
+        if ( leftWinsField != null ) {
+            scoreBox.getChildren( ).add( leftWinsField );
+        }
 
-        final TextField drawsField = new TextField( );
-        drawsField.setAlignment( Pos.CENTER );
-        drawsField.promptTextProperty( ).bind( _model.getI18n( ).get( "match.score.draw" ) );
-        drawsField.setTextFormatter(
-            new TextFormatter<>( new IntegerStringConverter( ),
-                                 null,
-                                 c -> {
-                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
-                                     if ( matches && !c.getControlNewText( ).isEmpty( ) ) {
-                                         final int count = Integer.parseInt( c.getControlNewText( ) );
-                                         if ( count > 9 ) {
-                                             return null;
-                                         }
-                                     }
-                                     return matches ? c : null;
-                                 } ) );
-        drawsField.textProperty( ).bindBidirectional( _model.drawsProperty( ), new IntegerStringConverter( ) );
-        scoreBox.getChildren( ).add( drawsField );
+        final TextField drawsField = buildDrawsField( );
+        if ( drawsField != null ) {
+            scoreBox.getChildren( ).add( drawsField );
+        }
 
-        final TextField rightWinsField = new TextField( );
-        rightWinsField.setAlignment( Pos.CENTER );
-        rightWinsField.promptTextProperty( )
-                      .bind( Bindings.concat( _model.getI18n( ).get( "match.score.wins" ),
-                                              " ",
-                                              _model.getI18n( ).get( "match.team.right" ) ) );
-        rightWinsField.setTextFormatter(
-            new TextFormatter<>( new IntegerStringConverter( ),
-                                 null,
-                                 c -> {
-                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
-                                     if ( matches && !c.getControlNewText( ).isEmpty( ) ) {
-                                         final int count = Integer.parseInt( c.getControlNewText( ) );
-                                         if ( count > 9 ) {
-                                             return null;
-                                         }
-                                     }
-                                     return matches ? c : null;
-                                 } ) );
-        rightWinsField.textProperty( ).bindBidirectional( _model.rightWinsProperty( ), new IntegerStringConverter( ) );
-        scoreBox.getChildren( ).add( rightWinsField );
+        final TextField rightWinsField = buildRightWinsField( );
+        if ( rightWinsField != null ) {
+            scoreBox.getChildren( ).add( rightWinsField );
+        }
 
         final Label scoreLabel = new Label( );
         scoreLabel.getStyleClass( ).add( "important" );
@@ -199,6 +153,52 @@ final class SetScoreDialog extends Dialog<Void> {
 
         getDialogPane( ).setContent( grid );
 
+        configureAutoFocus( leftWinsField, drawsField, rightWinsField, positionField );
+    }
+
+    protected TextField buildRightWinsField( ) {
+        return buildScoreField( Bindings.concat( _model.getI18n( ).get( "match.score.wins" ),
+                                                 " ",
+                                                 _model.getI18n( ).get( "match.team.right" ) ),
+                                _model.rightScoreProperty( ) );
+    }
+
+    protected TextField buildDrawsField( ) {
+        return buildScoreField( _model.getI18n( ).get( "match.score.draw" ),
+                                _model.drawsProperty( ) );
+    }
+
+    protected TextField getLeftWinsField( ) {
+        return buildScoreField( Bindings.concat( _model.getI18n( ).get( "match.score.wins" ),
+                                                 " ",
+                                                 _model.getI18n( ).get( "match.team.left" ) ),
+                                _model.leftScoreProperty( ) );
+    }
+
+    private TextField buildScoreField( final ObservableStringValue promptText,
+                                       final SimpleObjectProperty<Integer> integerSimpleObjectProperty ) {
+        final TextField field = new TextField( );
+        field.setAlignment( Pos.CENTER );
+        field.promptTextProperty( ).bind( promptText );
+        field.setTextFormatter(
+            new TextFormatter<>( new IntegerStringConverter( ),
+                                 null,
+                                 c -> {
+                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
+                                     if ( matches && !c.getControlNewText( ).isEmpty( ) ) {
+                                         final int count = Integer.parseInt( c.getControlNewText( ) );
+                                         if ( count > 9 ) {
+                                             return null;
+                                         }
+                                     }
+                                     return matches ? c : null;
+                                 } ) );
+        field.textProperty( ).bindBidirectional( integerSimpleObjectProperty, new IntegerStringConverter( ) );
+        return field;
+    }
+
+    protected void configureAutoFocus( final TextField leftWinsField, final TextField drawsField,
+                                       final TextField rightWinsField, final TextField positionField ) {
         // Configure autofocus
         leftWinsField.setOnKeyTyped( event -> {
             Platform.runLater( ( ) -> {

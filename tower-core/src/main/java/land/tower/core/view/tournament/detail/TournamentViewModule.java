@@ -26,6 +26,7 @@ import land.tower.core.view.tournament.detail.ladder.CloseTournamentDialogModel;
 import land.tower.core.view.tournament.detail.ladder.TournamentLadderViewModel;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel;
 import land.tower.core.view.tournament.detail.round.SetScoreDialogModel;
+import land.tower.core.view.tournament.detail.round.TournamentRoundTabFactory;
 import land.tower.core.view.tournament.detail.round.TournamentRoundTabModel;
 
 /**
@@ -37,6 +38,7 @@ public final class TournamentViewModule extends AbstractModule {
     @Override
     protected void configure( ) {
         bind( TournamentViewProvider.class ).in( Scopes.SINGLETON );
+        bind( TournamentRoundTabFactory.class ).in( Scopes.SINGLETON );
 
         install( new FactoryModuleBuilder( )
                      .implement( TournamentViewModel.class, TournamentViewModel.class )

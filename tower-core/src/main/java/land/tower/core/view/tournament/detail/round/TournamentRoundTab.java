@@ -47,7 +47,7 @@ import land.tower.data.TournamentStatus;
  * Created on 30/12/2017
  * @author Cédric Longo
  */
-public final class TournamentRoundTab extends Tab {
+public class TournamentRoundTab extends Tab {
 
     public TournamentRoundTab( final TournamentRoundTabModel model ) {
         _model = model;
@@ -105,7 +105,49 @@ public final class TournamentRoundTab extends Tab {
         scoreCol.textProperty( ).bind( _model.getI18n( ).get( "match.score" ) );
         scoreCol.setPrefWidth( tableView.widthProperty( ).divide( 3 ).getValue( ) );
         tableView.getColumns( ).add( scoreCol );
+        addScoreColumns( scoreCol );
 
+        final TableColumn<ObservableMatch, String> teamRightCol = new TableColumn<>( );
+        teamRightCol.setEditable( false );
+        teamRightCol.textProperty( ).bind( _model.getI18n( ).get( "match.team.right" ) );
+        teamRightCol.setCellValueFactory(
+            param -> {
+                final int teamId = param.getValue( ).getRightTeamId( );
+                return _model.getTournament( ).getTeam( teamId ).nameProperty( );
+            } );
+        tableView.getColumns( ).add( teamRightCol );
+
+        tableView.setRowFactory( tv -> {
+            TableRow<ObservableMatch> row = new TableRow<>( );
+            row.setOnMouseClicked( event -> {
+                if ( event.getClickCount( ) == 2 && ( !row.isEmpty( ) ) ) {
+                    if ( _model.getTournament( ).getHeader( ).getStatus( ) == TournamentStatus.CLOSED ) {
+                        return;
+                    }
+
+                    final ObservableMatch match = row.getItem( );
+                    final SetScoreDialog setScoreDialog = _model.createSetScoreDialog( );
+                    setScoreDialog.getModel( ).positionProperty( ).set( match.getPosition( ) );
+                    if ( match.hasScore( ) ) {
+                        setScoreDialog.getModel( ).leftScoreProperty( ).set( match.getScoreLeft( ) );
+                        setScoreDialog.getModel( ).drawsProperty( ).set( match.getScoreDraw( ) );
+                        setScoreDialog.getModel( ).rightScoreProperty( ).set( match.getScoreRight( ) );
+                    }
+                    setScoreDialog.setOnCloseRequest( e -> Platform.runLater( this::resetFilter ) );
+                    setScoreDialog.show( );
+                }
+            } );
+            return row;
+        } );
+
+        final Label emptyLabel = new Label( );
+        emptyLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.no.match" ) );
+        tableView.setPlaceholder( emptyLabel );
+
+        return tableView;
+    }
+
+    protected void addScoreColumns( final TableColumn<ObservableMatch, String> scoreCol ) {
         // CODEREVIEW These columns should be not reorderable but available only since Java 9
         final TableColumn<ObservableMatch, String> winsLeftCol = new TableColumn<>( );
         winsLeftCol.setEditable( false );
@@ -151,45 +193,6 @@ public final class TournamentRoundTab extends Tab {
             return value;
         } );
         scoreCol.getColumns( ).add( winsRightCol );
-
-        final TableColumn<ObservableMatch, String> teamRightCol = new TableColumn<>( );
-        teamRightCol.setEditable( false );
-        teamRightCol.textProperty( ).bind( _model.getI18n( ).get( "match.team.right" ) );
-        teamRightCol.setCellValueFactory(
-            param -> {
-                final int teamId = param.getValue( ).getRightTeamId( );
-                return _model.getTournament( ).getTeam( teamId ).nameProperty( );
-            } );
-        tableView.getColumns( ).add( teamRightCol );
-
-        tableView.setRowFactory( tv -> {
-            TableRow<ObservableMatch> row = new TableRow<>( );
-            row.setOnMouseClicked( event -> {
-                if ( event.getClickCount( ) == 2 && ( !row.isEmpty( ) ) ) {
-                    if ( _model.getTournament( ).getHeader( ).getStatus( ) == TournamentStatus.CLOSED ) {
-                        return;
-                    }
-
-                    final ObservableMatch match = row.getItem( );
-                    final SetScoreDialog setScoreDialog = _model.createSetScoreDialog( );
-                    setScoreDialog.getModel( ).positionProperty( ).set( match.getPosition( ) );
-                    if ( match.hasScore( ) ) {
-                        setScoreDialog.getModel( ).leftWinsProperty( ).set( match.getScoreLeft( ) );
-                        setScoreDialog.getModel( ).drawsProperty( ).set( match.getScoreDraw( ) );
-                        setScoreDialog.getModel( ).rightWinsProperty( ).set( match.getScoreRight( ) );
-                    }
-                    setScoreDialog.setOnCloseRequest( e -> Platform.runLater( this::resetFilter ) );
-                    setScoreDialog.show( );
-                }
-            } );
-            return row;
-        } );
-
-        final Label emptyLabel = new Label( );
-        emptyLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.no.match" ) );
-        tableView.setPlaceholder( emptyLabel );
-
-        return tableView;
     }
 
     private void resetFilter( ) {

@@ -42,7 +42,7 @@ import land.tower.core.view.tournament.detail.information.TournamentInformationT
 import land.tower.core.view.tournament.detail.ladder.TournamentLadderView;
 import land.tower.core.view.tournament.detail.ladder.TournamentLadderViewModel;
 import land.tower.core.view.tournament.detail.round.TournamentRoundTab;
-import land.tower.core.view.tournament.detail.round.TournamentRoundTabModel;
+import land.tower.core.view.tournament.detail.round.TournamentRoundTabFactory;
 import land.tower.data.TournamentStatus;
 
 /**
@@ -71,7 +71,7 @@ public final class TournamentViewModel {
                                 final I18nTranslator i18n,
                                 final TournamentInformationTabModel.Factory informationTabFactory,
                                 final TournamentEnrolmentTabModel.Factory enrolmentTabFactory,
-                                final TournamentRoundTabModel.Factory roundTabFactory,
+                                final TournamentRoundTabFactory roundTabFactory,
                                 final TournamentLadderViewModel.Factory ladderTabFactory,
                                 final TournamentRepository tournamentRepository,
                                 final TournamentViewProvider tournamentViewProvider ) {
@@ -89,15 +89,13 @@ public final class TournamentViewModel {
         _tabViews.add( new TournamentInformationTab( _informationTabFactory.forTournament( _tournament ) ) );
         _tabViews.add( new TournamentEnrolmentTab( _enrolmentTabFactory.forTournament( _tournament ) ) );
         _tournament.getRounds( ).forEach( round -> {
-            final TournamentRoundTabModel roundTabModel = _roundTabFactory.create( _tournament, round );
-            _tabViews.add( new TournamentRoundTab( roundTabModel ) );
+            _tabViews.add( _roundTabFactory.create( _tournament, round ) );
         } );
         _tournament.getRounds( ).addListener( (ListChangeListener<ObservableRound>) c -> {
             if ( c.next( ) ) {
                 if ( c.wasAdded( ) ) {
-                    final TournamentRoundTabModel roundTabModel =
-                        _roundTabFactory.create( _tournament, c.getAddedSubList( ).get( 0 ) );
-                    final TournamentRoundTab roundTab = new TournamentRoundTab( roundTabModel );
+                    final TournamentRoundTab roundTab = _roundTabFactory
+                                                            .create( _tournament, c.getAddedSubList( ).get( 0 ) );
                     _tabViews.add( _tabViews.size( ) - 1, roundTab );
                     selectDefaultTab( );
                 }
@@ -174,7 +172,7 @@ public final class TournamentViewModel {
     private final ObservableList<Tab> _tabViews = FXCollections.observableArrayList( );
     private final TournamentInformationTabModel.Factory _informationTabFactory;
     private final TournamentEnrolmentTabModel.Factory _enrolmentTabFactory;
-    private final TournamentRoundTabModel.Factory _roundTabFactory;
+    private final TournamentRoundTabFactory _roundTabFactory;
     private final TournamentLadderViewModel.Factory _ladderTabFactory;
 
     private final SimpleObjectProperty<Tab> _selectedTab = new SimpleObjectProperty<>( );
