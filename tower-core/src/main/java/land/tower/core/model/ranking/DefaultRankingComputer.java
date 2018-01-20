@@ -25,6 +25,7 @@ import land.tower.core.model.tournament.ObservableRanking;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.data.TournamentScoringMode;
 
 /**
  * Created on 01/01/2018
@@ -45,7 +46,12 @@ public final class DefaultRankingComputer implements IRankingComputer {
                                                        .collect( Collectors.toList( ) );
 
         // Compute main points
-        teams.forEach( team -> team.getRanking( ).setPoints( KashdanSystem.compute( team, rounds ) ) );
+        if ( tournament.getHeader( ).getScoringMode( ) == TournamentScoringMode.BY_WINS ) {
+            teams.forEach( team -> team.getRanking( ).setPoints( KashdanSystem.compute( team, rounds ) ) );
+
+        } else if ( tournament.getHeader( ).getScoringMode( ) == TournamentScoringMode.BY_POINTS ) {
+            teams.forEach( team -> team.getRanking( ).setPoints( SumOfScoreSystem.compute( team, rounds ) ) );
+        }
 
         // Compute secondary points
         teams.forEach( team -> {
