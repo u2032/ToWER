@@ -16,10 +16,11 @@ package land.tower.core.view.tournament.detail;
 
 import static javafx.scene.layout.HBox.setHgrow;
 
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
@@ -65,9 +66,8 @@ public final class TournamentView extends BorderPane implements Displayable {
         homeButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
         homeButton.getStyleClass( ).add( "rich-button" );
 
-        _tournamentList = new ChoiceBox<>( );
+        _tournamentList = new ComboBox<>( );
         _tournamentList.itemsProperty( ).bind( _model.getOpenedTournaments( ) );
-        _tournamentList.setValue( _model.getTournament( ) );
         _tournamentList.setConverter( new StringConverter<ObservableTournament>( ) {
             @Override
             public String toString( final ObservableTournament object ) {
@@ -80,7 +80,7 @@ public final class TournamentView extends BorderPane implements Displayable {
             }
         } );
         _tournamentList.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {
-            if ( newValue != null ) {
+            if ( !refreshing && newValue != null ) {
                 _model.fireTournamentSelection( newValue );
             }
         } );
@@ -108,11 +108,21 @@ public final class TournamentView extends BorderPane implements Displayable {
     }
 
     @Override
-    public void onDisplay( ) {
-        _tournamentList.setValue( _model.getTournament( ) );
+    public synchronized void onDisplay( ) {
+        try {
+            refreshing = true;
+            _tournamentList.setValue( null );
+            _tournamentList.itemsProperty( ).unbind( );
+            _tournamentList.itemsProperty( ).set( FXCollections.emptyObservableList( ) );
+            _tournamentList.itemsProperty( ).bind( _model.getOpenedTournaments( ) );
+            _tournamentList.setValue( _model.getTournament( ) );
+        } finally {
+            refreshing = false;
+        }
     }
 
     private final TournamentViewModel _model;
 
-    private ChoiceBox<ObservableTournament> _tournamentList;
+    private ComboBox<ObservableTournament> _tournamentList;
+    private boolean refreshing;
 }
