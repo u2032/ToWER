@@ -32,6 +32,15 @@
         </profile>
 
         <profile>
+            <id>linux</id>
+            <properties>
+                <bundle.executable>${env.JAVA_HOME}/bin/javapackager</bundle.executable>
+                <bundle.native>deb</bundle.native>
+                <bundle.icon>tower.png</bundle.icon>
+            </properties>
+        </profile>
+
+        <profile>
             <id>bundle</id>
             <build>
                 <plugins>
@@ -42,7 +51,7 @@
                                 <id>copy-project</id>
                                 <phase>generate-resources</phase>
                                 <goals>
-                                    <goal>unpack</goal>
+                                    <goal>copy</goal>
                                 </goals>
                                 <configuration>
                                     <artifactItems>
@@ -50,7 +59,8 @@
                                             <groupId>${deploy.groupId}</groupId>
                                             <artifactId>${deploy.artefactId}</artifactId>
                                             <version>${deploy.version}</version>
-                                            <type>zip</type>
+                                            <classifier>uber</classifier>
+                                            <type>jar</type>
                                             <outputDirectory>${project.build.directory}/deployment</outputDirectory>
                                         </artifactItem>
                                     </artifactItems>
@@ -70,7 +80,8 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>${bundle.executable}</executable>
+                                    <executable>${bundle.executable}
+                                    </executable>
                                     <arguments>
                                         <argument>-deploy</argument>
                                         <argument>-native</argument>
@@ -80,9 +91,9 @@
                                         <argument>-outfile</argument>
                                         <argument>${deploy.name}</argument>
                                         <argument>-srcdir</argument>
-                                        <argument>
-                                            ${project.build.directory}/deployment/${deploy.artefactId}-${deploy.version}
-                                        </argument>
+                                        <argument>${project.build.directory}/deployment</argument>
+                                        <argument>-srcfiles</argument>
+                                        <argument>tower-core-${deploy.version}-uber.jar</argument>
                                         <argument>-appclass</argument>
                                         <argument>${deploy.mainClass}</argument>
                                         <argument>-name</argument>
@@ -91,13 +102,15 @@
                                         <argument>${deploy.name}</argument>
                                         <argument>-description</argument>
                                         <argument>Tournament management app</argument>
-                                        <argument>-Bruntime=${env.JAVA_HOME}\jre</argument>
+                                        <argument>-Bruntime=${env.JAVA_HOME}/jre</argument>
                                         <argument>-BappVersion=${deploy.version}</argument>
                                         <argument>-Bidentifier=land.tower.${deploy.name}</argument>
+                                        <argument>-BsystemWide=false</argument>
                                         <argument>-BmenuHint=true</argument>
                                         <argument>-Bwin.menuGroup=${deploy.name}</argument>
                                         <argument>-BshortcutHint=true</argument>
                                         <argument>-Bicon=${project.basedir}/icons/${bundle.icon}</argument>
+                                        <argument>-Bcategory=Game</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

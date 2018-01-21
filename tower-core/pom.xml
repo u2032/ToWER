@@ -74,22 +74,26 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/main/assembly/packaging.xml</descriptor>
-                            </descriptors>
-                            <appendAssemblyId>false</appendAssemblyId>
-                        </configuration>
+                        <artifactId>maven-shade-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>package-app</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>single</goal>
+                                    <goal>shade</goal>
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>uber</shadedClassifierName>
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>land.tower.core.Application</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
