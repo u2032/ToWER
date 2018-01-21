@@ -56,6 +56,7 @@ import land.tower.core.ext.preference.PreferenceModule;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.ext.service.ServiceManager;
 import land.tower.core.ext.service.ServiceModule;
+import land.tower.core.ext.singleton.SingletonAppModule;
 import land.tower.core.ext.thread.ThreadingModule;
 import land.tower.core.model.pairing.PairingModule;
 import land.tower.core.model.player.PlayerModule;
@@ -199,6 +200,7 @@ public final class Application extends javafx.application.Application {
 
     private static ModuleResolver modules( ) {
         return ModuleResolver.withModules( new ConfigurationModule( "config.properties" ),
+                                           new SingletonAppModule( ),
                                            new PreferenceModule( ),
                                            new MainViewModule( ),
                                            new HomepageViewModule( ),

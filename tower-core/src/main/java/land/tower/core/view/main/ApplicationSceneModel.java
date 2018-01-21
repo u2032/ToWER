@@ -21,9 +21,11 @@ import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javax.inject.Inject;
+import land.tower.core.ext.singleton.SingletonAppEvent;
 import land.tower.core.view.component.Displayable;
 import land.tower.core.view.event.CloseRequestEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
@@ -57,6 +59,18 @@ final class ApplicationSceneModel {
         Platform.runLater( ( ) -> {
             final Window window = _current.getValue( ).getScene( ).getWindow( );
             window.fireEvent( new WindowEvent( window, WindowEvent.WINDOW_CLOSE_REQUEST ) );
+        } );
+    }
+
+    @Subscribe
+    void singleappEvent( final SingletonAppEvent event ) {
+        Platform.runLater( ( ) -> {
+            final Window window = _current.getValue( ).getScene( ).getWindow( );
+            if ( window instanceof Stage ) {
+                final Stage stage = (Stage) window;
+                stage.toFront( );
+            }
+            window.requestFocus( );
         } );
     }
 
