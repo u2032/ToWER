@@ -32,7 +32,7 @@
         </profile>
 
         <profile>
-            <id>package</id>
+            <id>bundle</id>
             <build>
                 <plugins>
                     <plugin>
