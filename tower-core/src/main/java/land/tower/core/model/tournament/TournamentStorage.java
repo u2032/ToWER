@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.data.Tournament;
@@ -46,19 +46,22 @@ import land.tower.data.adapter.ZonedDateTimeAdapter;
 final class TournamentStorage implements ITournamentStorage {
 
     @Inject
-    TournamentStorage( final @ApplicationThread ScheduledExecutorService scheduledExecutorService ) {
+    TournamentStorage( final Configuration configuration,
+                       final @ApplicationThread ScheduledExecutorService scheduledExecutorService ) {
+        _configuration = configuration;
         _scheduledExecutorService = scheduledExecutorService;
+        _tournamentStorage = configuration.dataDirectory( ).resolve( "tournaments" );
     }
 
     @Override
     public List<Tournament> loadTournaments( ) {
         final ArrayList<Tournament> result = new ArrayList<>( );
-        if ( !Files.exists( TOURNAMENT_STORAGE ) ) {
+        if ( !Files.exists( _tournamentStorage ) ) {
             return result;
         }
 
         try {
-            Files.walk( TOURNAMENT_STORAGE, 1 )
+            Files.walk( _tournamentStorage, 1 )
                  .filter( p -> p.getFileName( ).toString( ).endsWith( ".twr" ) )
                  .filter( p -> p.toFile( ).isFile( ) )
                  .forEach( p -> {
@@ -84,11 +87,11 @@ final class TournamentStorage implements ITournamentStorage {
     public void saveTournament( final ObservableTournament otournament ) {
         final Tournament tournament = otournament.getTournament( );
         _scheduledExecutorService.schedule( ( ) -> {
-            if ( !Files.exists( TOURNAMENT_STORAGE ) ) {
+            if ( !Files.exists( _tournamentStorage ) ) {
                 try {
-                    Files.createDirectories( TOURNAMENT_STORAGE );
+                    Files.createDirectories( _tournamentStorage );
                 } catch ( final IOException e ) {
-                    _logger.error( "Can't create directories: " + TOURNAMENT_STORAGE.toAbsolutePath( ), e );
+                    _logger.error( "Can't create directories: " + _tournamentStorage.toAbsolutePath( ), e );
                 }
             }
 
@@ -96,7 +99,7 @@ final class TournamentStorage implements ITournamentStorage {
                                     .registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeAdapter( ) )
                                     .create( )
                                     .toJson( tournament );
-            final Path fileTmp = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr._COPYING_" );
+            final Path fileTmp = _tournamentStorage.resolve( tournament.getId( ).toString( ) + ".twr._COPYING_" );
             try ( final BufferedWriter out = Files.newBufferedWriter( fileTmp, StandardCharsets.UTF_8 ) ) {
                 out.write( json );
             } catch ( final IOException e ) {
@@ -105,7 +108,7 @@ final class TournamentStorage implements ITournamentStorage {
             }
 
             try {
-                final Path file = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr" );
+                final Path file = _tournamentStorage.resolve( tournament.getId( ).toString( ) + ".twr" );
                 Files.move( fileTmp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE );
                 _logger.info( "Tournament saved into: {}", file );
 
@@ -120,12 +123,12 @@ final class TournamentStorage implements ITournamentStorage {
     @Override
     public void deleteTournament( final Tournament tournament ) {
         _scheduledExecutorService.schedule( ( ) -> {
-            if ( !Files.exists( TOURNAMENT_STORAGE ) ) {
+            if ( !Files.exists( _tournamentStorage ) ) {
                 return;
             }
 
             try {
-                final Path file = TOURNAMENT_STORAGE.resolve( tournament.getId( ).toString( ) + ".twr" );
+                final Path file = _tournamentStorage.resolve( tournament.getId( ).toString( ) + ".twr" );
                 Files.deleteIfExists( file );
             } catch ( IOException e ) {
                 _logger.error( "Error during deleting tournament: " + tournament.getId( ), e );
@@ -133,9 +136,10 @@ final class TournamentStorage implements ITournamentStorage {
         }, 2, TimeUnit.SECONDS );
     }
 
+    private final Configuration _configuration;
     private final ScheduledExecutorService _scheduledExecutorService;
 
-    private static final Path TOURNAMENT_STORAGE = Paths.get( "data", "tournaments" );
+    private final Path _tournamentStorage;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }

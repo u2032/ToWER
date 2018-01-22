@@ -14,8 +14,10 @@
 
 package land.tower.core.ext.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
+import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -23,6 +25,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -108,6 +112,33 @@ public final class Configuration {
         return get( "title" );
     }
 
+    public Path dataDirectory( ) {
+        switch ( currentOS( ) ) {
+            case WINDOWS:
+                return Paths.get( ".", "data" );
+            case LINUX:
+                return Paths.get( StandardSystemProperty.USER_HOME.value( ),
+                                  "." + get( "app.name" ).toLowerCase( ),
+                                  "data" );
+            case MACOS:
+                return Paths.get( StandardSystemProperty.USER_HOME.value( ),
+                                  "Library",
+                                  get( "app.name" ),
+                                  "data" );
+        }
+        throw new UnsupportedOperationException( );
+    }
+
+    public OS currentOS( ) {
+        if ( _currentOs != null ) {
+            return _currentOs;
+        }
+        return checkNotNull( _currentOs = OS.fromOsName( StandardSystemProperty.OS_NAME.value( ) ),
+                             "Unable to determine OS type for name: %s",
+                             StandardSystemProperty.OS_NAME.value( ) );
+    }
+
     private final Map<String, String> _config = Maps.newHashMap( );
     private List<Image> _icons;
+    private OS _currentOs;
 }

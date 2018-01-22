@@ -30,12 +30,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.data.Player;
@@ -47,17 +47,22 @@ import land.tower.data.Player;
 final class PlayerStorage implements IPlayerStorage {
 
     @Inject
-    PlayerStorage( @ApplicationThread final ScheduledExecutorService scheduledExecutorService ) {
+    PlayerStorage( final Configuration configuration,
+                   @ApplicationThread final ScheduledExecutorService scheduledExecutorService ) {
+        _configuration = configuration;
         _scheduledExecutorService = scheduledExecutorService;
+
+        playerStorage = configuration.dataDirectory( ).resolve( "players.json" );
+        playerStorageTmp = configuration.dataDirectory( ).resolve( "players.json._COPYING_" );
     }
 
     @Override
     public List<Player> loadPlayers( ) {
-        if ( !Files.exists( PLAYER_STORAGE ) ) {
+        if ( !Files.exists( playerStorage ) ) {
             return new ArrayList<>( );
         }
         try {
-            try ( final BufferedReader fileReader = Files.newBufferedReader( PLAYER_STORAGE, UTF_8 ) ) {
+            try ( final BufferedReader fileReader = Files.newBufferedReader( playerStorage, UTF_8 ) ) {
                 return new GsonBuilder( ).create( )
                                          .fromJson( fileReader, new TypeToken<List<Player>>( ) {
                                          }.getType( ) );
@@ -74,19 +79,19 @@ final class PlayerStorage implements IPlayerStorage {
             final String json = new GsonBuilder( ).create( ).toJson( players );
 
             try {
-                Files.createDirectories( PLAYER_STORAGE.getParent( ) );
+                Files.createDirectories( playerStorage.getParent( ) );
             } catch ( final IOException e ) {
-                _logger.error( "Error caught during creating directory: " + PLAYER_STORAGE.toString( ), e );
+                _logger.error( "Error caught during creating directory: " + playerStorage.toString( ), e );
             }
 
-            try ( final BufferedWriter out = Files.newBufferedWriter( PLAYER_STORAGE_TMP, UTF_8 ) ) {
+            try ( final BufferedWriter out = Files.newBufferedWriter( playerStorageTmp, UTF_8 ) ) {
                 out.write( json );
             } catch ( final IOException e ) {
                 _logger.error( "Error caught during saving storage", e );
             }
 
             try {
-                Files.move( PLAYER_STORAGE_TMP, PLAYER_STORAGE, REPLACE_EXISTING, ATOMIC_MOVE );
+                Files.move( playerStorageTmp, playerStorage, REPLACE_EXISTING, ATOMIC_MOVE );
             } catch ( final IOException e ) {
                 _logger.error( "Error caught during saving storage", e );
             }
@@ -96,10 +101,12 @@ final class PlayerStorage implements IPlayerStorage {
         }, 2, TimeUnit.SECONDS );
     }
 
+    private final Configuration _configuration;
+
     private final ScheduledExecutorService _scheduledExecutorService;
 
-    private static final Path PLAYER_STORAGE = Paths.get( "data", "players.json" );
-    private static final Path PLAYER_STORAGE_TMP = Paths.get( "data", "players.json._COPYING_" );
+    private final Path playerStorage;
+    private final Path playerStorageTmp;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }

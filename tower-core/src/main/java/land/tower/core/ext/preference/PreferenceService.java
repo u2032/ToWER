@@ -26,9 +26,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.IService;
 import land.tower.core.ext.service.ServicePriority;
@@ -39,9 +40,14 @@ import land.tower.core.ext.service.ServicePriority;
  */
 final class PreferenceService implements IService {
 
+    @Inject
+    PreferenceService( final Configuration configuration ) {
+        _configuration = configuration;
+    }
+
     @Override
     public void start( ) {
-        final Path path = Paths.get( "data", "preferences.json" );
+        final Path path = _configuration.dataDirectory( ).resolve( "preferences.json" );
         try ( FileReader in = new FileReader( path.toFile( ) ) ) {
             final Map<String, String> map = new Gson( )
                                                 .fromJson( in, new TypeToken<Map<String, String>>( ) {
@@ -59,8 +65,8 @@ final class PreferenceService implements IService {
 
     @Override
     public void stop( ) {
-        final Path path = Paths.get( "data", "preferences.json._COPYING_" );
-        final Path finalPath = Paths.get( "data", "preferences.json" );
+        final Path path = _configuration.dataDirectory( ).resolve( "preferences.json._COPYING_" );
+        final Path finalPath = _configuration.dataDirectory( ).resolve( "preferences.json" );
 
         try {
             Files.createDirectories( path.getParent( ) );
@@ -88,7 +94,7 @@ final class PreferenceService implements IService {
         return _preferences;
     }
 
+    private final Configuration _configuration;
     private final Preferences _preferences = new Preferences( );
-
     private Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }
