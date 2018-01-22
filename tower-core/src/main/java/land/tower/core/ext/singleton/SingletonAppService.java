@@ -41,13 +41,17 @@ final class SingletonAppService implements IService {
             _logger.info( "One another instance is launched, closing." );
             System.exit( 0 );
         } else {
-            new Thread( _server, "singleton-app-thread" ).start( );
+            _thread = new Thread( _server, "singleton-app-thread" );
+            _thread.start( );
         }
     }
 
     @Override
     public void stop( ) {
-
+        _server.stop( );
+        if ( _thread != null ) {
+            _thread.interrupt( );
+        }
     }
 
     @Override
@@ -59,4 +63,5 @@ final class SingletonAppService implements IService {
     private final SingletonAppServer _server;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
+    private Thread _thread;
 }

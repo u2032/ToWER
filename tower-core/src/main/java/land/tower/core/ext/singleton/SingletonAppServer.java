@@ -41,12 +41,13 @@ final class SingletonAppServer implements Runnable {
         _configuration = configuration;
     }
 
+    @Override
     public void run( ) {
         final int port = Integer.parseInt( _configuration.get( "singleton.app.port" ) );
         _logger.info( "Listening for communication on port {}", port );
 
-        try ( final ServerSocket socket = new ServerSocket( port, 10, InetAddress.getLoopbackAddress( ) ) ) {
-
+        try ( final ServerSocket socket = _serverSocket = new ServerSocket( port, 10,
+                                                                            InetAddress.getLoopbackAddress( ) ) ) {
             while ( true ) {
                 try ( Socket soc = socket.accept( );
                       BufferedReader plec = new BufferedReader( new InputStreamReader( soc.getInputStream( ) ) ) ) {
@@ -59,14 +60,31 @@ final class SingletonAppServer implements Runnable {
                     }
 
                 } catch ( IOException e1 ) {
-                    _logger.info( "Communication failed in an unexpected way", e1 );
+                    if ( !_stopping ) {
+                        _logger.info( "Communication failed in an unexpected way", e1 );
+                    }
                 }
             }
 
         } catch ( IOException e ) {
-            _logger.info( "Sevrer binding for communication failed in an unexpected way", e );
+            if ( !_stopping ) {
+                _logger.info( "Sevrer binding for communication failed in an unexpected way", e );
+            }
         }
     }
+
+    public void stop( ) {
+        _stopping = true;
+        if ( _serverSocket != null ) {
+            try {
+                _serverSocket.close( );
+            } catch ( IOException ignored ) {
+            }
+        }
+    }
+
+    private ServerSocket _serverSocket;
+    private boolean _stopping;
 
     private final EventBus _eventBus;
     private final Configuration _configuration;
