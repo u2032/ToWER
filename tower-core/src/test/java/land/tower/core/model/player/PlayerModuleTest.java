@@ -25,6 +25,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
+import land.tower.core.ext.config.ConfigurationModule;
 import land.tower.core.ext.service.IService;
 import land.tower.core.ext.thread.ThreadingModule;
 
@@ -38,7 +39,8 @@ class PlayerModuleTest {
     @DisplayName( "PlayerRepository can be injected as singleton" )
     void can_inject_PlayerRepository( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new PlayerModule( ), new ThreadingModule( ) );
+        final Injector injector = Guice.createInjector( new PlayerModule( ), new ThreadingModule( ),
+                                                        new ConfigurationModule( "config.properties" ) );
         // Exercice
         final PlayerRepository instance = injector.getInstance( PlayerRepository.class );
         final PlayerRepository instance2 = injector.getInstance( PlayerRepository.class );
@@ -51,7 +53,8 @@ class PlayerModuleTest {
     @DisplayName( "IPlayerStorage can be injected as singleton" )
     void can_inject_IPlayerStorage( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new PlayerModule( ), new ThreadingModule( ) );
+        final Injector injector = Guice.createInjector( new PlayerModule( ), new ThreadingModule( ),
+                                                        new ConfigurationModule( "config.properties" ) );
         // Exercice
         final IPlayerStorage instance = injector.getInstance( IPlayerStorage.class );
         final IPlayerStorage instance2 = injector.getInstance( IPlayerStorage.class );
@@ -65,7 +68,8 @@ class PlayerModuleTest {
     @DisplayName( "PlayerRepository is registered as Service" )
     void PlayerRepository_is_registered( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new PlayerModule( ), new ThreadingModule( ) );
+        final Injector injector = Guice.createInjector( new PlayerModule( ), new ThreadingModule( ),
+                                                        new ConfigurationModule( "config.properties" ) );
         // Exercice
         final Set<IService> instance = injector.getInstance( Key.get( new TypeLiteral<Set<IService>>( ) {
         } ) );
