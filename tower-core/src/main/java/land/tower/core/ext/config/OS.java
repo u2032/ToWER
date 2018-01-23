@@ -22,7 +22,7 @@ public enum OS {
 
     WINDOWS( "windows" ),
     LINUX( "linux" ),
-    MACOS( "macos" );
+    MACOS( "mac" );
 
     OS( final String key ) {
         _key = key;
