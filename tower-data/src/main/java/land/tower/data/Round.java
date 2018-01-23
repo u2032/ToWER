@@ -14,6 +14,8 @@
 
 package land.tower.data;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +26,13 @@ import java.util.List;
  */
 public final class Round {
 
+    @SerializedName( value = "numero", alternate = { "_numero" } )
     private int _numero;
+
+    @SerializedName( value = "matches", alternate = { "_matches" } )
     private List<Match> _matches = new ArrayList<>( );
+
+    @SerializedName( value = "final", alternate = { "_final" } )
     private boolean _final;
 
     private ZonedDateTime _startDate;

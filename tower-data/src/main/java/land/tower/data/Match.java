@@ -14,18 +14,30 @@
 
 package land.tower.data;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created on 30/12/2017
  * @author Cédric Longo
  */
 public final class Match {
 
+    @SerializedName( value = "position", alternate = { "_position" } )
     private int _position;
+
+    @SerializedName( value = "leftTeamId", alternate = { "_leftTeamId" } )
     private int _leftTeamId;
+
+    @SerializedName( value = "rightTeamId", alternate = { "_rightTeamId" } )
     private int _rightTeamId;
 
+    @SerializedName( value = "scoreLeft", alternate = { "_scoreLeft" } )
     private int _scoreLeft;
+
+    @SerializedName( value = "scoreDraw", alternate = { "_scoreDraw" } )
     private int _scoreDraw;
+
+    @SerializedName( value = "scoreRight", alternate = { "_scoreRight" } )
     private int _scoreRight;
 
     public int getLeftTeamId( ) {
