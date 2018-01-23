@@ -41,6 +41,15 @@
         </profile>
 
         <profile>
+            <id>macos</id>
+            <properties>
+                <bundle.executable>${env.JAVA_HOME}/bin/javapackager</bundle.executable>
+                <bundle.native>pkg</bundle.native>
+                <bundle.icon>tower.icns</bundle.icon>
+            </properties>
+        </profile>
+
+        <profile>
             <id>bundle</id>
             <build>
                 <plugins>
@@ -105,12 +114,12 @@
                                         <argument>-Bruntime=${env.JAVA_HOME}/jre</argument>
                                         <argument>-BappVersion=${deploy.version}</argument>
                                         <argument>-Bidentifier=land.tower.${deploy.name}</argument>
-                                        <argument>-BsystemWide=false</argument>
                                         <argument>-BmenuHint=true</argument>
                                         <argument>-Bwin.menuGroup=${deploy.name}</argument>
                                         <argument>-BshortcutHint=true</argument>
                                         <argument>-Bicon=${project.basedir}/icons/${bundle.icon}</argument>
                                         <argument>-Bcategory=Game</argument>
+                                        <argument>-Bmac.category=Games</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
