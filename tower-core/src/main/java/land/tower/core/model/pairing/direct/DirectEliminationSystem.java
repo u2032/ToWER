@@ -14,7 +14,6 @@
 
 package land.tower.core.model.pairing.direct;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -32,6 +31,7 @@ import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Match;
 import land.tower.data.Round;
 import land.tower.data.Teams;
+import land.tower.data.TimerInfo;
 
 /**
  * Created on 02/01/2018
@@ -98,7 +98,7 @@ public final class DirectEliminationSystem implements PairingSystem {
 
         final Round round = new Round( );
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
-        round.setStartDate( ZonedDateTime.now( ) );
+        round.setTimer( new TimerInfo( tournament.getHeader( ).getMatchDuration( ) ) );
         round.getMatches( ).addAll( matches );
         round.setFinal( isFinal );
         return round;
@@ -173,7 +173,7 @@ public final class DirectEliminationSystem implements PairingSystem {
 
         final Round round = new Round( );
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
-        round.setStartDate( ZonedDateTime.now( ) );
+        round.setTimer( new TimerInfo( tournament.getHeader( ).getMatchDuration( ) ) );
         round.getMatches( ).addAll( Arrays.asList( matches ) );
         round.setFinal( isFinal );
         return round;
@@ -255,7 +255,7 @@ public final class DirectEliminationSystem implements PairingSystem {
 
         final Round round = new Round( );
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
-        round.setStartDate( ZonedDateTime.now( ) );
+        round.setTimer( new TimerInfo( tournament.getHeader( ).getMatchDuration( ) ) );
         round.getMatches( ).addAll( matches );
         round.setFinal( isFinal );
         return round;

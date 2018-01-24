@@ -72,3 +72,8 @@
     linear-gradient(#ffe657 0%, #f8c202 50%, #eea10b 100%);
     -fx-text-fill: black;
 }
+
+.clock {
+    -fx-font-size: 4em;
+    -fx-font-family: "Baloo";
+}

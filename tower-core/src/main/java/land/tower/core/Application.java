@@ -126,6 +126,7 @@ public final class Application extends javafx.application.Application {
                     loadFont( "fonts/NotoSans-BoldItalic.ttf" );
                     loadFont( "fonts/fa-regular-400.ttf" );
                     loadFont( "fonts/fa-solid-900.ttf" );
+                    loadFont( "fonts/Baloo-Regular.ttf" );
 
                     final ServiceManager serviceManager = injector.getInstance( ServiceManager.class );
                     serviceManager.startAll( );

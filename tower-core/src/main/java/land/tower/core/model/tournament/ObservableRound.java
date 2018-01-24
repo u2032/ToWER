@@ -14,12 +14,10 @@
 
 package land.tower.core.model.tournament;
 
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -38,9 +36,9 @@ public final class ObservableRound {
         _numero.addListener( ( observable, oldValue, newValue ) -> _round.setNumero( newValue.intValue( ) ) );
         _numero.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
 
-        _startDate.set( round.getStartDate( ) );
-        _startDate.addListener( ( observable, oldValue, newValue ) -> _round.setStartDate( newValue ) );
-        _startDate.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
+        _timer = new ObservableTimer( round.getTimer( ) );
+        _timer.dirtyProperty( )
+              .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
 
         round.getMatches( )
              .forEach( match -> {
@@ -64,6 +62,12 @@ public final class ObservableRound {
         } );
 
         updateEndedStatus( );
+
+        _ended.addListener( ( observable, oldValue, newValue ) -> {
+            if ( !oldValue && newValue ) {
+                getTimer( ).end( );
+            }
+        } );
     }
 
     private void updateEndedStatus( ) {
@@ -82,12 +86,8 @@ public final class ObservableRound {
         return _numero;
     }
 
-    public ZonedDateTime getStartDate( ) {
-        return _startDate.get( );
-    }
-
-    public SimpleObjectProperty<ZonedDateTime> startDateProperty( ) {
-        return _startDate;
+    public ObservableTimer getTimer( ) {
+        return _timer;
     }
 
     public ObservableList<ObservableMatch> getMatches( ) {
@@ -118,14 +118,15 @@ public final class ObservableRound {
 
     public void markAsClean( ) {
         _matches.forEach( ObservableMatch::markAsClean );
+        _timer.markAsClean( );
         _dirty.set( false );
     }
 
     private final Round _round;
 
     private final SimpleIntegerProperty _numero = new SimpleIntegerProperty( );
-    private final SimpleObjectProperty<ZonedDateTime> _startDate = new SimpleObjectProperty<>( );
     private final ObservableList<ObservableMatch> _matches = FXCollections.observableArrayList( );
+    private final ObservableTimer _timer;
 
     private final SimpleBooleanProperty _ended = new SimpleBooleanProperty( );
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );

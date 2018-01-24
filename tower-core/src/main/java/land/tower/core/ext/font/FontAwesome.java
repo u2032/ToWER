@@ -43,4 +43,6 @@ public final class FontAwesome {
     public static final String CONTINUE = "\uf35a";
     public static final String BOOK = "\uf02d";
     public static final String LIST = "\uf03a";
+    public static final String PLAY = "\uf04b";
+    public static final String CONFIGURATION = "\uf0ad";
 }

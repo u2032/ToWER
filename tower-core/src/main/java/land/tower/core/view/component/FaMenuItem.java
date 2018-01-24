@@ -14,8 +14,8 @@
 
 package land.tower.core.view.component;
 
-import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.text.Text;
 import land.tower.core.ext.font.FontAwesome;
 
 /**
@@ -25,8 +25,8 @@ import land.tower.core.ext.font.FontAwesome;
 public final class FaMenuItem extends MenuItem {
 
     public FaMenuItem( final String icon, final String color ) {
-        final Label faIcon = new Label( icon + " " );
-        faIcon.setStyle( "-fx-text-fill: " + color ); // Should be inherited from CSS
+        final Text faIcon = new Text( icon + " " );
+        faIcon.setStyle( "-fx-fill: " + color ); // Should be inherited from CSS
         faIcon.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
         setGraphic( faIcon );
     }

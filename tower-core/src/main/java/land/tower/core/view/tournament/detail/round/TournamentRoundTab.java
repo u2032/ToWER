@@ -19,6 +19,9 @@ import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleListProperty;
@@ -27,6 +30,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
@@ -34,12 +38,20 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
+import javafx.util.converter.IntegerStringConverter;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableMatch;
+import land.tower.core.model.tournament.ObservableTimer;
 import land.tower.core.view.component.FaButton;
 import land.tower.data.TournamentStatus;
 
@@ -215,11 +227,87 @@ public class TournamentRoundTab extends Tab {
         checkBox.setStyle( "-fx-font-size: smaller" );
         checkBox.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.filter.not.empty.score" ) );
         checkBox.selectedProperty( ).bindBidirectional( _model.filterNotEmptyScoreProperty( ) );
-        hBox.getChildren( ).add( checkBox );
+        final VBox checkboxWrapper = new VBox( checkBox );
+        checkboxWrapper.setAlignment( Pos.BOTTOM_LEFT );
+        checkboxWrapper.setPadding( new Insets( 5 ) );
+        hBox.getChildren( ).add( checkboxWrapper );
 
         final HBox spacing = new HBox( );
         setHgrow( spacing, Priority.ALWAYS );
         hBox.getChildren( ).add( spacing );
+
+        final HBox clockBox = new HBox( );
+        clockBox.setSpacing( 8 );
+        clockBox.setAlignment( Pos.CENTER );
+        hBox.getChildren( ).add( clockBox );
+
+        final TextField timerEditionField = new TextField( );
+        timerEditionField.setAlignment( Pos.CENTER );
+        timerEditionField.setTextFormatter(
+            new TextFormatter<>( new IntegerStringConverter( ),
+                                 null,
+                                 c -> {
+                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
+                                     if ( matches && !c.getControlNewText( ).isEmpty( ) ) {
+                                         final int count = Integer.parseInt( c.getControlNewText( ) );
+                                         if ( count > 999 ) {
+                                             return null;
+                                         }
+                                     }
+                                     return matches ? c : null;
+                                 } ) );
+
+        final Text timer = new Text( );
+        timer.getStyleClass( ).add( "clock" );
+        timer.setBoundsType( TextBoundsType.VISUAL );
+        timer.textProperty( ).bind( _model.getRound( ).getTimer( ).textProperty( ) );
+        timer.setStyle( "-fx-fill: " + ( _model.getRound( ).getTimer( ).isOvertime( ) ? "darkred" : "darkgreen" ) );
+        _model.getRound( ).getTimer( ).overtimeProperty( )
+              .addListener( ( observable, oldValue, newValue ) -> {
+                  timer.setStyle( "-fx-fill: " + ( newValue ? "darkred" : "darkgreen" ) );
+              } );
+        final VBox clockButtonBox = new VBox( );
+        clockButtonBox.setSpacing( 2 );
+        clockButtonBox.setAlignment( Pos.CENTER );
+
+        final Button playButton = new Button( FontAwesome.PLAY );
+        playButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+        playButton.setStyle( "-fx-text-fill: green; -fx-font-size: small" );
+        playButton.setOnAction( e -> _model.getRound( ).getTimer( ).start( ) );
+        playButton.visibleProperty( ).bind( _model.getRound( ).endedProperty( ).not( ) );
+        final Button setButton = new Button( FontAwesome.CONFIGURATION );
+        setButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+        setButton.setStyle( "-fx-text-fill: darkgrey; -fx-font-size: small" );
+        setButton.visibleProperty( ).bind( _model.getRound( ).endedProperty( ).not( ) );
+
+        clockButtonBox.getChildren( ).addAll( playButton, setButton );
+        clockBox.getChildren( ).addAll( timer, clockButtonBox );
+        setButton.setOnAction( e -> {
+            final ObservableTimer roundTimer = _model.getRound( ).getTimer( );
+            if ( roundTimer.getEndTime( ) == null ) {
+                timerEditionField.setText( String.valueOf( roundTimer.getInitialDuration( ) ) );
+                clockBox.getChildren( ).setAll( timerEditionField );
+            } else {
+                final Duration d = Duration.between( ZonedDateTime.now( ), roundTimer.getEndTime( ) );
+                timerEditionField.setText( String.valueOf( d.isNegative( ) ? 0 : d.toMinutes( ) ) );
+                clockBox.getChildren( ).setAll( timerEditionField );
+                timerEditionField.requestFocus( );
+            }
+        } );
+        timerEditionField.setOnKeyReleased( e -> {
+            if ( e.getCode( ) == KeyCode.ENTER ) {
+                final ObservableTimer roundTimer = _model.getRound( ).getTimer( );
+                roundTimer.initialDurationProperty( ).set( Integer.parseInt( timerEditionField.getText( ) ) );
+                roundTimer.reset( );
+                clockBox.getChildren( ).setAll( timer, clockButtonBox );
+            } else if ( e.getCode( ) == KeyCode.ESCAPE ) {
+                clockBox.getChildren( ).setAll( timer, clockButtonBox );
+            }
+        } );
+
+        final HBox spacing2 = new HBox( );
+        setHgrow( spacing2, Priority.ALWAYS );
+        hBox.getChildren( ).add( spacing2 );
 
         final FaButton setScoreButton = new FaButton( FontAwesome.PLUS, "white" );
         setScoreButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.round.scoring" ) ) );

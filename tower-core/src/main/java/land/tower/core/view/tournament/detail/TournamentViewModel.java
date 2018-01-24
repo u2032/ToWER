@@ -17,7 +17,11 @@ package land.tower.core.view.tournament.detail;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import org.slf4j.LoggerFactory;
+
 import java.util.Comparator;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -30,6 +34,8 @@ import javafx.scene.control.Tab;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.ext.logger.Loggers;
+import land.tower.core.ext.thread.ApplicationThread;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.model.tournament.TournamentRepository;
@@ -74,7 +80,8 @@ public final class TournamentViewModel {
                                 final TournamentRoundTabFactory roundTabFactory,
                                 final TournamentLadderViewModel.Factory ladderTabFactory,
                                 final TournamentRepository tournamentRepository,
-                                final TournamentViewProvider tournamentViewProvider ) {
+                                final TournamentViewProvider tournamentViewProvider,
+                                @ApplicationThread final ScheduledExecutorService scheduler ) {
         _tournament = tournament;
         _eventBus = eventBus;
         _homeviewProvider = homeviewProvider;
@@ -85,6 +92,7 @@ public final class TournamentViewModel {
         _ladderTabFactory = ladderTabFactory;
         _tournamentRepository = tournamentRepository;
         _tournamentViewProvider = tournamentViewProvider;
+        _scheduler = scheduler;
 
         _tabViews.add( new TournamentInformationTab( _informationTabFactory.forTournament( _tournament ) ) );
         _tabViews.add( new TournamentEnrolmentTab( _enrolmentTabFactory.forTournament( _tournament ) ) );
@@ -113,6 +121,7 @@ public final class TournamentViewModel {
         } );
         _tabViews.add( new TournamentLadderView( _ladderTabFactory.forTournament( _tournament ) ) );
         selectDefaultTab( );
+        startTimerTask( );
     }
 
     private void selectDefaultTab( ) {
@@ -164,6 +173,22 @@ public final class TournamentViewModel {
         _eventBus.post( new SceneRequestedEvent( _tournamentViewProvider.forTournament( tournament ) ) );
     }
 
+    private void startTimerTask( ) {
+        _scheduler.scheduleWithFixedDelay( ( ) -> {
+            try {
+                _tournament.getRounds( )
+                           .stream( )
+                           .filter( r -> !r.isEnded( ) )
+                           .forEach( round -> {
+                               round.getTimer( ).update( );
+                           } );
+            } catch ( final Exception e ) {
+                LoggerFactory.getLogger( Loggers.MAIN )
+                             .error( "Error during updating clock schedule task", e );
+            }
+        }, 1, 1, TimeUnit.SECONDS );
+    }
+
     private final ObservableTournament _tournament;
     private final EventBus _eventBus;
     private final Provider<HomepageView> _homeviewProvider;
@@ -179,4 +204,6 @@ public final class TournamentViewModel {
     private final TournamentRepository _tournamentRepository;
 
     private final TournamentViewProvider _tournamentViewProvider;
+
+    private final ScheduledExecutorService _scheduler;
 }

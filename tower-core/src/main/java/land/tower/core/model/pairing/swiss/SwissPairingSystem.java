@@ -14,7 +14,6 @@
 
 package land.tower.core.model.pairing.swiss;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -33,6 +32,7 @@ import land.tower.data.Match;
 import land.tower.data.Round;
 import land.tower.data.Team;
 import land.tower.data.Teams;
+import land.tower.data.TimerInfo;
 import land.tower.data.Tournament;
 
 /**
@@ -154,7 +154,7 @@ public final class SwissPairingSystem implements PairingSystem {
 
         final Round round = new Round( );
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
-        round.setStartDate( ZonedDateTime.now( ) );
+        round.setTimer( new TimerInfo( tournament.getHeader( ).getMatchDuration( ) ) );
         round.getMatches( ).addAll( matches );
         return new Pair<>( duplicates.get( ), round );
     }
@@ -188,7 +188,7 @@ public final class SwissPairingSystem implements PairingSystem {
     private Round firstRound( final Tournament tournament ) {
         final Round round = new Round( );
         round.setNumero( 1 );
-        round.setStartDate( ZonedDateTime.now( ) );
+        round.setTimer( new TimerInfo( tournament.getHeader( ).getMatchDuration( ) ) );
 
         final List<Team> availableTeams = new ArrayList<>( tournament.getTeams( ).stream( )
                                                                      .filter( Team::isActive )

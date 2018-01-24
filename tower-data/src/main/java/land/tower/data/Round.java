@@ -16,7 +16,6 @@ package land.tower.data;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +34,8 @@ public final class Round {
     @SerializedName( value = "final", alternate = { "_final" } )
     private boolean _final;
 
-    private ZonedDateTime _startDate;
+    @SerializedName( "timer" )
+    private TimerInfo _timer = new TimerInfo( );
 
     public int getNumero( ) {
         return _numero;
@@ -53,12 +53,12 @@ public final class Round {
         _matches = matches;
     }
 
-    public ZonedDateTime getStartDate( ) {
-        return _startDate;
+    public TimerInfo getTimer( ) {
+        return _timer;
     }
 
-    public void setStartDate( final ZonedDateTime startDate ) {
-        _startDate = startDate;
+    public void setTimer( final TimerInfo timer ) {
+        _timer = timer;
     }
 
     public void setFinal( final boolean aFinal ) {
