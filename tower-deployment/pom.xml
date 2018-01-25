@@ -120,6 +120,7 @@
                                         <argument>-Bicon=${project.basedir}/icons/${bundle.icon}</argument>
                                         <argument>-Bcategory=Game</argument>
                                         <argument>-Bmac.category=Games</argument>
+                                        <argument>-BjvmProperties=bundle=${bundle.native}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

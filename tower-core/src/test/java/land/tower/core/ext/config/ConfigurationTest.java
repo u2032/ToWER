@@ -31,7 +31,7 @@ class ConfigurationTest {
         // Setup
         final Configuration config = new Configuration( "config.properties" );
         // Exercice
-        final String splashscreen = config.get( "splashcreen" );
+        final String splashscreen = config.get( "splashscreen" );
         // Verify
         assertThat( splashscreen ).isEqualTo( "img/splashscreen.png" );
     }

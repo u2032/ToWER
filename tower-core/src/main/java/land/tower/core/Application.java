@@ -89,6 +89,7 @@ public final class Application extends javafx.application.Application {
                                                                 .with( hostServiceModule( getHostServices( ) ) )
                                                                 .getModules( ) );
             final Configuration configuration = injector.getInstance( Configuration.class );
+            _logger.info( "Application packaged from bundler: {}", configuration.bundleType( ) );
 
             /* Display a splashscreen */
             final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( );

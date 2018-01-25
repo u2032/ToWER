@@ -62,7 +62,7 @@ public final class Configuration {
     }
 
     public Image getSplashscreen( ) {
-        final InputStream imStream = getClass( ).getClassLoader( ).getResourceAsStream( get( "splashcreen" ) );
+        final InputStream imStream = getClass( ).getClassLoader( ).getResourceAsStream( get( "splashscreen" ) );
         return new Image( imStream, 600, 400, true, true );
     }
 
@@ -113,6 +113,11 @@ public final class Configuration {
     }
 
     public Path dataDirectory( ) {
+        // With image bundle, we write only inside the app directory
+        if ( "image".equals( bundleType( ) ) ) {
+            return Paths.get( ".", "data" );
+        }
+
         switch ( currentOS( ) ) {
             case WINDOWS:
                 return Paths.get( ".", "data" );
@@ -136,6 +141,10 @@ public final class Configuration {
         return checkNotNull( _currentOs = OS.fromOsName( StandardSystemProperty.OS_NAME.value( ) ),
                              "Unable to determine OS type for name: %s",
                              StandardSystemProperty.OS_NAME.value( ) );
+    }
+
+    public String bundleType( ) {
+        return System.getProperty( "bundle" );
     }
 
     private final Map<String, String> _config = Maps.newHashMap( );
