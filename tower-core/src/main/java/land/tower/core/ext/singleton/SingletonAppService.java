@@ -42,6 +42,7 @@ final class SingletonAppService implements IService {
             System.exit( 0 );
         } else {
             _thread = new Thread( _server, "singleton-app-thread" );
+            _thread.setDaemon( true );
             _thread.start( );
         }
     }
