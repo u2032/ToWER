@@ -100,7 +100,7 @@ public final class TournamentLadderView extends Tab {
         tableView.getColumns( ).add( pointsCol );
 
         final TableColumn<ObservableTeam, Integer> dCol = new TableColumn<>( );
-        dCol.textProperty( ).bind( _model.getI18n( ).get( "ranking.deciding" ) );
+        dCol.textProperty( ).bind( _model.getI18n( ).get( "ranking.tiebreakers" ) );
         tableView.getColumns( ).add( dCol );
 
         final TableColumn<ObservableTeam, Integer> d1Col = new TableColumn<>( );
