@@ -33,6 +33,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import land.tower.core.ext.font.FontAwesome;
@@ -138,7 +139,7 @@ class SetScoreDialog extends Dialog<Void> {
         if ( !_model.getTournament( ).getCurrentRound( ).equals( _model.getRound( ) ) ) {
             line++;
             final Label warnLabel = new Label( );
-            final Label icon = new Label( FontAwesome.WARNING );
+            final Text icon = new Text( FontAwesome.WARNING );
             icon.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
             warnLabel.setGraphic( icon );
 

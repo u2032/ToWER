@@ -19,6 +19,7 @@ import com.google.inject.assistedinject.Assisted;
 
 import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.stage.Window;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.pairing.PairingSystem;
@@ -45,12 +46,14 @@ public final class TournamentRoundTabModel {
                                     @Assisted ObservableRound round,
                                     final I18nTranslator i18n,
                                     final SetScoreDialogModel.Factory setScoreDialogFactory,
+                                    final ManualPairingDialogModel.Factory manualPairingDialogFactory,
                                     final EventBus eventBus,
                                     final Map<PairingMode, PairingSystem> pairingSystems ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
         _setScoreDialogFactory = setScoreDialogFactory;
+        _manualPairingDialogFactory = manualPairingDialogFactory;
         _eventBus = eventBus;
         _pairingSystems = pairingSystems;
     }
@@ -94,10 +97,17 @@ public final class TournamentRoundTabModel {
                                                  _tournament.getHeader( ).getScoringMode( ) + " is not defined" );
     }
 
+    public void fireManualPairing( final Window window ) {
+        final ManualPairingDialog dialog =
+            new ManualPairingDialog( window, _manualPairingDialogFactory.forRound( _tournament, _round ) );
+        dialog.show( );
+    }
+
     private final ObservableTournament _tournament;
     private final ObservableRound _round;
     private final I18nTranslator _i18n;
     private final SetScoreDialogModel.Factory _setScoreDialogFactory;
+    private final ManualPairingDialogModel.Factory _manualPairingDialogFactory;
 
     private final SimpleBooleanProperty _filterNotEmptySource = new SimpleBooleanProperty( );
     private final EventBus _eventBus;

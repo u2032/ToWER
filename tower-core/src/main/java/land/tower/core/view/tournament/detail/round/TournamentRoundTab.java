@@ -33,6 +33,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -48,11 +50,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
+import javafx.stage.Window;
 import javafx.util.converter.IntegerStringConverter;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableTimer;
 import land.tower.core.view.component.FaButton;
+import land.tower.core.view.component.FaMenuItem;
 import land.tower.data.TournamentStatus;
 
 /**
@@ -220,7 +224,7 @@ public class TournamentRoundTab extends Tab {
     private HBox buildActionBox( ) {
         final HBox hBox = new HBox( );
         hBox.setAlignment( Pos.CENTER_LEFT );
-        hBox.setSpacing( 20 );
+        hBox.setSpacing( 15 );
         hBox.setPadding( new Insets( 10 ) );
 
         final CheckBox checkBox = new CheckBox( );
@@ -275,9 +279,9 @@ public class TournamentRoundTab extends Tab {
         playButton.setStyle( "-fx-text-fill: green; -fx-font-size: small" );
         playButton.setOnAction( e -> _model.getRound( ).getTimer( ).start( ) );
         playButton.visibleProperty( ).bind( _model.getRound( ).endedProperty( ).not( ) );
-        final Button setButton = new Button( FontAwesome.CONFIGURATION );
+        final Button setButton = new Button( FontAwesome.RESET_CLOCK );
         setButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
-        setButton.setStyle( "-fx-text-fill: darkgrey; -fx-font-size: small" );
+        setButton.setStyle( "-fx-text-fill: #424242; -fx-font-size: small" );
         setButton.visibleProperty( ).bind( _model.getRound( ).endedProperty( ).not( ) );
 
         clockButtonBox.getChildren( ).addAll( playButton, setButton );
@@ -308,6 +312,9 @@ public class TournamentRoundTab extends Tab {
         final HBox spacing2 = new HBox( );
         setHgrow( spacing2, Priority.ALWAYS );
         hBox.getChildren( ).add( spacing2 );
+
+        final MenuButton advancedButton = buildToolsMenuButton( );
+        hBox.getChildren( ).add( advancedButton );
 
         final FaButton setScoreButton = new FaButton( FontAwesome.PLUS, "white" );
         setScoreButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.round.scoring" ) ) );
@@ -341,6 +348,21 @@ public class TournamentRoundTab extends Tab {
                 _model.getTournament( ).getHeader( ).statusProperty( ) ) );
 
         return hBox;
+    }
+
+    private MenuButton buildToolsMenuButton( ) {
+        final MenuButton advancedButton = new MenuButton( FontAwesome.TOOLS );
+        advancedButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+
+        final MenuItem manualPairing = new FaMenuItem( FontAwesome.HAND, "black" );
+        manualPairing.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.manual.pairing" ) );
+        manualPairing.setOnAction( e -> {
+            final Window window = advancedButton.getScene( ).getWindow( );
+            _model.fireManualPairing( window );
+        } );
+        advancedButton.getItems( ).add( manualPairing );
+
+        return advancedButton;
     }
 
     public TournamentRoundTabModel getModel( ) {

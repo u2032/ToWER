@@ -44,5 +44,10 @@ public final class FontAwesome {
     public static final String BOOK = "\uf02d";
     public static final String LIST = "\uf03a";
     public static final String PLAY = "\uf04b";
-    public static final String CONFIGURATION = "\uf0ad";
+    public static final String RESET_CLOCK = "\uf1da";
+    public static final String TOOLS = "\uf0ad";
+    public static final String HAND = "\uf256";
+    public static final String PAIR = "\uf074";
+    public static final String UNPAIR = "\uf101";
+    public static final String BYE_USER = "\uf21b";
 }

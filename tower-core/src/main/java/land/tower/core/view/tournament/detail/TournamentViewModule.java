@@ -25,6 +25,7 @@ import land.tower.core.view.tournament.detail.ladder.ChainTournamentDialogModel;
 import land.tower.core.view.tournament.detail.ladder.CloseTournamentDialogModel;
 import land.tower.core.view.tournament.detail.ladder.TournamentLadderViewModel;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel;
+import land.tower.core.view.tournament.detail.round.ManualPairingDialogModel;
 import land.tower.core.view.tournament.detail.round.SetScoreDialogModel;
 import land.tower.core.view.tournament.detail.round.TournamentRoundTabFactory;
 import land.tower.core.view.tournament.detail.round.TournamentRoundTabModel;
@@ -79,5 +80,9 @@ public final class TournamentViewModule extends AbstractModule {
         install( new FactoryModuleBuilder( )
                      .implement( ChainTournamentDialogModel.class, ChainTournamentDialogModel.class )
                      .build( ChainTournamentDialogModel.Factory.class ) );
+
+        install( new FactoryModuleBuilder( )
+                     .implement( ManualPairingDialogModel.class, ManualPairingDialogModel.class )
+                     .build( ManualPairingDialogModel.Factory.class ) );
     }
 }
