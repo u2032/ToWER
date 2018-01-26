@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/u2032/ToWER.svg?branch=master)](https://travis-ci.org/u2032/ToWER)
+[![Build Status](https://travis-ci.org/u2032/ToWER.svg?branch=master)](https://travis-ci.org/u2032/ToWER) [![Known Vulnerabilities](https://snyk.io/test/github/u2032/tower/badge.svg?targetFile=tower-core%2Fpom.xml)](https://snyk.io/test/github/u2032/tower?targetFile=tower-core%2Fpom.xml)
 # What is ToWER ? 
 **ToWER** is a software to let you manage a tournament easily. You can add players and define the pairing mode you want. After that, **ToWER** will do all the stuff for you, you can go for a beer and enjoy. 
 <p align="center"> 
