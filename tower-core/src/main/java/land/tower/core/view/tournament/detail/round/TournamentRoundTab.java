@@ -265,11 +265,10 @@ public class TournamentRoundTab extends Tab {
         timer.getStyleClass( ).add( "clock" );
         timer.setBoundsType( TextBoundsType.VISUAL );
         timer.textProperty( ).bind( _model.getRound( ).getTimer( ).textProperty( ) );
-        timer.setStyle( "-fx-fill: " + ( _model.getRound( ).getTimer( ).isOvertime( ) ? "darkred" : "darkgreen" ) );
-        _model.getRound( ).getTimer( ).overtimeProperty( )
-              .addListener( ( observable, oldValue, newValue ) -> {
-                  timer.setStyle( "-fx-fill: " + ( newValue ? "darkred" : "darkgreen" ) );
-              } );
+        timer.styleProperty( ).bind( Bindings.createStringBinding( ( ) -> {
+            return "-fx-fill: " + ( _model.getRound( ).getTimer( ).isOvertime( ) ? "darkred" : "darkgreen" );
+        }, _model.getRound( ).getTimer( ).overtimeProperty( ) ) );
+
         final VBox clockButtonBox = new VBox( );
         clockButtonBox.setSpacing( 2 );
         clockButtonBox.setAlignment( Pos.CENTER );

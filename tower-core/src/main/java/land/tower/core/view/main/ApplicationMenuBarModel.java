@@ -19,6 +19,7 @@ import com.google.common.eventbus.Subscribe;
 
 import javafx.application.HostServices;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.stage.Window;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.config.Configuration;
@@ -41,6 +42,7 @@ import land.tower.core.view.tournament.detail.TournamentViewProvider;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel;
 import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel.Factory;
 import land.tower.core.view.tournament.management.TournamentManagementView;
+import land.tower.core.view.tournament.radiator.RadiatorDialogFactory;
 import land.tower.data.Player;
 
 /**
@@ -59,6 +61,7 @@ final class ApplicationMenuBarModel {
                              final Provider<AboutDialog> aboutDialogProvider,
                              final Provider<LanguageDialog> languageDialogProvider,
                              final Provider<AddPlayerDialogModel> addPlayerDialogModelProvider,
+                             final RadiatorDialogFactory radiatorDialogFacotry,
                              final Factory resertRoundDialogFactory,
                              final I18nService i18nService,
                              final Preferences preferences,
@@ -69,6 +72,7 @@ final class ApplicationMenuBarModel {
         _playerManagementViewProvider = playerManagementViewProvider;
         _languageDialogProvider = languageDialogProvider;
         _addPlayerDialogModelProvider = addPlayerDialogModelProvider;
+        _radiatorDialogFacotry = radiatorDialogFacotry;
         _resertRoundDialogFactory = resertRoundDialogFactory;
         _i18nService = i18nService;
         _preferences = preferences;
@@ -158,6 +162,10 @@ final class ApplicationMenuBarModel {
         _preferences.save( "player.nationality", player.getNationality( ).name( ) );
     }
 
+    public void fireTournamentInformationRadiator( final Window owner ) {
+        _radiatorDialogFacotry.create( owner, _currentTournament.get( ) ).show( );
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
     private final Provider<HomepageView> _homepageViewProvider;
@@ -170,6 +178,7 @@ final class ApplicationMenuBarModel {
     private final Provider<LanguageDialog> _languageDialogProvider;
 
     private final Provider<AddPlayerDialogModel> _addPlayerDialogModelProvider;
+    private final RadiatorDialogFactory _radiatorDialogFacotry;
 
     private final SimpleObjectProperty<ObservableTournament> _currentTournament = new SimpleObjectProperty<>( );
     private final Factory _resertRoundDialogFactory;

@@ -71,6 +71,7 @@ import land.tower.core.view.option.LanguageDialogModel;
 import land.tower.core.view.player.PlayerViewModule;
 import land.tower.core.view.tournament.detail.TournamentViewModule;
 import land.tower.core.view.tournament.management.TournamentManagementViewModule;
+import land.tower.core.view.tournament.radiator.InformationRadiatorModule;
 
 /**
  * Created on 09/11/2017
@@ -215,6 +216,7 @@ public final class Application extends javafx.application.Application {
                                            new TournamentModule( ),
                                            new TournamentManagementViewModule( ),
                                            new TournamentViewModule( ),
+                                           new InformationRadiatorModule( ),
                                            new PlayerSuggestionModule( ),
                                            new PairingModule( ),
                                            new RankingModule( ) );

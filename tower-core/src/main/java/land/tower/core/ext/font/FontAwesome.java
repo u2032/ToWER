@@ -50,4 +50,6 @@ public final class FontAwesome {
     public static final String PAIR = "\uf074";
     public static final String UNPAIR = "\uf101";
     public static final String BYE_USER = "\uf21b";
+    public static final String SCREEN = "\uf108";
+    public static final String FULLSCREEN = "\uf065";
 }

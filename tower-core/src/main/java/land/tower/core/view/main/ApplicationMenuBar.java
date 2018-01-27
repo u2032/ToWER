@@ -19,6 +19,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.stage.Window;
 import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.view.component.FaMenu;
@@ -77,6 +78,16 @@ final class ApplicationMenuBar extends MenuBar {
         tournamentMenu.getItems( ).add( listMenu );
 
         tournamentMenu.getItems( ).add( new SeparatorMenuItem( ) );
+
+        final MenuItem radiatorMenu = new FaMenuItem( FontAwesome.SCREEN, "black" );
+        radiatorMenu.textProperty( ).bind( _model.getI18n( ).get( "tournament.radiator.information" ) );
+        final ApplicationMenuBar menuBar = this;
+        radiatorMenu.setOnAction( event -> {
+            final Window owner = menuBar.getParent( ).getScene( ).getWindow( );
+            _model.fireTournamentInformationRadiator( owner );
+        } );
+        radiatorMenu.disableProperty( ).bind( _model.currentTournamentProperty( ).isNull( ) );
+        tournamentMenu.getItems( ).add( radiatorMenu );
 
         final MenuItem deleteRound = new FaMenuItem( FontAwesome.WARNING, "black" );
         deleteRound.textProperty( ).bind( _model.getI18n( ).get( "menu.round.delete" ) );
