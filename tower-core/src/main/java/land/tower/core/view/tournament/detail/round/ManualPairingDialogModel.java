@@ -66,8 +66,7 @@ public final class ManualPairingDialogModel {
 
     public synchronized void fireSavePairing( ) {
         if ( !_matches.isEmpty( ) ) {
-            _round.getMatches( ).clear( );
-            _round.getMatches( ).addAll( _matches );
+            _round.getMatches( ).setAll( _matches );
         }
     }
 
