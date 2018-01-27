@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -40,21 +41,27 @@ public final class ObservableRound {
         _timer.dirtyProperty( )
               .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
 
+        final ChangeListener<Boolean> matchListener = ( observable, oldValue, newValue ) -> {
+            _dirty.set( isDirty( ) || newValue );
+            updateEndedStatus( );
+        };
+
         round.getMatches( )
              .forEach( match -> {
                  final ObservableMatch oMatch = new ObservableMatch( match );
-                 oMatch.dirtyProperty( )
-                       .addListener( ( observable, oldValue, newValue ) -> {
-                           _dirty.set( isDirty( ) || newValue );
-                           updateEndedStatus( );
-                       } );
+                 oMatch.dirtyProperty( ).addListener( matchListener );
                  _matches.add( oMatch );
              } );
+
         _matches.addListener( (ListChangeListener<ObservableMatch>) c -> {
             _round.getMatches( ).clear( );
             _round.getMatches( ).addAll( _matches.stream( )
                                                  .map( ObservableMatch::getMatch )
                                                  .collect( Collectors.toList( ) ) );
+            _matches.forEach( match -> {
+                match.dirtyProperty( ).removeListener( matchListener );
+                match.dirtyProperty( ).addListener( matchListener );
+            } );
         } );
         _matches.addListener( (ListChangeListener<ObservableMatch>) c -> {
             _dirty.set( true );
