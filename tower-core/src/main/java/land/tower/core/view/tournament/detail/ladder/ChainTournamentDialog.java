@@ -27,7 +27,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.LongStringConverter;
 import land.tower.core.model.tournament.ObservableTeam;
@@ -40,8 +39,7 @@ import land.tower.data.PairingMode;
 final class ChainTournamentDialog extends Dialog<Void> {
 
     public ChainTournamentDialog( final ChainTournamentDialogModel model ) {
-        getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
-        model.getConfig( ).setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
+        initOwner( model.getOwner( ) );
 
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "tournament.chaining.title" ) );

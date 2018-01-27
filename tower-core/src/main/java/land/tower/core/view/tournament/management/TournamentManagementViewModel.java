@@ -19,6 +19,7 @@ import com.google.common.eventbus.EventBus;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.stage.Stage;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
@@ -41,12 +42,13 @@ final class TournamentManagementViewModel {
     TournamentManagementViewModel( final EventBus eventBus, final I18nTranslator i18n,
                                    final Provider<HomepageView> homepageViewProvider,
                                    final TournamentRepository tournamentRepository,
-                                   final TournamentViewProvider tournamentViewProvider ) {
+                                   final TournamentViewProvider tournamentViewProvider, final Stage owner ) {
         _i18n = i18n;
         _eventBus = eventBus;
         _homepageViewProvider = homepageViewProvider;
         _tournamentRepository = tournamentRepository;
         _tournamentViewProvider = tournamentViewProvider;
+        _owner = owner;
         _eventBus.register( this );
     }
 
@@ -77,10 +79,15 @@ final class TournamentManagementViewModel {
         _eventBus.post( new SceneRequestedEvent( view ) );
     }
 
+    public Stage getOwner( ) {
+        return _owner;
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
 
     private final Provider<HomepageView> _homepageViewProvider;
     private final TournamentRepository _tournamentRepository;
     private final TournamentViewProvider _tournamentViewProvider;
+    private final Stage _owner;
 }

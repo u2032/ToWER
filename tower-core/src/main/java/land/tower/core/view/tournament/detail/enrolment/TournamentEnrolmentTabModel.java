@@ -20,6 +20,7 @@ import com.google.inject.assistedinject.Assisted;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.pairing.PairingSystem;
@@ -36,6 +37,10 @@ import land.tower.data.Team;
  * @author Cédric Longo
  */
 public final class TournamentEnrolmentTabModel {
+
+    public Stage getOwner( ) {
+        return _owner;
+    }
 
     public interface Factory {
 
@@ -79,12 +84,13 @@ public final class TournamentEnrolmentTabModel {
     TournamentEnrolmentTabModel( final @Assisted ObservableTournament tournament, final I18nTranslator i18n,
                                  final AddTeamDialogModel.Factory addTeamDialogProvider,
                                  final Map<PairingMode, PairingSystem> pairingSystems,
-                                 final EventBus eventBus ) {
+                                 final EventBus eventBus, final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
         _addTeamDialogProvider = addTeamDialogProvider;
         _pairingSystems = pairingSystems;
         _eventBus = eventBus;
+        _owner = owner;
     }
 
     public I18nTranslator getI18n( ) {
@@ -96,4 +102,5 @@ public final class TournamentEnrolmentTabModel {
     private final AddTeamDialogModel.Factory _addTeamDialogProvider;
     private final Map<PairingMode, PairingSystem> _pairingSystems;
     private final EventBus _eventBus;
+    private final Stage _owner;
 }

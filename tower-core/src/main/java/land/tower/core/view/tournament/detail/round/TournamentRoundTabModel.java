@@ -19,7 +19,6 @@ import com.google.inject.assistedinject.Assisted;
 
 import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.stage.Window;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.pairing.PairingSystem;
@@ -97,10 +96,9 @@ public final class TournamentRoundTabModel {
                                                  _tournament.getHeader( ).getScoringMode( ) + " is not defined" );
     }
 
-    public void fireManualPairing( final Window window ) {
-        final ManualPairingDialog dialog =
-            new ManualPairingDialog( window, _manualPairingDialogFactory.forRound( _tournament, _round ) );
-        dialog.show( );
+    public void fireManualPairing( ) {
+        new ManualPairingDialog( _manualPairingDialogFactory.forRound( _tournament, _round ) )
+            .show( );
     }
 
     private final ObservableTournament _tournament;

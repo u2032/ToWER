@@ -179,6 +179,7 @@ public final class PlayerManagementView extends BorderPane {
                 final Player player = getTableView( ).getItems( ).get( getIndex( ) ).getPlayer( );
 
                 final Alert alert = new Alert( AlertType.WARNING );
+                alert.initOwner( _model.getOwner( ) );
                 alert.headerTextProperty( ).bind( _model.getI18n( ).get( "player.delete.title" ) );
                 alert.contentTextProperty( ).bind( _model.getI18n( ).get( "player.delete.message" ) );
 

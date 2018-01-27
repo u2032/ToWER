@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import javafx.animation.FadeTransition;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -88,6 +89,7 @@ public final class Application extends javafx.application.Application {
         try {
             final Injector injector = Guice.createInjector( modules( )
                                                                 .with( hostServiceModule( getHostServices( ) ) )
+                                                                .with( new ApplicationStageModule( _stage ) )
                                                                 .getModules( ) );
             final Configuration configuration = injector.getInstance( Configuration.class );
             _logger.info( "Application packaged from bundler: {}", configuration.bundleType( ) );
@@ -166,6 +168,7 @@ public final class Application extends javafx.application.Application {
                                           final ServiceManager serviceManager,
                                           final Configuration configuration ) {
         final Stage stage = new Stage( );
+        _stage.set( stage );
         scene.getStylesheets( ).add( configuration.getApplicationStyle( ) );
 
         stage.setMaximized( true );
@@ -233,4 +236,5 @@ public final class Application extends javafx.application.Application {
 
     private final AtomicBoolean _ready = new AtomicBoolean( );
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
+    private final AtomicReference<Stage> _stage = new AtomicReference<>( );
 }

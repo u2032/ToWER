@@ -36,7 +36,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import land.tower.core.ext.font.FontAwesome;
@@ -51,8 +50,7 @@ import land.tower.data.Team;
 final class AddTeamDialog extends Dialog<Team> {
 
     public AddTeamDialog( final AddTeamDialogModel model ) {
-        getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
-        model.getConfig( ).setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
+        initOwner( model.getOwner( ) );
 
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "team.add.title" ) );

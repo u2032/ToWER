@@ -33,9 +33,8 @@ import land.tower.core.ext.i18n.I18nTranslator;
 public final class AboutDialog extends Dialog<Void> {
 
     @Inject
-    public AboutDialog( final Configuration config, final I18nTranslator translator ) {
-        getDialogPane( ).getStylesheets( ).add( config.getApplicationStyle( ) );
-        config.setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
+    public AboutDialog( final Stage owner, final Configuration config, final I18nTranslator translator ) {
+        initOwner( owner );
 
         final ButtonType saveButtonType =
             new ButtonType( translator.get( "action.ok" ).get( ).toUpperCase( ), ButtonData.OK_DONE );

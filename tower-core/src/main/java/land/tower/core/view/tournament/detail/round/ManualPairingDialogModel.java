@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.stage.Stage;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
@@ -45,11 +45,12 @@ public final class ManualPairingDialogModel {
     @Inject
     public ManualPairingDialogModel( @Assisted final ObservableTournament tournament,
                                      @Assisted final ObservableRound round,
-                                     final Configuration config, final I18nTranslator i18n ) {
+                                     final I18nTranslator i18n,
+                                     final Stage owner ) {
         _tournament = tournament;
         _round = round;
-        _config = config;
         _i18n = i18n;
+        _owner = owner;
 
         _matches = observableArrayList( _round.getMatches( ) );
         _teams = observableArrayList( tournament.getTeams( )
@@ -57,10 +58,6 @@ public final class ManualPairingDialogModel {
                                                 .filter( ObservableTeam::isActive )
                                                 .filter( t -> !_round.getMatchFor( t ).isPresent( ) )
                                                 .collect( Collectors.toList( ) ) );
-    }
-
-    public Configuration getConfig( ) {
-        return _config;
     }
 
     public I18nTranslator getI18n( ) {
@@ -151,6 +148,10 @@ public final class ManualPairingDialogModel {
         }
     }
 
+    public Stage getOwner( ) {
+        return _owner;
+    }
+
     public interface Factory {
 
         ManualPairingDialogModel forRound( ObservableTournament tournament, ObservableRound round );
@@ -159,8 +160,8 @@ public final class ManualPairingDialogModel {
     private final ObservableTournament _tournament;
     private final ObservableRound _round;
 
-    private final Configuration _config;
     private final I18nTranslator _i18n;
+    private final Stage _owner;
 
     private final ObservableList<ObservableMatch> _matches;
     private final ObservableList<ObservableTeam> _teams;

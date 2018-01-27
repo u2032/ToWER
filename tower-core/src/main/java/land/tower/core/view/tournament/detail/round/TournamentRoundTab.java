@@ -50,7 +50,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
-import javafx.stage.Window;
 import javafx.util.converter.IntegerStringConverter;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableMatch;
@@ -355,10 +354,7 @@ public class TournamentRoundTab extends Tab {
 
         final MenuItem manualPairing = new FaMenuItem( FontAwesome.HAND, "black" );
         manualPairing.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.manual.pairing" ) );
-        manualPairing.setOnAction( e -> {
-            final Window window = advancedButton.getScene( ).getWindow( );
-            _model.fireManualPairing( window );
-        } );
+        manualPairing.setOnAction( e -> _model.fireManualPairing( ) );
         advancedButton.getItems( ).add( manualPairing );
 
         return advancedButton;

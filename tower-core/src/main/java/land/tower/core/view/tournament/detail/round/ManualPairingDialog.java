@@ -32,8 +32,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableMatch;
@@ -46,10 +44,8 @@ import land.tower.core.model.tournament.ObservableTeam;
 final class ManualPairingDialog extends Dialog<Void> {
 
     @Inject
-    ManualPairingDialog( final Window owner, final ManualPairingDialogModel model ) {
-        initOwner( owner );
-        getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
-        model.getConfig( ).setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
+    ManualPairingDialog( final ManualPairingDialogModel model ) {
+        initOwner( model.getOwner( ) );
         setResizable( true );
         getDialogPane( ).setPrefWidth( getOwner( ).widthProperty( ).multiply( 0.9 ).getValue( ) );
 

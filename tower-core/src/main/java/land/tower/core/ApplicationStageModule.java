@@ -12,27 +12,33 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.view.option;
+package land.tower.core;
 
-import javafx.scene.control.ChoiceDialog;
-import javax.inject.Inject;
-import land.tower.core.ext.i18n.Language;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+
+import java.util.concurrent.atomic.AtomicReference;
+import javafx.stage.Stage;
 
 /**
- * Created on 31/12/2017
+ * Created on 27/01/2018
  * @author Cédric Longo
  */
-public final class LanguageDialog extends ChoiceDialog<Language> {
+final class ApplicationStageModule extends AbstractModule {
 
-    @Inject
-    public LanguageDialog( LanguageDialogModel model ) {
-        initOwner( model.getOwner( ) );
-
-        titleProperty( ).bind( model.getI18n( ).get( "option.language.title" ) );
-        headerTextProperty( ).bind( model.getI18n( ).get( "option.language.message" ) );
-        contentTextProperty( ).bind( model.getI18n( ).get( "language" ) );
-
-        getItems( ).addAll( Language.values( ) );
+    ApplicationStageModule( final AtomicReference<Stage> stage ) {
+        _stage = stage;
     }
 
+    @Override
+    protected void configure( ) {
+
+    }
+
+    @Provides
+    Stage mainStage( ) {
+        return _stage.get( );
+    }
+
+    private final AtomicReference<Stage> _stage;
 }

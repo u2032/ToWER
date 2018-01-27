@@ -20,8 +20,8 @@ import java.time.LocalDate;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.stage.Stage;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.model.player.PlayerNumeroValidator;
@@ -36,11 +36,11 @@ public final class AddPlayerDialogModel {
     @Inject
     public AddPlayerDialogModel( final I18nTranslator translator,
                                  final PlayerNumeroValidator playerNumeroValidator,
-                                 final Configuration config,
+                                 final Stage owner,
                                  final Preferences preferences ) {
         _playerNumeroValidator = playerNumeroValidator;
         _i18n = translator;
-        _config = config;
+        _owner = owner;
         _preferences = preferences;
 
         _playerNumero.addListener( ( observable, oldV, newV ) -> checkValidity( ) );
@@ -162,10 +162,9 @@ public final class AddPlayerDialogModel {
         return _i18n;
     }
 
-    public Configuration getConfig( ) {
-        return _config;
+    public Stage getOwner( ) {
+        return _owner;
     }
-
 
     private final SimpleBooleanProperty _isValid = new SimpleBooleanProperty( );
 
@@ -179,6 +178,6 @@ public final class AddPlayerDialogModel {
 
     private final PlayerNumeroValidator _playerNumeroValidator;
     private final I18nTranslator _i18n;
-    private final Configuration _config;
+    private final Stage _owner;
     private final Preferences _preferences;
 }

@@ -195,6 +195,7 @@ public final class TournamentEnrolmentTab extends Tab {
                 final Team team = getTableView( ).getItems( ).get( getIndex( ) ).getTeam( );
 
                 final Alert alert = new Alert( AlertType.WARNING );
+                alert.initOwner( _model.getOwner( ) );
                 alert.headerTextProperty( ).bind( _model.getI18n( ).get( "team.delete.title" ) );
                 alert.contentTextProperty( ).bind( _model.getI18n( ).get( "team.delete.message" ) );
 

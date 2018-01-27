@@ -14,8 +14,8 @@
 
 package land.tower.core.view.option;
 
+import javafx.stage.Stage;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 
 /**
@@ -25,19 +25,19 @@ import land.tower.core.ext.i18n.I18nTranslator;
 public final class LanguageDialogModel {
 
     @Inject
-    LanguageDialogModel( final I18nTranslator i18n, final Configuration config ) {
+    LanguageDialogModel( final I18nTranslator i18n, final Stage owner ) {
         this.i18n = i18n;
-        _config = config;
+        _owner = owner;
     }
 
     public I18nTranslator getI18n( ) {
         return i18n;
     }
 
-    public Configuration getConfig( ) {
-        return _config;
+    public Stage getOwner( ) {
+        return _owner;
     }
 
     private final I18nTranslator i18n;
-    private final Configuration _config;
+    private final Stage _owner;
 }

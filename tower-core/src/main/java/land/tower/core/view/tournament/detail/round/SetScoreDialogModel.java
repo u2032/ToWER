@@ -22,8 +22,8 @@ import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.stage.Stage;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableMatch;
@@ -46,16 +46,17 @@ public final class SetScoreDialogModel {
     }
 
     @Inject
-    SetScoreDialogModel( final Configuration config, final I18nTranslator i18n,
+    SetScoreDialogModel( final I18nTranslator i18n,
                          @Assisted final ObservableTournament tournament,
                          @Assisted final ObservableRound round, final EventBus eventBus,
-                         final Map<PairingMode, PairingSystem> pairingSystems ) {
-        _config = config;
+                         final Map<PairingMode, PairingSystem> pairingSystems,
+                         final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
         _round = round;
         _eventBus = eventBus;
         _pairingSystems = pairingSystems;
+        _owner = owner;
 
         _errorInformation.bind( Bindings.createStringBinding( ( ) -> {
             final int leftWins = _leftScore.get( ) == null ? 0 : _leftScore.get( );
@@ -129,16 +130,16 @@ public final class SetScoreDialogModel {
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
 
+    public Stage getOwner( ) {
+        return _owner;
+    }
+
     public ObservableTournament getTournament( ) {
         return _tournament;
     }
 
     public ObservableRound getRound( ) {
         return _round;
-    }
-
-    public Configuration getConfig( ) {
-        return _config;
     }
 
     public I18nTranslator getI18n( ) {
@@ -189,7 +190,6 @@ public final class SetScoreDialogModel {
         return _teamInfo;
     }
 
-    private final Configuration _config;
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
     private final ObservableRound _round;
@@ -204,4 +204,5 @@ public final class SetScoreDialogModel {
 
     private final EventBus _eventBus;
     private final Map<PairingMode, PairingSystem> _pairingSystems;
+    private final Stage _owner;
 }

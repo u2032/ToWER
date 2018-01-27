@@ -39,7 +39,6 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import javafx.util.converter.LongStringConverter;
 import land.tower.data.Player;
@@ -52,8 +51,7 @@ import land.tower.data.PlayerNationality;
 public final class AddPlayerDialog extends Dialog<Player> {
 
     public AddPlayerDialog( final AddPlayerDialogModel model ) {
-        getDialogPane( ).getStylesheets( ).add( model.getConfig( ).getApplicationStyle( ) );
-        model.getConfig( ).setIcons( (Stage) getDialogPane( ).getScene( ).getWindow( ) );
+        initOwner( model.getOwner( ) );
 
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "player.add.title" ) );

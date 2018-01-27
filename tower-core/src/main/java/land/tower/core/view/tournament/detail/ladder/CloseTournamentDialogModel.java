@@ -14,11 +14,10 @@
 
 package land.tower.core.view.tournament.detail.ladder;
 
-import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import javafx.stage.Stage;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.TournamentStatus;
@@ -30,22 +29,20 @@ import land.tower.data.TournamentStatus;
 public final class CloseTournamentDialogModel {
 
     public interface Factory {
-
         CloseTournamentDialogModel forTournament( ObservableTournament tournament );
     }
 
     @Inject
-    public CloseTournamentDialogModel( final Configuration config, final I18nTranslator i18n,
+    public CloseTournamentDialogModel( final I18nTranslator i18n,
                                        final @Assisted ObservableTournament tournament,
-                                       final EventBus eventBus ) {
-        _config = config;
+                                       final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
-        _eventBus = eventBus;
+        _owner = owner;
     }
 
-    public Configuration getConfig( ) {
-        return _config;
+    public Stage getOwner( ) {
+        return _owner;
     }
 
     public I18nTranslator getI18n( ) {
@@ -56,8 +53,7 @@ public final class CloseTournamentDialogModel {
         _tournament.getHeader( ).setStatus( TournamentStatus.CLOSED );
     }
 
-    private final Configuration _config;
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
-    private final EventBus _eventBus;
+    private final Stage _owner;
 }

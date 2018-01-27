@@ -18,8 +18,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.Map;
+import javafx.stage.Stage;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
@@ -39,19 +39,15 @@ public final class DeleteRoundDialogModel {
     }
 
     @Inject
-    public DeleteRoundDialogModel( final Configuration config, final I18nTranslator i18n,
+    public DeleteRoundDialogModel( final I18nTranslator i18n,
                                    final @Assisted ObservableTournament tournament,
                                    final Map<PairingMode, PairingSystem> pairingSystem,
-                                   final EventBus eventBus ) {
-        _config = config;
+                                   final EventBus eventBus, final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
         _pairingSystem = pairingSystem;
         _eventBus = eventBus;
-    }
-
-    public Configuration getConfig( ) {
-        return _config;
+        _owner = owner;
     }
 
     public I18nTranslator getI18n( ) {
@@ -69,9 +65,13 @@ public final class DeleteRoundDialogModel {
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
 
-    private final Configuration _config;
+    public Stage getOwner( ) {
+        return _owner;
+    }
+
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
     private final Map<PairingMode, PairingSystem> _pairingSystem;
     private final EventBus _eventBus;
+    private final Stage _owner;
 }

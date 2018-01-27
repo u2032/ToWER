@@ -24,8 +24,8 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.stage.Stage;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.player.suggestion.IPlayerSuggestionProvider;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -54,11 +54,11 @@ public final class AddTeamDialogModel {
 
     @Inject
     public AddTeamDialogModel( final I18nTranslator translator, @Assisted final ObservableTournament tournament,
-                               final Configuration config,
+                               final Stage owner,
                                final IPlayerSuggestionProvider playerSuggestionProvider ) {
         _i18n = translator;
         _tournament = tournament;
-        _config = config;
+        _owner = owner;
         _playerSuggestionProvider = playerSuggestionProvider;
 
         _players = new Player[tournament.getHeader( ).getTeamSize( )];
@@ -85,8 +85,8 @@ public final class AddTeamDialogModel {
         }
     }
 
-    public Configuration getConfig( ) {
-        return _config;
+    public Stage getOwner( ) {
+        return _owner;
     }
 
     public SimpleStringProperty errorInformationProperty( ) {
@@ -160,7 +160,7 @@ public final class AddTeamDialogModel {
 
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
-    private final Configuration _config;
+    private final Stage _owner;
 
     private final Player[] _players;
 

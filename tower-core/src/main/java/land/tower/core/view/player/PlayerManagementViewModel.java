@@ -19,6 +19,7 @@ import com.google.common.eventbus.EventBus;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.stage.Stage;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
@@ -40,13 +41,14 @@ final class PlayerManagementViewModel {
                                       final Provider<HomepageView> homepageViewProvider,
                                       final Provider<AddPlayerDialogModel> addPlayerDialogModelProvider,
                                       final PlayerRepository playerRepository,
-                                      final Preferences preferences ) {
+                                      final Preferences preferences, final Stage owner ) {
         _eventBus = eventBus;
         _homepageViewProvider = homepageViewProvider;
         _addPlayerDialogModelProvider = addPlayerDialogModelProvider;
         _playerRepository = playerRepository;
         _i18n = i18n;
         _preferences = preferences;
+        _owner = owner;
         eventBus.register( this );
     }
 
@@ -77,6 +79,10 @@ final class PlayerManagementViewModel {
         _eventBus.post( new InformationEvent( _i18n.get( "player.deleted" ) ) );
     }
 
+    public Stage getOwner( ) {
+        return _owner;
+    }
+
     private final EventBus _eventBus;
     private final Provider<HomepageView> _homepageViewProvider;
     private final Provider<AddPlayerDialogModel> _addPlayerDialogModelProvider;
@@ -84,4 +90,5 @@ final class PlayerManagementViewModel {
     private final PlayerRepository _playerRepository;
     private final I18nTranslator _i18n;
     private final Preferences _preferences;
+    private final Stage _owner;
 }

@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.stage.Stage;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
@@ -51,14 +51,14 @@ public final class ChainTournamentDialogModel {
 
     @Inject
     public ChainTournamentDialogModel( final I18nTranslator translator,
-                                       final Configuration config,
+                                       final Stage owner,
                                        @Assisted final ObservableTournament tournament,
                                        final TournamentRepository tournamentRepository,
                                        final Map<PairingMode, PairingSystem> pairingSystems,
                                        final EventBus eventBus,
                                        final TournamentViewModel.Factory tournamentViewFactory ) {
         _i18n = translator;
-        _config = config;
+        _owner = owner;
         _tournament = tournament;
         _tournamentRepository = tournamentRepository;
         _pairingSystems = pairingSystems;
@@ -132,8 +132,8 @@ public final class ChainTournamentDialogModel {
         return _i18n;
     }
 
-    public Configuration getConfig( ) {
-        return _config;
+    public Stage getOwner( ) {
+        return _owner;
     }
 
     public boolean isIsValid( ) {
@@ -201,7 +201,7 @@ public final class ChainTournamentDialogModel {
     private final SimpleObjectProperty<PairingMode> _pairingMode = new SimpleObjectProperty<>( PairingMode.DIRECT_ELIMINATION );
 
     private final I18nTranslator _i18n;
-    private final Configuration _config;
+    private final Stage _owner;
     private final ObservableTournament _tournament;
 
     private final TournamentRepository _tournamentRepository;

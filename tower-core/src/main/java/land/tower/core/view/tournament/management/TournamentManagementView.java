@@ -166,6 +166,7 @@ public final class TournamentManagementView extends BorderPane {
                 final Tournament tournament = getTableView( ).getItems( ).get( getIndex( ) ).getTournament( );
 
                 final Alert alert = new Alert( AlertType.WARNING );
+                alert.initOwner( _model.getOwner( ) );
                 alert.headerTextProperty( ).bind( _model.getI18n( ).get( "tournament.delete.title" ) );
                 alert.contentTextProperty( ).bind( _model.getI18n( ).get( "tournament.delete.message" ) );
 
