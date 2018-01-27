@@ -4,6 +4,10 @@
     -fx-font-smoothing-type: lcd;
 }
 
+.menu-item {
+    -fx-cursor: hand;
+}
+
 .fa {
     -fx-font-family: "Font Awesome 5 Free";
 }
