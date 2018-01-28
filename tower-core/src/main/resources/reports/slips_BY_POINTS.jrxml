@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="slips_by_wins" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20"
+              topMargin="20" bottomMargin="20" uuid="f1ea4f56-1e87-473e-823e-210b98722940">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <parameter name="match.position" class="java.lang.String"/>
+    <parameter name="page" class="java.lang.String"/>
+    <parameter name="app.version" class="java.lang.String"/>
+    <parameter name="points" class="java.lang.String"/>
+    <parameter name="app.name" class="java.lang.String"/>
+    <parameter name="match.team.left" class="java.lang.String"/>
+    <parameter name="round" class="java.lang.String"/>
+    <parameter name="match.team.right" class="java.lang.String"/>
+    <parameter name="tournament.title" class="java.lang.String" isForPrompting="false"/>
+    <parameter name="round.numero" class="java.lang.Integer"/>
+    <parameter name="page.title" class="java.lang.String"/>
+    <parameter name="logo.path" class="java.lang.String"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <field name="position" class="java.lang.Integer"/>
+    <field name="team.left" class="java.lang.String"/>
+    <field name="team.right" class="java.lang.String"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="125" splitType="Stretch">
+            <frame>
+                <reportElement x="0" y="1" width="555" height="115" uuid="cba6ed93-a270-4297-a44e-83b9ac397714"/>
+                <box>
+                    <bottomPen lineWidth="1.0"/>
+                </box>
+                <textField>
+                    <reportElement x="480" y="0" width="54" height="30" uuid="2035bd56-df75-4721-abaa-a82d2e59f6e9"/>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font fontName="Noto Sans" size="12" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{position}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="370" y="0" width="110" height="30" uuid="b7fdb0a1-db38-411b-b729-907b6e2b23f4"/>
+                    <textElement textAlignment="Right" verticalAlignment="Middle">
+                        <font fontName="Noto Sans" size="10"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{match.position}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="22" y="33" width="160" height="66" uuid="f26a7a82-44b0-4d1f-b373-928d4941af56"/>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font fontName="Noto Sans" size="14" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{team.left}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="22" y="0" width="348" height="30" uuid="0be12be0-e560-49d4-b292-3184b1a4054a"/>
+                    <textElement textAlignment="Left" verticalAlignment="Middle">
+                        <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
+                    </textElement>
+                    <textFieldExpression>
+                        <![CDATA[$P{round} + " #" +$P{round.numero} + " – " + $P{tournament.title}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="374" y="33" width="160" height="65" uuid="b75f2055-5c37-49fb-8d7f-3d3264a99f10"/>
+                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                        <font fontName="Noto Sans" size="14" isBold="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$F{team.right}]]></textFieldExpression>
+                </textField>
+                <frame>
+                    <reportElement x="207" y="40" width="50" height="50" uuid="de3f9843-7784-4b78-9acb-f8ccc37e762a"/>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <frame>
+                    <reportElement x="296" y="40" width="50" height="50" uuid="5eab3f69-091d-4fe9-8bf1-9397d36c512a"/>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <textField>
+                    <reportElement x="201" y="90" width="62" height="14" uuid="8f4cb9d8-df76-4743-a6bf-2ed7e7a9b774"/>
+                    <textElement textAlignment="Center" verticalAlignment="Top">
+                        <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{points}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="291" y="90" width="62" height="14" uuid="bb40f04f-b7f6-41b8-bb94-472118512870"/>
+                    <textElement textAlignment="Center" verticalAlignment="Top">
+                        <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{points}]]></textFieldExpression>
+                </textField>
+            </frame>
+        </band>
+    </detail>
+    <pageFooter>
+        <band height="20" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="529" height="20" uuid="e5249154-f9b4-4c90-a0a0-083adf7498eb"/>
+                <textElement textAlignment="Right">
+                    <font fontName="Noto Sans" isItalic="true"/>
+                </textElement>
+                <textFieldExpression>
+                    <![CDATA[$P{app.name} + " v" + $P{app.version} + "  –  " +  $P{page} + " " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>

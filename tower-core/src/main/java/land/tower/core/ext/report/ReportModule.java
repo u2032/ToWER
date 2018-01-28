@@ -35,5 +35,9 @@ public final class ReportModule extends AbstractModule {
         install( new FactoryModuleBuilder( )
                      .implement( PairingReport.class, PairingReport.class )
                      .build( PairingReport.Factory.class ) );
+
+        install( new FactoryModuleBuilder( )
+                     .implement( ResultSlipReport.class, ResultSlipReport.class )
+                     .build( ResultSlipReport.Factory.class ) );
     }
 }

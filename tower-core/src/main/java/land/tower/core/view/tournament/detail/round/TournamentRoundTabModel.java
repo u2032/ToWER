@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.report.PairingReport;
 import land.tower.core.ext.report.ReportEngine;
+import land.tower.core.ext.report.ResultSlipReport;
 import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -35,6 +36,7 @@ import land.tower.data.Round;
  * @author Cédric Longo
  */
 public final class TournamentRoundTabModel {
+
 
     public interface Factory {
 
@@ -51,7 +53,8 @@ public final class TournamentRoundTabModel {
                                     final EventBus eventBus,
                                     final Map<PairingMode, PairingSystem> pairingSystems,
                                     final ReportEngine reportEngine,
-                                    final PairingReport.Factory pairingReportFactory ) {
+                                    final PairingReport.Factory pairingReportFactory,
+                                    final ResultSlipReport.Factory resultSlipReportFactory ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
@@ -61,6 +64,7 @@ public final class TournamentRoundTabModel {
         _pairingSystems = pairingSystems;
         _reportEngine = reportEngine;
         _pairingReportFactory = pairingReportFactory;
+        _resultSlipReportFactory = resultSlipReportFactory;
     }
 
     public void fireStartNewRound( ) {
@@ -99,6 +103,10 @@ public final class TournamentRoundTabModel {
         _reportEngine.generate( _pairingReportFactory.create( _tournament, _round, true ) );
     }
 
+    public void firePrintResultSlips( ) {
+        _reportEngine.generate( _resultSlipReportFactory.create( _tournament, _round ) );
+    }
+
     public SetScoreDialog createSetScoreDialog( ) {
         switch ( _tournament.getHeader( ).getScoringMode( ) ) {
             case BY_WINS:
@@ -127,4 +135,5 @@ public final class TournamentRoundTabModel {
 
     private final ReportEngine _reportEngine;
     private final PairingReport.Factory _pairingReportFactory;
+    private final ResultSlipReport.Factory _resultSlipReportFactory;
 }

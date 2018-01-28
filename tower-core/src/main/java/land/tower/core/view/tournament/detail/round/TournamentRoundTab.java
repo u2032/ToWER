@@ -368,6 +368,11 @@ public class TournamentRoundTab extends Tab {
         printByName.setOnAction( e -> _model.firePrintLadderByName( ) );
         print.getItems( ).add( printByName );
 
+        final MenuItem printSlips = new FaMenuItem( FontAwesome.PRINTER, "black" );
+        printSlips.textProperty( ).bind( _model.getI18n( ).get( "tournament.slips.print" ) );
+        printSlips.setOnAction( e -> _model.firePrintResultSlips( ) );
+        advancedButton.getItems( ).add( printSlips );
+
         final MenuItem manualPairing = new FaMenuItem( FontAwesome.HAND, "black" );
         manualPairing.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.manual.pairing" ) );
         manualPairing.setOnAction( e -> _model.fireManualPairing( ) );
