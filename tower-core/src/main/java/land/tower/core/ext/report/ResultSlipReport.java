@@ -18,9 +18,13 @@ import com.google.inject.assistedinject.Assisted;
 
 import net.sf.jasperreports.engine.JRDataSource;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableMatch;
@@ -54,8 +58,36 @@ public final class ResultSlipReport implements Report {
 
     @Override
     public JRDataSource getJRDataSource( ) {
-        return new JRMatchListDataSource( _tournament, _round.getMatches( ),
-                                          Comparator.comparing( ObservableMatch::getPosition ) );
+        final int NUMBER_BY_PAGE = 6; // according to the design of the template
+        final List<ObservableMatch> byPosition = _round.getMatches( )
+                                                       .stream( )
+                                                       .sorted( Comparator.comparing( ObservableMatch::getPosition ) )
+                                                       .collect( Collectors.toList( ) );
+
+        final int NUMBER_OF_PAGES = byPosition.size( ) / NUMBER_BY_PAGE
+                                    + ( byPosition.size( ) % NUMBER_BY_PAGE > 0 ? 1 : 0 );
+
+        final List<ObservableMatch[]> parts = new ArrayList<>( );
+        for ( int i = 0; i < NUMBER_OF_PAGES; i++ ) {
+            parts.add( new ObservableMatch[NUMBER_BY_PAGE] );
+        }
+
+        int x = 0, y = 0;
+        for ( int i = 0; i < byPosition.size( ); i++ ) {
+            parts.get( x )[y] = byPosition.get( i );
+            x++;
+            if ( x >= NUMBER_OF_PAGES ) {
+                x = 0;
+                y++;
+            }
+        }
+
+        final List<ObservableMatch> matches = new ArrayList<>( );
+        parts.forEach( l -> {
+            matches.addAll( Arrays.asList( l ) );
+        } );
+
+        return new JRMatchListDataSource( _tournament, matches );
     }
 
     @Override

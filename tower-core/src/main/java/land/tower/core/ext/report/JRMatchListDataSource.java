@@ -51,6 +51,9 @@ final class JRMatchListDataSource implements JRRewindableDataSource {
     @Override
     public Object getFieldValue( final JRField jrField ) throws JRException {
         final ObservableMatch match = _matches.get( index );
+        if ( match == null ) {
+            return null;
+        }
         switch ( jrField.getName( ) ) {
             case "position":
                 return match.getPosition( );
