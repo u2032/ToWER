@@ -55,6 +55,7 @@ import land.tower.core.ext.inject.ModuleResolver;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.preference.PreferenceModule;
 import land.tower.core.ext.preference.Preferences;
+import land.tower.core.ext.report.ReportModule;
 import land.tower.core.ext.service.ServiceManager;
 import land.tower.core.ext.service.ServiceModule;
 import land.tower.core.ext.singleton.SingletonAppModule;
@@ -124,13 +125,13 @@ public final class Application extends javafx.application.Application {
             /* Start loading app */
             CompletableFuture.runAsync( ( ) -> {
                 try {
-                    loadFont( "fonts/NotoSans-Regular.ttf" );
-                    loadFont( "fonts/NotoSans-Italic.ttf" );
-                    loadFont( "fonts/NotoSans-Bold.ttf" );
-                    loadFont( "fonts/NotoSans-BoldItalic.ttf" );
-                    loadFont( "fonts/fa-regular-400.ttf" );
-                    loadFont( "fonts/fa-solid-900.ttf" );
-                    loadFont( "fonts/Baloo-Regular.ttf" );
+                    loadFont( "fonts/NotoSans/NotoSans-Regular.ttf" );
+                    loadFont( "fonts/NotoSans/NotoSans-Italic.ttf" );
+                    loadFont( "fonts/NotoSans/NotoSans-Bold.ttf" );
+                    loadFont( "fonts/NotoSans/NotoSans-BoldItalic.ttf" );
+                    loadFont( "fonts/FontAwesome/fa-regular-400.ttf" );
+                    loadFont( "fonts/FontAwesome/fa-solid-900.ttf" );
+                    loadFont( "fonts/Baloo/Baloo-Regular.ttf" );
 
                     final ServiceManager serviceManager = injector.getInstance( ServiceManager.class );
                     serviceManager.startAll( );
@@ -222,7 +223,8 @@ public final class Application extends javafx.application.Application {
                                            new InformationRadiatorModule( ),
                                            new PlayerSuggestionModule( ),
                                            new PairingModule( ),
-                                           new RankingModule( ) );
+                                           new RankingModule( ),
+                                           new ReportModule( ) );
     }
 
     private Module hostServiceModule( final HostServices hostServices ) {

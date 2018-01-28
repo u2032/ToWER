@@ -53,11 +53,11 @@
             <version>8.40.14</version>
         </dependency>
         <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>2.3.23</version>
+            <groupId>net.sf.jasperreports</groupId>
+            <artifactId>jasperreports</artifactId>
+            <version>6.5.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.assertj/assertj-core-java8 -->
+        <!-- TESTS -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>

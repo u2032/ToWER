@@ -52,4 +52,5 @@ public final class FontAwesome {
     public static final String BYE_USER = "\uf21b";
     public static final String SCREEN = "\uf108";
     public static final String FULLSCREEN = "\uf065";
+    public static final String PRINTER = "\uf02f";
 }

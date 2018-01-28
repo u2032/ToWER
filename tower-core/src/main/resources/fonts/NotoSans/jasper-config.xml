@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fontFamilies>
+    <fontFamily name="Noto Sans">
+        <normal><![CDATA[fonts/NotoSans/NotoSans-Regular.ttf]]></normal>
+        <bold><![CDATA[fonts/NotoSans/NotoSans-Bold.ttf]]></bold>
+        <italic><![CDATA[fonts/NotoSans/NotoSans-Italic.ttf]]></italic>
+        <boldItalic><![CDATA[fonts/NotoSans/NotoSans-BoldItalic.ttf]]></boldItalic>
+        <pdfEncoding><![CDATA[Identity-H]]></pdfEncoding>
+        <pdfEmbedded><![CDATA[true]]></pdfEmbedded>
+        <exportFonts/>
+    </fontFamily>
+</fontFamilies>

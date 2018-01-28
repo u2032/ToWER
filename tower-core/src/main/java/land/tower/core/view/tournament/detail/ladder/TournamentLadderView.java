@@ -14,7 +14,6 @@
 
 package land.tower.core.view.tournament.detail.ladder;
 
-import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 
@@ -25,6 +24,8 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -35,6 +36,7 @@ import javafx.scene.layout.HBox;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.view.component.FaButton;
+import land.tower.core.view.component.FaMenuItem;
 import land.tower.data.TournamentStatus;
 
 /**
@@ -179,7 +181,8 @@ public final class TournamentLadderView extends Tab {
         } );
         chainButton.visibleProperty( ).bind( _model.getTournament( ).getHeader( ).statusProperty( )
                                                    .isEqualTo( TournamentStatus.CLOSED ) );
-        hBox.getChildren( ).add( chainButton );
+
+        final MenuButton toolMenu = buildToolsMenuButton( );
 
         final FaButton closeButton = new FaButton( FontAwesome.LOCK, "white" );
         closeButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.round.close" ) ) );
@@ -188,10 +191,6 @@ public final class TournamentLadderView extends Tab {
         closeButton.setOnAction( event -> {
             new CloseTournamentDialog( _model.createCloseTournamentViewModel( ) ).show( );
         } );
-        closeButton.visibleProperty( )
-                   .bind( createBooleanBinding(
-                       ( ) -> _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED,
-                       _model.getTournament( ).getHeader( ).statusProperty( ) ) );
 
         final Runnable updateDisableCloseButton = ( ) -> {
             closeButton.setDisable(
@@ -218,9 +217,34 @@ public final class TournamentLadderView extends Tab {
                   .addListener( ( observable1, oldValue1, newValue1 ) -> updateDisableCloseButton.run( ) );
         }
 
-        hBox.getChildren( ).add( closeButton );
+        if ( _model.getTournament( ).getHeader( ).getStatus( ) == TournamentStatus.CLOSED ) {
+            hBox.getChildren( ).setAll( toolMenu, chainButton );
+        } else {
+            hBox.getChildren( ).setAll( toolMenu, closeButton );
+        }
+
+        _model.getTournament( ).getHeader( ).statusProperty( )
+              .addListener( ( observable, oldValue, newValue ) -> {
+                  if ( newValue == TournamentStatus.CLOSED ) {
+                      hBox.getChildren( ).setAll( toolMenu, chainButton );
+                  } else {
+                      hBox.getChildren( ).setAll( toolMenu, closeButton );
+                  }
+              } );
 
         return hBox;
+    }
+
+    private MenuButton buildToolsMenuButton( ) {
+        final MenuButton advancedButton = new MenuButton( FontAwesome.TOOLS );
+        advancedButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+
+        final MenuItem manualPairing = new FaMenuItem( FontAwesome.PRINTER, "black" );
+        manualPairing.textProperty( ).bind( _model.getI18n( ).get( "tournament.ladder.print" ) );
+        manualPairing.setOnAction( e -> _model.firePrintLadder( ) );
+        advancedButton.getItems( ).add( manualPairing );
+
+        return advancedButton;
     }
 
     private final TournamentLadderViewModel _model;
