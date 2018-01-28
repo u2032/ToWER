@@ -55,7 +55,7 @@
     </title>
     <columnHeader>
         <band height="36" splitType="Stretch">
-            <textField>
+            <textField isStretchWithOverflow="true">
                 <reportElement mode="Opaque" x="21" y="12" width="50" height="20" backcolor="#EBE8E8"
                                uuid="4d8ad303-8f9f-48d2-82a8-9494b994858a">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
@@ -72,7 +72,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$P{team.rank}]]></textFieldExpression>
             </textField>
-            <textField>
+            <textField isStretchWithOverflow="true">
                 <reportElement mode="Opaque" x="71" y="12" width="380" height="20" backcolor="#EBE8E8"
                                uuid="07abe824-e7be-4ea7-a032-0bf6568a4b90">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
@@ -89,7 +89,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$P{team.name}]]></textFieldExpression>
             </textField>
-            <textField>
+            <textField isStretchWithOverflow="true">
                 <reportElement mode="Opaque" x="451" y="12" width="78" height="20" backcolor="#EBE8E8"
                                uuid="e5b3d46d-e706-43b8-b081-66d24cfe0210">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
@@ -110,7 +110,7 @@
     </columnHeader>
     <detail>
         <band height="24" splitType="Stretch">
-            <textField>
+            <textField isStretchWithOverflow="true">
                 <reportElement x="21" y="0" width="50" height="20" uuid="2f93e200-6d2d-4e82-b569-c3a0c5a87b1d">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
                               value="c590feb3-b9ce-4910-94d9-1e30c04f4c1d"/>
@@ -126,7 +126,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{rank}]]></textFieldExpression>
             </textField>
-            <textField>
+            <textField isStretchWithOverflow="true">
                 <reportElement x="71" y="0" width="380" height="20" isPrintWhenDetailOverflows="true"
                                uuid="d0134211-6fab-4ce5-972c-fb03c667ab79">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
@@ -143,7 +143,7 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
             </textField>
-            <textField>
+            <textField isStretchWithOverflow="true">
                 <reportElement x="451" y="0" width="78" height="20" uuid="2d590c21-9c81-4339-aa04-38b154c2902e">
                     <property name="com.jaspersoft.studio.spreadsheet.connectionID"
                               value="c590feb3-b9ce-4910-94d9-1e30c04f4c1d"/>

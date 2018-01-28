@@ -239,10 +239,10 @@ public final class TournamentLadderView extends Tab {
         final MenuButton advancedButton = new MenuButton( FontAwesome.TOOLS );
         advancedButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
 
-        final MenuItem manualPairing = new FaMenuItem( FontAwesome.PRINTER, "black" );
-        manualPairing.textProperty( ).bind( _model.getI18n( ).get( "tournament.ladder.print" ) );
-        manualPairing.setOnAction( e -> _model.firePrintLadder( ) );
-        advancedButton.getItems( ).add( manualPairing );
+        final MenuItem printButton = new FaMenuItem( FontAwesome.PRINTER, "black" );
+        printButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.ladder.print" ) );
+        printButton.setOnAction( e -> _model.firePrintLadder( ) );
+        advancedButton.getItems( ).add( printButton );
 
         return advancedButton;
     }

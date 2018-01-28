@@ -22,7 +22,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
-import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableTournament;
 
@@ -39,10 +38,8 @@ public final class LadderReport implements Report {
 
     @Inject
     public LadderReport( final I18nTranslator i18n,
-                         final Configuration configuration,
                          @Assisted final ObservableTournament tournament ) {
         _i18n = i18n;
-        _configuration = configuration;
         _tournament = tournament;
     }
 
@@ -65,8 +62,6 @@ public final class LadderReport implements Report {
         params.put( "team.rank", _i18n.get( "ranking.rank" ).getValue( ) );
         params.put( "team.points", _i18n.get( "ranking.points" ).getValue( ) );
         params.put( "team.name", _i18n.get( "team.name" ).getValue( ) );
-        params.put( "app.name", _configuration.get( "app.name" ) );
-        params.put( "app.version", _configuration.get( "version" ) );
         params.put( "page", _i18n.get( "report.page" ).getValue( ) );
         return params;
     }
@@ -77,6 +72,5 @@ public final class LadderReport implements Report {
     }
 
     private final I18nTranslator _i18n;
-    private final Configuration _configuration;
     private final ObservableTournament _tournament;
 }

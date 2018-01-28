@@ -51,7 +51,8 @@ public final class ReportEngine {
     public ReportEngine( final Configuration configuration,
                          @ApplicationThread final ExecutorService executorService ) {
         _executorService = executorService;
-        _logoPath = configuration.dataDirectory( ).resolve( "report-logo.png" );
+        _configuration = configuration;
+        _logoPath = _configuration.dataDirectory( ).resolve( "report-logo.png" );
         _logoPathTmp = configuration.dataDirectory( ).resolve( "report-logo.png._COPYING_" );
     }
 
@@ -79,6 +80,8 @@ public final class ReportEngine {
 
         try {
             final Map<String, Object> parameters = report.getParameters( );
+            parameters.put( "app.name", _configuration.get( "app.name" ) );
+            parameters.put( "app.version", _configuration.get( "version" ) );
             parameters.put( "logo.path", getLogoPath( ).toAbsolutePath( ).toString( ) );
             final JasperPrint jrPrint = JasperFillManager.fillReport( jreport,
                                                                       parameters,
@@ -116,4 +119,5 @@ public final class ReportEngine {
     private final ExecutorService _executorService;
     private final Map<String, JasperReport> _reports = new ConcurrentHashMap<>( );
     private Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
+    private final Configuration _configuration;
 }

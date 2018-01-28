@@ -33,6 +33,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
@@ -55,6 +56,7 @@ import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableTimer;
 import land.tower.core.view.component.FaButton;
+import land.tower.core.view.component.FaMenu;
 import land.tower.core.view.component.FaMenuItem;
 import land.tower.data.TournamentStatus;
 
@@ -351,6 +353,20 @@ public class TournamentRoundTab extends Tab {
     private MenuButton buildToolsMenuButton( ) {
         final MenuButton advancedButton = new MenuButton( FontAwesome.TOOLS );
         advancedButton.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+
+        final Menu print = new FaMenu( FontAwesome.PRINTER, "black" );
+        print.textProperty( ).bind( _model.getI18n( ).get( "tournament.pairing.print" ) );
+        advancedButton.getItems( ).add( print );
+
+        final MenuItem printByPosition = new MenuItem( );
+        printByPosition.textProperty( ).bind( _model.getI18n( ).get( "tournament.pairing.print.byPosition" ) );
+        printByPosition.setOnAction( e -> _model.firePrintLadderByPosition( ) );
+        print.getItems( ).add( printByPosition );
+
+        final MenuItem printByName = new MenuItem( );
+        printByName.textProperty( ).bind( _model.getI18n( ).get( "tournament.pairing.print.byName" ) );
+        printByName.setOnAction( e -> _model.firePrintLadderByName( ) );
+        print.getItems( ).add( printByName );
 
         final MenuItem manualPairing = new FaMenuItem( FontAwesome.HAND, "black" );
         manualPairing.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.manual.pairing" ) );

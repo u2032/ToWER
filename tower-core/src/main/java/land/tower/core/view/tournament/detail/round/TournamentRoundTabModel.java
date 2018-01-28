@@ -21,6 +21,8 @@ import java.util.Map;
 import javafx.beans.property.SimpleBooleanProperty;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.ext.report.PairingReport;
+import land.tower.core.ext.report.ReportEngine;
 import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -47,7 +49,9 @@ public final class TournamentRoundTabModel {
                                     final SetScoreDialogModel.Factory setScoreDialogFactory,
                                     final ManualPairingDialogModel.Factory manualPairingDialogFactory,
                                     final EventBus eventBus,
-                                    final Map<PairingMode, PairingSystem> pairingSystems ) {
+                                    final Map<PairingMode, PairingSystem> pairingSystems,
+                                    final ReportEngine reportEngine,
+                                    final PairingReport.Factory pairingReportFactory ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
@@ -55,6 +59,8 @@ public final class TournamentRoundTabModel {
         _manualPairingDialogFactory = manualPairingDialogFactory;
         _eventBus = eventBus;
         _pairingSystems = pairingSystems;
+        _reportEngine = reportEngine;
+        _pairingReportFactory = pairingReportFactory;
     }
 
     public void fireStartNewRound( ) {
@@ -85,6 +91,14 @@ public final class TournamentRoundTabModel {
         return _round;
     }
 
+    public void firePrintLadderByPosition( ) {
+        _reportEngine.generate( _pairingReportFactory.create( _tournament, _round, false ) );
+    }
+
+    public void firePrintLadderByName( ) {
+        _reportEngine.generate( _pairingReportFactory.create( _tournament, _round, true ) );
+    }
+
     public SetScoreDialog createSetScoreDialog( ) {
         switch ( _tournament.getHeader( ).getScoringMode( ) ) {
             case BY_WINS:
@@ -110,4 +124,7 @@ public final class TournamentRoundTabModel {
     private final SimpleBooleanProperty _filterNotEmptySource = new SimpleBooleanProperty( );
     private final EventBus _eventBus;
     private final Map<PairingMode, PairingSystem> _pairingSystems;
+
+    private final ReportEngine _reportEngine;
+    private final PairingReport.Factory _pairingReportFactory;
 }
