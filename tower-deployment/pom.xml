@@ -71,6 +71,7 @@
                                             <classifier>uber</classifier>
                                             <type>jar</type>
                                             <outputDirectory>${project.build.directory}/deployment</outputDirectory>
+                                            <destFileName>${deploy.artefactId}.jar</destFileName>
                                         </artifactItem>
                                     </artifactItems>
                                 </configuration>
@@ -102,7 +103,7 @@
                                         <argument>-srcdir</argument>
                                         <argument>${project.build.directory}/deployment</argument>
                                         <argument>-srcfiles</argument>
-                                        <argument>tower-core-${deploy.version}-uber.jar</argument>
+                                        <argument>${deploy.artefactId}.jar</argument>
                                         <argument>-appclass</argument>
                                         <argument>${deploy.mainClass}</argument>
                                         <argument>-name</argument>
