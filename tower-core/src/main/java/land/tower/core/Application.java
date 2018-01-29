@@ -87,6 +87,9 @@ public final class Application extends javafx.application.Application {
 
     @Override
     public void start( final Stage primaryStage ) throws Exception {
+        Thread.setDefaultUncaughtExceptionHandler( ( thread, throwable ) ->
+                                                       _logger.error( "Exception in JavaFXThread:", throwable ) );
+
         try {
             final Injector injector = Guice.createInjector( modules( )
                                                                 .with( hostServiceModule( getHostServices( ) ) )
