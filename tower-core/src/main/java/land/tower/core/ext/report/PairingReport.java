@@ -85,7 +85,7 @@ public final class PairingReport implements Report {
         final HashMap<String, Object> params = new HashMap<>( );
         params.put( "page.title", _i18n.get( "report.pairing.title", _round.getNumero( ) ).toUpperCase( ) );
         params.put( "tournament.title", _tournament.getHeader( ).getTitle( ) );
-        params.put( "match.position", _i18n.get( "match.position" ).getValue( ) );
+        params.put( "match.position", _i18n.get( "match.position.short" ).getValue( ) );
         params.put( "match.team.left", _i18n.get( "report.pairing.team.left" ).getValue( ) );
         params.put( "match.team.right", _i18n.get( "report.pairing.team.right" ).getValue( ) );
         params.put( "page", _i18n.get( "report.page" ).getValue( ) );
