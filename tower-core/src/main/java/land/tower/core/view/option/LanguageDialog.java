@@ -33,6 +33,7 @@ public final class LanguageDialog extends ChoiceDialog<Language> {
         contentTextProperty( ).bind( model.getI18n( ).get( "language" ) );
 
         getItems( ).addAll( Language.values( ) );
+        setSelectedItem( model.getCurrentLanguage( ) );
     }
 
 }

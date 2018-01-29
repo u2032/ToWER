@@ -42,7 +42,7 @@ public enum Language {
 
     public static Optional<Language> fromCode( final String code ) {
         return Stream.of( values( ) )
-                     .filter( l -> l.getCode( ).equals( code ) )
+                     .filter( l -> l.getCode( ).startsWith( code ) )
                      .findAny( );
     }
 
