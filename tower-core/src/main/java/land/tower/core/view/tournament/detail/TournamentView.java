@@ -16,6 +16,7 @@ package land.tower.core.view.tournament.detail;
 
 import static javafx.scene.layout.HBox.setHgrow;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -84,6 +85,8 @@ public final class TournamentView extends BorderPane implements Displayable {
                 _model.fireTournamentSelection( newValue );
             }
         } );
+        _tournamentList.visibleProperty( ).bind( Bindings.size( _model.getOpenedTournaments( ).getValue( ) )
+                                                         .greaterThan( 1 ) );
 
         final HBox spacing = new HBox( );
         setHgrow( spacing, Priority.ALWAYS );
