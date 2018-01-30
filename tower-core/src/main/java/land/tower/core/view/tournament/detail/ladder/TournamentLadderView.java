@@ -242,6 +242,7 @@ public final class TournamentLadderView extends Tab {
         final MenuItem printButton = new FaMenuItem( FontAwesome.PRINTER, "black" );
         printButton.textProperty( ).bind( _model.getI18n( ).get( "tournament.ladder.print" ) );
         printButton.setOnAction( e -> _model.firePrintLadder( ) );
+        printButton.disableProperty( ).bind( Bindings.isEmpty( _model.getTournament( ).getTeams( ) ) );
         advancedButton.getItems( ).add( printButton );
 
         return advancedButton;
