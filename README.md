@@ -14,10 +14,17 @@ You don't need to install it because it's packaged with the installer and it wil
 ### Installation steps 
 * Download the [last release](https://github.com/u2032/ToWER/releases)
 * Execute the installer to install the application
-* Launch the application from menu or desktop shortcuts
+* Launch the application from menu or shortcuts
+
+_Note: The recommended way is to download the "installer" package according to your operating system. This package installs the application on your computer in the proper way and integration. But, you can also prefer to have the application on a USB Key or without any integration. In this former case, you should download the "standalone" package, which is the application packaged inside a simple and unique directory._
+
 
 ## User guide
-You can found some documentation and screenshot here: https://github.com/u2032/ToWER/wiki
+You can found some [documentation on the wiki](https://github.com/u2032/ToWER/wiki) and some [screenshots here](https://github.com/u2032/ToWER/tree/master/docs/screenshots)
+
+But the simplest way is to directly test the app! It's free.
 
 ## Want to talk about the project?
 Feel free to join us on slack: https://tower-app-slack-invite.herokuapp.com
+ 
+
