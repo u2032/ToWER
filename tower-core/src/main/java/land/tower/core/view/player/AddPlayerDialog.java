@@ -41,6 +41,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import javafx.util.converter.LongStringConverter;
+import land.tower.core.view.component.ComboBoxKeyListenerDecorator;
 import land.tower.data.Player;
 import land.tower.data.PlayerNationality;
 
@@ -139,6 +140,7 @@ public final class AddPlayerDialog extends Dialog<Player> {
                 return null;
             }
         } );
+        new ComboBoxKeyListenerDecorator<>( nationalityBox );
 
         final Label nationalityLabel = new Label( );
         nationalityLabel.textProperty( ).bind( model.getI18n( ).get( "player.nationality" ) );
