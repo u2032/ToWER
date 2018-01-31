@@ -21,6 +21,8 @@ import javax.inject.Inject;
 import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
+import land.tower.core.model.rules.ITournamentRulesProvider;
+import land.tower.core.model.rules.TournamentRules;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
 
@@ -38,6 +40,10 @@ public final class TournamentInformationTabModel {
         return _configuration;
     }
 
+    public TournamentRules getTournamentRules( final String game ) {
+        return _tournamentRulesProvider.forGame( game );
+    }
+
     public interface Factory {
 
         TournamentInformationTabModel forTournament( final ObservableTournament tournament );
@@ -47,12 +53,14 @@ public final class TournamentInformationTabModel {
     @Inject
     TournamentInformationTabModel( final @Assisted ObservableTournament tournament, final I18nTranslator i18n,
                                    final Preferences preferences, final EventBus eventBus,
-                                   final Configuration configuration ) {
+                                   final Configuration configuration,
+                                   final ITournamentRulesProvider tournamentRulesProvider ) {
         _i18n = i18n;
         _tournament = tournament;
         _preferences = preferences;
         _eventBus = eventBus;
         _configuration = configuration;
+        _tournamentRulesProvider = tournamentRulesProvider;
     }
 
     public void fireSaveAsPreference( ) {
@@ -69,4 +77,5 @@ public final class TournamentInformationTabModel {
     private final Preferences _preferences;
     private final EventBus _eventBus;
     private final Configuration _configuration;
+    private final ITournamentRulesProvider _tournamentRulesProvider;
 }

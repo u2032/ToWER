@@ -47,6 +47,8 @@ import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
+import land.tower.core.model.rules.TournamentRules;
+import land.tower.core.model.tournament.ObservableTournamentHeader;
 import land.tower.core.view.component.FaButton;
 import land.tower.data.PairingMode;
 import land.tower.data.TournamentScoringMode;
@@ -172,6 +174,18 @@ public final class TournamentInformationTab extends Tab {
                     return null;
                 }
             } );
+            gameField.disableProperty( ).bind( createBooleanBinding( ( ) -> {
+                final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
+                switch ( status ) {
+                    case NOT_CONFIGURED:
+                    case PLANNED:
+                    case ENROLMENT:
+                        return false;
+                    default:
+                        return true;
+                }
+            }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
+
             final Label gameLabel = new Label( );
             gameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.game" ) );
             gameLabel.setLabelFor( gameField );
@@ -387,11 +401,11 @@ public final class TournamentInformationTab extends Tab {
         grid.add( teamSizeField, 1, line );
 
         line++;
-        final ChoiceBox<TournamentScoringMode> scoringModeBox = new ChoiceBox<>( );
-        scoringModeBox.itemsProperty( )
-                      .bind( new SimpleListProperty<>(
-                          FXCollections.observableArrayList( TournamentScoringMode.values( ) ) ) );
-        scoringModeBox.setConverter( new StringConverter<TournamentScoringMode>( ) {
+        _scoringModeBox = new ChoiceBox<>( );
+        _scoringModeBox.itemsProperty( )
+                       .bind( new SimpleListProperty<>(
+                           FXCollections.observableArrayList( TournamentScoringMode.values( ) ) ) );
+        _scoringModeBox.setConverter( new StringConverter<TournamentScoringMode>( ) {
             @Override
             public String toString( final TournamentScoringMode object ) {
                 return _model.getI18n( ).get( "scoringMode." + object.name( ) ).get( );
@@ -402,33 +416,23 @@ public final class TournamentInformationTab extends Tab {
                 return null;
             }
         } );
-        scoringModeBox.valueProperty( )
-                      .bindBidirectional( _model.getTournament( ).getHeader( ).scoringModeProperty( ) );
-        scoringModeBox.disableProperty( ).bind( createBooleanBinding( ( ) -> {
-            final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
-            switch ( status ) {
-                case NOT_CONFIGURED:
-                case PLANNED:
-                case ENROLMENT:
-                    return false;
-                default:
-                    return true;
-            }
-        }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
+        _scoringModeBox.valueProperty( )
+                       .bindBidirectional( _model.getTournament( ).getHeader( ).scoringModeProperty( ) );
+
         final Label scoringModeLabel = new Label( );
         scoringModeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.scoringMode" ) );
         scoringModeLabel.setLabelFor( scoringModeLabel );
         grid.add( scoringModeLabel, 0, line );
-        grid.add( scoringModeBox, 1, line );
+        grid.add( _scoringModeBox, 1, line );
 
         line++;
-        final TextField scoreMaxField = new TextField( );
-        scoreMaxField.setPrefWidth( 40 );
-        scoreMaxField.setMaxWidth( Pane.USE_PREF_SIZE );
-        scoreMaxField.textProperty( )
-                     .bindBidirectional( _model.getTournament( ).getHeader( ).scoreMaxProperty( ),
-                                         new IntegerStringConverter( ) );
-        scoreMaxField.setTextFormatter(
+        _scoreMaxField = new TextField( );
+        _scoreMaxField.setPrefWidth( 40 );
+        _scoreMaxField.setMaxWidth( Pane.USE_PREF_SIZE );
+        _scoreMaxField.textProperty( )
+                      .bindBidirectional( _model.getTournament( ).getHeader( ).scoreMaxProperty( ),
+                                          new IntegerStringConverter( ) );
+        _scoreMaxField.setTextFormatter(
             new TextFormatter<>( new IntegerStringConverter( ),
                                  _model.getTournament( ).getHeader( ).getScoreMax( ),
                                  c -> {
@@ -442,25 +446,15 @@ public final class TournamentInformationTab extends Tab {
                                      }
                                      return matches ? c : null;
                                  } ) );
-        scoreMaxField.disableProperty( ).bind( createBooleanBinding( ( ) -> {
-            final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
-            switch ( status ) {
-                case NOT_CONFIGURED:
-                case PLANNED:
-                case ENROLMENT:
-                    return false;
-                default:
-                    return true;
-            }
-        }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
+
         final Label scoreMaxLabel = new Label( );
         scoreMaxLabel.textProperty( )
                      .bind( Bindings.createStringBinding( ( ) -> {
-                         return _model.getI18n( ).get( "tournament.scoreMax." + scoringModeBox.getValue( ) ).get( );
-                     }, scoringModeBox.valueProperty( ) ) );
-        scoreMaxLabel.setLabelFor( scoreMaxField );
+                         return _model.getI18n( ).get( "tournament.scoreMax." + _scoringModeBox.getValue( ) ).get( );
+                     }, _scoringModeBox.valueProperty( ) ) );
+        scoreMaxLabel.setLabelFor( _scoreMaxField );
         grid.add( scoreMaxLabel, 0, line );
-        grid.add( scoreMaxField, 1, line );
+        grid.add( _scoreMaxField, 1, line );
 
         line++;
         final TextField matchDurationField = new TextField( );
@@ -563,8 +557,52 @@ public final class TournamentInformationTab extends Tab {
         // TODO Judge
         mainPane.getChildren( ).add( grid );
 
+        _model.getTournament( ).getHeader( ).gameProperty( )
+              .addListener( ( observable, oldValue, newValue ) -> checkTournamentRules( ) );
+
+        checkTournamentRules( );
+
         return scrollPane;
     }
 
+    private void checkTournamentRules( ) {
+        final ObservableTournamentHeader header = _model.getTournament( ).getHeader( );
+        final String game = header.getGame( );
+        final TournamentRules rules = _model.getTournamentRules( game );
+
+        final BooleanBinding tournamentNotStarted = createBooleanBinding( ( ) -> {
+            final TournamentStatus status = _model.getTournament( ).getHeader( ).statusProperty( ).get( );
+            switch ( status ) {
+                case NOT_CONFIGURED:
+                case PLANNED:
+                case ENROLMENT:
+                    return false;
+                default:
+                    return true;
+            }
+        }, _model.getTournament( ).getHeader( ).statusProperty( ) );
+
+        if ( rules.getScoringMode( ).isPresent( ) ) {
+            _scoringModeBox.disableProperty( ).unbind( );
+            _scoringModeBox.setDisable( true );
+            header.setScoringMode( rules.getScoringMode( ).get( ) );
+        } else {
+            _scoringModeBox.disableProperty( ).unbind( );
+            _scoringModeBox.disableProperty( ).bind( tournamentNotStarted );
+        }
+
+        if ( rules.getScoreMax( ).isPresent( ) ) {
+            _scoreMaxField.disableProperty( ).unbind( );
+            _scoreMaxField.setDisable( true );
+            header.setScoreMax( rules.getScoreMax( ).get( ) );
+        } else {
+            _scoreMaxField.disableProperty( ).unbind( );
+            _scoreMaxField.disableProperty( ).bind( tournamentNotStarted );
+        }
+    }
+
     private final TournamentInformationTabModel _model;
+    private ChoiceBox<TournamentScoringMode> _scoringModeBox;
+    private TextField _scoreMaxField;
+
 }

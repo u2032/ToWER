@@ -215,6 +215,10 @@ public final class ObservableTournamentHeader {
         return _scoringMode;
     }
 
+    public void setScoringMode( final TournamentScoringMode scoringMode ) {
+        this._scoringMode.set( scoringMode );
+    }
+
     public void markAsClean( ) {
         _dirty.set( false );
         _address.markAsClean( );
