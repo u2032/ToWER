@@ -25,6 +25,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
+import land.tower.core.ext.config.ConfigurationModule;
 import land.tower.core.ext.service.IService;
 
 /**
@@ -37,7 +38,7 @@ class I18nModuleTest {
     @DisplayName( "I18nTranslator can be injected as singleton" )
     void can_inject_I18nTranslator( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new I18nModule( ) );
+        final Injector injector = Guice.createInjector( new I18nModule( ), new ConfigurationModule( ) );
         // Exercice
         final I18nTranslator instance = injector.getInstance( I18nTranslator.class );
         final I18nTranslator instance2 = injector.getInstance( I18nTranslator.class );
@@ -50,7 +51,7 @@ class I18nModuleTest {
     @DisplayName( "I18nService can be injected as singleton" )
     void can_inject_I18nService( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new I18nModule( ) );
+        final Injector injector = Guice.createInjector( new I18nModule( ), new ConfigurationModule( ) );
         // Exercice
         final I18nService instance = injector.getInstance( I18nService.class );
         final I18nService instance2 = injector.getInstance( I18nService.class );
@@ -63,7 +64,7 @@ class I18nModuleTest {
     @DisplayName( "I18nService is registered as Service" )
     void I18nService_is_registered( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new I18nModule( ) );
+        final Injector injector = Guice.createInjector( new I18nModule( ), new ConfigurationModule( ) );
         // Exercice
         final Set<IService> instance = injector.getInstance( Key.get( new TypeLiteral<Set<IService>>( ) {
         } ) );
