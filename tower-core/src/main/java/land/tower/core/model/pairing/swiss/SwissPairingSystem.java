@@ -14,10 +14,14 @@
 
 package land.tower.core.model.pairing.swiss;
 
+import static java.lang.Math.abs;
+
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -52,11 +56,11 @@ public final class SwissPairingSystem implements PairingSystem {
             return firstRound( tournament.getTournament( ) );
         }
 
-        return IntStream.rangeClosed( 1, 10 )
+        return IntStream.rangeClosed( 1, 16 )
+                        .unordered( )
                         .parallel( )
                         .mapToObj( i -> makePairing( tournament.getTournament( ) ) )
-                        .sorted( Comparator.comparing( Pair::getKey ) )
-                        .findFirst( )
+                        .min( Comparator.comparing( Pair::getKey ) )
                         .map( Pair::getValue )
                         .orElseThrow( IllegalStateException::new );
     }
@@ -72,6 +76,7 @@ public final class SwissPairingSystem implements PairingSystem {
     }
 
     private Pair<Integer, Round> makePairing( final Tournament tournament ) {
+        System.err.println( "MAKE PAIRING" );
         final List<Match> matches = new ArrayList<>( );
 
         // Compute groups of teams with same score
@@ -82,6 +87,14 @@ public final class SwissPairingSystem implements PairingSystem {
                       .collect( Collectors.groupingBy( t -> t.getRanking( ).getPoints( ),
                                                        LinkedHashMap::new,
                                                        Collectors.toList( ) ) );
+
+        // Constructs a map teamId -> GroupNum
+        final AtomicInteger groupNum = new AtomicInteger( );
+        final Map<Integer, Integer> groupNums = new HashMap<>( );
+        groups.forEach( ( points, teams ) -> {
+            groupNum.incrementAndGet( );
+            teams.forEach( t -> groupNums.put( t.getId( ), groupNum.get( ) ) );
+        } );
 
         // Pairing in same group if possible
         final List<List<Team>> groupList = new ArrayList<>( groups.values( ) );
@@ -131,6 +144,16 @@ public final class SwissPairingSystem implements PairingSystem {
             }
         }
 
+        // Compute how many group permutation we have
+        final AtomicInteger permutes = new AtomicInteger( );
+        for ( int i = 0; i < matches.size( ); i++ ) {
+            final Match match = matches.get( i );
+            final int groupLeft = groupNums.getOrDefault( match.getLeftTeamId( ), groupNum.get( ) );
+            final int groupRight = groupNums.getOrDefault( match.getRightTeamId( ), groupNum.get( ) );
+            permutes.addAndGet( abs( ( groupNum.get( ) - groupLeft ) * ( groupNum.get( ) - groupLeft )
+                                     - ( groupNum.get( ) - groupRight ) * ( groupNum.get( ) - groupRight ) ) );
+        }
+
         // Initialize score for Bye teams and put them on the end
         final List<Match> byeMatches = matches.stream( )
                                               .filter( this::isByeMatch )
@@ -156,7 +179,12 @@ public final class SwissPairingSystem implements PairingSystem {
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
         round.setTimer( new TimerInfo( tournament.getHeader( ).getMatchDuration( ) ) );
         round.getMatches( ).addAll( matches );
-        return new Pair<>( duplicates.get( ), round );
+
+        return new Pair<>( computeScore( duplicates.get( ), permutes.get( ) ), round );
+    }
+
+    private int computeScore( final int duplicates, final int permutes ) {
+        return duplicates * 1000 + permutes;
     }
 
     private boolean matchPermutation( final Tournament tournament, final Match match, final Match match2 ) {
