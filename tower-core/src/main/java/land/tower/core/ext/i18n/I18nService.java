@@ -19,11 +19,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.ext.service.IService;
@@ -35,8 +37,9 @@ import land.tower.core.ext.service.IService;
 public final class I18nService implements IService, Provider<I18nTranslator> {
 
     @Inject
-    public I18nService( final Preferences preferences ) {
+    public I18nService( final Preferences preferences, final Configuration configuration ) {
         _preferences = preferences;
+        _configuration = configuration;
     }
 
     @Override
@@ -46,6 +49,8 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
         loadAllBundles( Language.EN.getCode( ), null );
         loadAllBundles( defaultLocale.getLanguage( ), defaultLocale.getCountry( ) );
         _preferences.getString( "language" )
+                    .filter( langCode -> Arrays.stream( _configuration.availableLanguages( ) )
+                                               .anyMatch( l -> l.getCode( ).equals( langCode ) ) )
                     .ifPresent( langCode -> Language.fromCode( langCode )
                                                     .ifPresent( lang -> loadAllBundles( lang.getCode( ), null ) ) );
     }
@@ -93,6 +98,7 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
 
     private final I18nTranslator _i18nTranslator = new I18nTranslator( );
     private final Preferences _preferences;
+    private final Configuration _configuration;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }

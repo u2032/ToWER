@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Optional;
 import javafx.stage.Stage;
 import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.i18n.Language;
 import land.tower.core.ext.preference.Preferences;
@@ -30,10 +31,11 @@ public final class LanguageDialogModel {
 
     @Inject
     LanguageDialogModel( final Preferences preferences, final I18nTranslator i18n,
-                         final Stage owner ) {
+                         final Stage owner, final Configuration config ) {
         _preferences = preferences;
         this.i18n = i18n;
         _owner = owner;
+        _config = config;
     }
 
     public I18nTranslator getI18n( ) {
@@ -54,7 +56,12 @@ public final class LanguageDialogModel {
         return Language.fromCode( fromLocale ).orElse( Language.EN );
     }
 
+    public Configuration getConfig( ) {
+        return _config;
+    }
+
     private final Preferences _preferences;
     private final I18nTranslator i18n;
     private final Stage _owner;
+    private final Configuration _config;
 }

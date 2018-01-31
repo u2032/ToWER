@@ -17,6 +17,7 @@ package land.tower.core.ext.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import land.tower.core.ext.i18n.Language;
 import land.tower.core.ext.logger.Loggers;
 
 /**
@@ -145,6 +147,18 @@ public final class Configuration {
 
     public String bundleType( ) {
         return System.getProperty( "bundle" );
+    }
+
+    public Language[] availableLanguages( ) {
+        return Splitter.on( "," )
+                       .omitEmptyStrings( )
+                       .trimResults( )
+                       .splitToList( get( "languages" ) )
+                       .stream( )
+                       .map( Language::fromCode )
+                       .filter( Optional::isPresent )
+                       .map( Optional::get )
+                       .toArray( Language[]::new );
     }
 
     private final Map<String, String> _config = Maps.newHashMap( );

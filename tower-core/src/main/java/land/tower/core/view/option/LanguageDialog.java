@@ -32,7 +32,7 @@ public final class LanguageDialog extends ChoiceDialog<Language> {
         headerTextProperty( ).bind( model.getI18n( ).get( "option.language.message" ) );
         contentTextProperty( ).bind( model.getI18n( ).get( "language" ) );
 
-        getItems( ).addAll( Language.values( ) );
+        getItems( ).addAll( model.getConfig( ).availableLanguages( ) );
         setSelectedItem( model.getCurrentLanguage( ) );
     }
 
