@@ -19,6 +19,7 @@
         <module>tower-data</module>
         <module>tower-core</module>
         <module>tower-deployment</module>
+        <module>tower-fonts</module>
     </modules>
 
     <build>

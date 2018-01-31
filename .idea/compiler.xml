@@ -18,6 +18,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="tower-core" />
         <module name="tower-data" />
+        <module name="tower-fonts" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -26,6 +27,7 @@
       <module name="tower-core" target="1.8" />
       <module name="tower-data" target="1.8" />
       <module name="tower-deployment" target="1.8" />
+      <module name="tower-fonts" target="1.8" />
       <module name="tower-parent" target="1.8" />
     </bytecodeTargetLevel>
   </component>
