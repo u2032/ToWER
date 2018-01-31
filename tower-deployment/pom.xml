@@ -19,6 +19,7 @@
         <deploy.version>${project.version}</deploy.version>
         <deploy.mainClass>land.tower.core.Application</deploy.mainClass>
         <deploy.name>Tower</deploy.name>
+        <config.file>config.properties</config.file>
     </properties>
 
     <profiles>
@@ -90,8 +91,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>${bundle.executable}
-                                    </executable>
+                                    <executable>${bundle.executable}</executable>
                                     <arguments>
                                         <argument>-deploy</argument>
                                         <argument>-native</argument>
@@ -122,6 +122,7 @@
                                         <argument>-Bcategory=Game</argument>
                                         <argument>-Bmac.category=Games</argument>
                                         <argument>-BjvmProperties=bundle=${bundle.native}</argument>
+                                        <argument>-BjvmProperties=config.file=${config.file}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

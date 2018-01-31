@@ -32,7 +32,7 @@ class ConfigurationModuleTest {
     @DisplayName( "Configuration can be injected in singleton" )
     void can_inject_Configuration_in_singleton( ) throws Exception {
         // Setup
-        final Injector injector = Guice.createInjector( new ConfigurationModule( "config.properties" ) );
+        final Injector injector = Guice.createInjector( new ConfigurationModule( ) );
         // Exercice
         final Configuration instance = injector.getInstance( Configuration.class );
         final Configuration instance2 = injector.getInstance( Configuration.class );

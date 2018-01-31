@@ -22,8 +22,8 @@ import com.google.inject.AbstractModule;
  */
 public final class ConfigurationModule extends AbstractModule {
 
-    public ConfigurationModule( final String file ) {
-        _file = file;
+    public ConfigurationModule( ) {
+        _file = System.getProperty( "config.file", "config.properties" );
     }
 
     @Override

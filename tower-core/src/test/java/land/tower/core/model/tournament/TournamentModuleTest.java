@@ -36,7 +36,7 @@ class TournamentModuleTest {
     void can_inject_TournamentRepository( ) throws Exception {
         // Setup
         final Injector injector = Guice.createInjector( new TournamentModule( ), new ThreadingModule( ),
-                                                        new ConfigurationModule( "config.properties" ) );
+                                                        new ConfigurationModule( ) );
         // Exercice
         final TournamentRepository instance = injector.getInstance( TournamentRepository.class );
         final TournamentRepository instance2 = injector.getInstance( TournamentRepository.class );
@@ -50,7 +50,7 @@ class TournamentModuleTest {
     void can_inject_TournamentStorage( ) throws Exception {
         // Setup
         final Injector injector = Guice.createInjector( new TournamentModule( ), new ThreadingModule( ),
-                                                        new ConfigurationModule( "config.properties" ) );
+                                                        new ConfigurationModule( ) );
         // Exercice
         final ITournamentStorage instance = injector.getInstance( ITournamentStorage.class );
         final ITournamentStorage instance2 = injector.getInstance( ITournamentStorage.class );

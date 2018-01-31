@@ -209,7 +209,7 @@ public final class Application extends javafx.application.Application {
     }
 
     private static ModuleResolver modules( ) {
-        return ModuleResolver.withModules( new ConfigurationModule( "config.properties" ),
+        return ModuleResolver.withModules( new ConfigurationModule( ),
                                            new SingletonAppModule( ),
                                            new PreferenceModule( ),
                                            new MainViewModule( ),
