@@ -20,6 +20,7 @@ import static land.tower.data.TournamentScoringMode.BY_POINTS;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -30,6 +31,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -144,14 +146,39 @@ public final class TournamentInformationTab extends Tab {
         } );
 
         line++;
-        final TextField gameField = new TextField( );
-        gameField.textProperty( ).bindBidirectional( _model.getTournament( ).getHeader( ).gameProperty( ) );
-        final Label gameLabel = new Label( );
-        gameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.game" ) );
-        gameLabel.setLabelFor( gameField );
-        gameField.disableProperty( ).bind( tournamentOpened.not( ) );
-        grid.add( gameLabel, 0, line );
-        grid.add( gameField, 1, line );
+        final List<String> gameList = _model.getConfiguration( ).gameList( );
+        if ( gameList.isEmpty( ) ) {
+            final TextField gameField = new TextField( );
+            gameField.textProperty( ).bindBidirectional( _model.getTournament( ).getHeader( ).gameProperty( ) );
+            final Label gameLabel = new Label( );
+            gameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.game" ) );
+            gameLabel.setLabelFor( gameField );
+            gameField.disableProperty( ).bind( tournamentOpened.not( ) );
+            grid.add( gameLabel, 0, line );
+            grid.add( gameField, 1, line );
+
+        } else {
+            final ComboBox<String> gameField = new ComboBox<>( );
+            gameField.setItems( FXCollections.observableArrayList( gameList ) );
+            gameField.valueProperty( ).bindBidirectional( _model.getTournament( ).getHeader( ).gameProperty( ) );
+            gameField.setConverter( new StringConverter<String>( ) {
+                @Override
+                public String toString( final String object ) {
+                    return _model.getI18n( ).get( "games." + object ).get( );
+                }
+
+                @Override
+                public String fromString( final String string ) {
+                    return null;
+                }
+            } );
+            final Label gameLabel = new Label( );
+            gameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.game" ) );
+            gameLabel.setLabelFor( gameField );
+            gameField.disableProperty( ).bind( tournamentOpened.not( ) );
+            grid.add( gameLabel, 0, line );
+            grid.add( gameField, 1, line );
+        }
 
         line++;
         final DatePicker dateField = new DatePicker( );

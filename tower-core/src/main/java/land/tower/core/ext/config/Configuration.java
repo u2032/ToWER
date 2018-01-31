@@ -161,6 +161,13 @@ public final class Configuration {
                        .toArray( Language[]::new );
     }
 
+    public List<String> gameList( ) {
+        return Splitter.on( "," )
+                       .omitEmptyStrings( )
+                       .trimResults( )
+                       .splitToList( get( "games" ) );
+    }
+
     private final Map<String, String> _config = Maps.newHashMap( );
     private List<Image> _icons;
     private OS _currentOs;

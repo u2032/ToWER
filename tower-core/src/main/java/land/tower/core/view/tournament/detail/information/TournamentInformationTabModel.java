@@ -18,6 +18,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -33,7 +34,11 @@ public final class TournamentInformationTabModel {
         return _tournament;
     }
 
-    public static interface Factory {
+    public Configuration getConfiguration( ) {
+        return _configuration;
+    }
+
+    public interface Factory {
 
         TournamentInformationTabModel forTournament( final ObservableTournament tournament );
 
@@ -41,11 +46,13 @@ public final class TournamentInformationTabModel {
 
     @Inject
     TournamentInformationTabModel( final @Assisted ObservableTournament tournament, final I18nTranslator i18n,
-                                   final Preferences preferences, final EventBus eventBus ) {
+                                   final Preferences preferences, final EventBus eventBus,
+                                   final Configuration configuration ) {
         _i18n = i18n;
         _tournament = tournament;
         _preferences = preferences;
         _eventBus = eventBus;
+        _configuration = configuration;
     }
 
     public void fireSaveAsPreference( ) {
@@ -61,4 +68,5 @@ public final class TournamentInformationTabModel {
     private final ObservableTournament _tournament;
     private final Preferences _preferences;
     private final EventBus _eventBus;
+    private final Configuration _configuration;
 }
