@@ -16,6 +16,8 @@ package land.tower.core.view.tournament.detail;
 
 import static javafx.scene.layout.HBox.setHgrow;
 
+import com.jfoenix.controls.JFXTabPane;
+
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -44,7 +46,7 @@ public final class TournamentView extends BorderPane implements Displayable {
         _model = model;
         buildHeader( );
 
-        final TabPane tabPane = new TabPane( );
+        final TabPane tabPane = new JFXTabPane( );
         tabPane.setTabClosingPolicy( TabClosingPolicy.UNAVAILABLE );
 
         tabPane.getTabs( ).setAll( _model.tabListProperty( ).get( ) );

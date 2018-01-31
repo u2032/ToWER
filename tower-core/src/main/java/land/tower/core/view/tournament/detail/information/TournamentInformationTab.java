@@ -18,6 +18,8 @@ import static javafx.beans.binding.Bindings.createBooleanBinding;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 import static land.tower.data.TournamentScoringMode.BY_POINTS;
 
+import com.jfoenix.controls.JFXComboBox;
+
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -30,7 +32,6 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -160,7 +161,7 @@ public final class TournamentInformationTab extends Tab {
             grid.add( gameField, 1, line );
 
         } else {
-            final ComboBox<String> gameField = new ComboBox<>( );
+            final JFXComboBox<String> gameField = new JFXComboBox<>( );
             gameField.setItems( FXCollections.observableArrayList( gameList ) );
             gameField.valueProperty( ).bindBidirectional( _model.getTournament( ).getHeader( ).gameProperty( ) );
             gameField.setConverter( new StringConverter<String>( ) {
@@ -308,7 +309,7 @@ public final class TournamentInformationTab extends Tab {
         grid.add( configurationTitle, 0, line, 2, 1 );
 
         line++;
-        final ChoiceBox<TournamentType> typeField = new ChoiceBox<>( );
+        final ComboBox<TournamentType> typeField = new JFXComboBox<>( );
         typeField.disableProperty( ).bind( tournamentOpened.not( ) );
         typeField.itemsProperty( )
                  .bind( new SimpleListProperty<>( FXCollections.observableArrayList( TournamentType.values( ) ) ) );
@@ -331,7 +332,7 @@ public final class TournamentInformationTab extends Tab {
         grid.add( typeField, 1, line );
 
         line++;
-        final ChoiceBox<PairingMode> pairingField = new ChoiceBox<>( );
+        final ComboBox<PairingMode> pairingField = new JFXComboBox<>( );
         pairingField.disableProperty( ).bind( tournamentOpened.not( ) );
         pairingField.itemsProperty( )
                     .bind( new SimpleListProperty<>( FXCollections.observableArrayList( PairingMode.values( ) ) ) );
@@ -401,7 +402,7 @@ public final class TournamentInformationTab extends Tab {
         grid.add( teamSizeField, 1, line );
 
         line++;
-        _scoringModeBox = new ChoiceBox<>( );
+        _scoringModeBox = new JFXComboBox<>( );
         _scoringModeBox.itemsProperty( )
                        .bind( new SimpleListProperty<>(
                            FXCollections.observableArrayList( TournamentScoringMode.values( ) ) ) );
@@ -602,7 +603,7 @@ public final class TournamentInformationTab extends Tab {
     }
 
     private final TournamentInformationTabModel _model;
-    private ChoiceBox<TournamentScoringMode> _scoringModeBox;
+    private JFXComboBox<TournamentScoringMode> _scoringModeBox;
     private TextField _scoreMaxField;
 
 }

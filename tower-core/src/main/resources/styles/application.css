@@ -92,3 +92,16 @@
     -fx-padding: 6 15 6 15;
     -fx-text-fill: WHITE;
 }
+
+.jfx-tab-pane .tab-header-background {
+    -fx-background-color: #00b0ca;
+}
+
+.jfx-tab-pane .tab-selected-line {
+    -fx-background-color: #fbf563;
+}
+
+.jfx-tab-pane .tab-label {
+    -fx-font-family: "Noto Sans";
+    -fx-text-fill: white;
+}

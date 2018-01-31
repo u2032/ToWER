@@ -14,6 +14,9 @@
 
 package land.tower.core.view.tournament.detail.ladder;
 
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXComboBox;
+
 import java.util.regex.Pattern;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -21,7 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -62,7 +65,7 @@ final class ChainTournamentDialog extends Dialog<Void> {
         grid.setPadding( new Insets( 20, 150, 10, 10 ) );
 
         int line = 0;
-        final ChoiceBox<PairingMode> pairingBox = new ChoiceBox<>( );
+        final ComboBox<PairingMode> pairingBox = new JFXComboBox<>( );
         pairingBox.setItems( FXCollections.observableArrayList( PairingMode.values( ) ) );
         pairingBox.valueProperty( ).bindBidirectional( model.pairingModeProperty( ) );
         pairingBox.setConverter( new StringConverter<PairingMode>( ) {
@@ -101,7 +104,7 @@ final class ChainTournamentDialog extends Dialog<Void> {
         grid.add( teamCountField, 1, line );
 
         line++;
-        final CheckBox activeTeamsOnlyCheckbox = new CheckBox( );
+        final CheckBox activeTeamsOnlyCheckbox = new JFXCheckBox( );
         activeTeamsOnlyCheckbox.selectedProperty( ).bindBidirectional( model.activeTeamsOnlyProperty( ) );
 
         final Label activeTeamOnlyLabel = new Label( );

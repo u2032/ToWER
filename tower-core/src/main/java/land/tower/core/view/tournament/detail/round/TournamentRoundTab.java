@@ -19,6 +19,8 @@ import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static javafx.scene.layout.HBox.setHgrow;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 
+import com.jfoenix.controls.JFXCheckBox;
+
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.regex.Pattern;
@@ -228,7 +230,7 @@ public class TournamentRoundTab extends Tab {
         hBox.setSpacing( 15 );
         hBox.setPadding( new Insets( 10 ) );
 
-        final CheckBox checkBox = new CheckBox( );
+        final CheckBox checkBox = new JFXCheckBox( );
         checkBox.setStyle( "-fx-font-size: smaller" );
         checkBox.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.filter.not.empty.score" ) );
         checkBox.selectedProperty( ).bindBidirectional( _model.filterNotEmptyScoreProperty( ) );
