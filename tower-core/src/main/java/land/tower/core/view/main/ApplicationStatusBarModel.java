@@ -26,7 +26,6 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
-import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.event.TournamentUpdatedEvent;
 import land.tower.core.view.tournament.detail.TournamentView;
@@ -38,7 +37,6 @@ import land.tower.data.Teams;
  */
 final class ApplicationStatusBarModel {
 
-    private final StringProperty _taskInfo = new SimpleStringProperty( );
     private final StringProperty _stateInfo = new SimpleStringProperty( );
 
     private final I18nTranslator _i18n;
@@ -47,14 +45,6 @@ final class ApplicationStatusBarModel {
     public ApplicationStatusBarModel( final EventBus eventBus, final I18nTranslator i18n ) {
         _i18n = i18n;
         eventBus.register( this );
-    }
-
-    @Subscribe
-    public void informationEvent( final InformationEvent event ) {
-        Platform.runLater( ( ) -> {
-            taskInfoProperty( ).setValue( "" );
-            taskInfoProperty( ).setValue( event.getText( ) );
-        } );
     }
 
     @Subscribe
@@ -96,10 +86,6 @@ final class ApplicationStatusBarModel {
                                        currentRound.getMatches( ).size( ) );
 
         Platform.runLater( ( ) -> _stateInfo.setValue( info ) );
-    }
-
-    StringProperty taskInfoProperty( ) {
-        return _taskInfo;
     }
 
     StringProperty stateInfoProperty( ) {

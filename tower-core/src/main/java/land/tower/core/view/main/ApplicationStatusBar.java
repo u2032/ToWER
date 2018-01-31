@@ -14,14 +14,10 @@
 
 package land.tower.core.view.main;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.util.Duration;
 import javax.inject.Inject;
 
 /**
@@ -37,15 +33,6 @@ final class ApplicationStatusBar extends HBox {
         setSpacing( 10 );
         setPadding( new Insets( 5, 10, 5, 10 ) );
 
-        final Label taskInfo = new Label( );
-        taskInfo.setId( "taskInformation" );
-        _animation = prepareAnimation( taskInfo );
-        taskInfo.textProperty( ).bind( model.taskInfoProperty( ) );
-        taskInfo.textProperty( ).addListener( text -> {
-            _animation.playFromStart( );
-        } );
-        getChildren( ).add( taskInfo );
-
         final HBox spacing = new HBox( );
         setHgrow( spacing, Priority.ALWAYS );
         getChildren( ).add( spacing );
@@ -56,13 +43,4 @@ final class ApplicationStatusBar extends HBox {
         getChildren( ).add( stateInfo );
     }
 
-    private FadeTransition prepareAnimation( final Node node ) {
-        final FadeTransition transition = new FadeTransition( Duration.millis( 5000 ), node );
-        transition.setInterpolator( Interpolator.EASE_BOTH );
-        transition.setFromValue( 1.0 );
-        transition.setToValue( 0 );
-        return transition;
-    }
-
-    private final FadeTransition _animation;
 }

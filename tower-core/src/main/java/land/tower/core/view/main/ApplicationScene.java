@@ -40,5 +40,7 @@ public final class ApplicationScene extends Scene {
         model.currentPaneProperty( ).addListener( ( observable, oldValue, newValue ) -> {
             root.setCenter( newValue );
         } );
+
+        model.initSnackBar( root );
     }
 }

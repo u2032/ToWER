@@ -16,10 +16,12 @@ package land.tower.core.view.main;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.jfoenix.controls.JFXSnackbar;
 
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -28,6 +30,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.singleton.SingletonAppEvent;
 import land.tower.core.view.component.Displayable;
 import land.tower.core.view.event.CloseRequestEvent;
+import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
 
@@ -74,10 +77,30 @@ final class ApplicationSceneModel {
         } );
     }
 
+    @Subscribe
+    public void notificationEvent( final InformationEvent event ) {
+        if ( _snackbar == null ) {
+            return;
+        }
+        Platform.runLater( ( ) -> {
+            _snackbar.show( event.getText( ), 2500 );
+        } );
+    }
+
+    public JFXSnackbar getSnackbar( ) {
+        return _snackbar;
+    }
+
     public Property<Pane> currentPaneProperty( ) {
         return _current;
     }
 
+    public JFXSnackbar initSnackBar( final BorderPane root ) {
+        _snackbar = new JFXSnackbar( root );
+        return _snackbar;
+    }
+
     private final Property<Pane> _current = new SimpleObjectProperty<>( );
+    private JFXSnackbar _snackbar;
 
 }
