@@ -17,8 +17,14 @@ package land.tower.core.view.tournament.detail.round;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import org.controlsfx.control.Notifications;
+
 import java.util.Map;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Pos;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.report.PairingReport;
@@ -54,7 +60,8 @@ public final class TournamentRoundTabModel {
                                     final Map<PairingMode, PairingSystem> pairingSystems,
                                     final ReportEngine reportEngine,
                                     final PairingReport.Factory pairingReportFactory,
-                                    final ResultSlipReport.Factory resultSlipReportFactory ) {
+                                    final ResultSlipReport.Factory resultSlipReportFactory,
+                                    final Stage owner ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
@@ -65,6 +72,22 @@ public final class TournamentRoundTabModel {
         _reportEngine = reportEngine;
         _pairingReportFactory = pairingReportFactory;
         _resultSlipReportFactory = resultSlipReportFactory;
+
+        tournament.getCurrentRound( ).getTimer( )
+                  .overtimeProperty( )
+                  .addListener( ( observable, oldValue, newValue ) -> {
+                      if ( !oldValue && newValue && _round == _tournament.getCurrentRound( ) ) {
+                          final Notifications notif = Notifications.create( );
+                          notif.owner( owner );
+                          notif.position( Pos.CENTER );
+                          notif.hideAfter( new Duration( 600_000 ) );
+                          notif.title( _i18n.get( "round.overtime.title", _round.getNumero( ) ) );
+                          notif.text( _i18n.get( "round.overtime.message",
+                                                 _round.getNumero( ),
+                                                 _tournament.getHeader( ).getTitle( ) ) );
+                          Platform.runLater( notif::showWarning );
+                      }
+                  } );
     }
 
     public void fireStartNewRound( ) {
