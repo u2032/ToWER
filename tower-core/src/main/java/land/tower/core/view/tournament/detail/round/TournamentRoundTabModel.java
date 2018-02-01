@@ -27,6 +27,7 @@ import land.tower.core.ext.report.ResultSlipReport;
 import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.TournamentUpdatedEvent;
 import land.tower.data.PairingMode;
 import land.tower.data.Round;
@@ -36,7 +37,6 @@ import land.tower.data.Round;
  * @author Cédric Longo
  */
 public final class TournamentRoundTabModel {
-
 
     public interface Factory {
 
@@ -68,6 +68,7 @@ public final class TournamentRoundTabModel {
     }
 
     public void fireStartNewRound( ) {
+        _eventBus.post( new InformationEvent( _i18n.get( "round.generation.started" ) ) );
         final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
         final Round newRound = pairing.createNewRound( _tournament );
         _tournament.registerRound( new ObservableRound( newRound ) );
@@ -77,6 +78,7 @@ public final class TournamentRoundTabModel {
                        .computeRanking( _tournament );
 
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
+        _eventBus.post( new InformationEvent( _i18n.get( "round.generation.finished", newRound.getNumero( ) ) ) );
     }
 
     public SimpleBooleanProperty filterNotEmptyScoreProperty( ) {
@@ -96,15 +98,27 @@ public final class TournamentRoundTabModel {
     }
 
     public void firePrintLadderByPosition( ) {
-        _reportEngine.generate( _pairingReportFactory.create( _tournament, _round, false ) );
+        _eventBus.post( new InformationEvent( _i18n.get( "document.generation.started" ) ) );
+        _reportEngine.generate( _pairingReportFactory.create( _tournament, _round, false ) )
+                     .thenRun( ( ) -> {
+                         _eventBus.post( new InformationEvent( _i18n.get( "document.generation.finished" ) ) );
+                     } );
     }
 
     public void firePrintLadderByName( ) {
-        _reportEngine.generate( _pairingReportFactory.create( _tournament, _round, true ) );
+        _eventBus.post( new InformationEvent( _i18n.get( "document.generation.started" ) ) );
+        _reportEngine.generate( _pairingReportFactory.create( _tournament, _round, true ) )
+                     .thenRun( ( ) -> {
+                         _eventBus.post( new InformationEvent( _i18n.get( "document.generation.finished" ) ) );
+                     } );
     }
 
     public void firePrintResultSlips( ) {
-        _reportEngine.generate( _resultSlipReportFactory.create( _tournament, _round ) );
+        _eventBus.post( new InformationEvent( _i18n.get( "document.generation.started" ) ) );
+        _reportEngine.generate( _resultSlipReportFactory.create( _tournament, _round ) )
+                     .thenRun( ( ) -> {
+                         _eventBus.post( new InformationEvent( _i18n.get( "document.generation.finished" ) ) );
+                     } );
     }
 
     public SetScoreDialog createSetScoreDialog( ) {

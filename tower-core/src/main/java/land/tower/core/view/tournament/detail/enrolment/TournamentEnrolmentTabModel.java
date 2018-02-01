@@ -27,6 +27,7 @@ import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.TournamentUpdatedEvent;
 import land.tower.data.PairingMode;
 import land.tower.data.Round;
@@ -66,10 +67,12 @@ public final class TournamentEnrolmentTabModel {
     }
 
     public void fireStartTournament( ) {
+        _eventBus.post( new InformationEvent( _i18n.get( "round.generation.started" ) ) );
         final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
         final Round newRound = pairing.createNewRound( _tournament );
         _tournament.registerRound( new ObservableRound( newRound ) );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
+        _eventBus.post( new InformationEvent( _i18n.get( "round.generation.finished", newRound.getNumero( ) ) ) );
     }
 
     public void fireTeamAdded( final Team team ) {
@@ -91,6 +94,13 @@ public final class TournamentEnrolmentTabModel {
         _pairingSystems = pairingSystems;
         _eventBus = eventBus;
         _owner = owner;
+
+        tournament.getTeams( )
+                  .forEach( t -> t.activeProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+                      if ( !newValue ) {
+                          _eventBus.post( new InformationEvent( _i18n.get( "tournament.team.dropped" ) ) );
+                      }
+                  } ) );
     }
 
     public I18nTranslator getI18n( ) {

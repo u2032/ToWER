@@ -14,6 +14,7 @@
 
 package land.tower.core.view.tournament.detail.ladder;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import javax.inject.Inject;
@@ -21,6 +22,7 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.report.LadderReport;
 import land.tower.core.ext.report.ReportEngine;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.event.InformationEvent;
 
 /**
  * Created on 01/01/2018
@@ -40,13 +42,15 @@ public final class TournamentLadderViewModel {
                                       final CloseTournamentDialogModel.Factory closeTournamentDialogModelProvider,
                                       final ChainTournamentDialogModel.Factory chainTournamentDialogModelProvider,
                                       final ReportEngine reportEngine,
-                                      final LadderReport.Factory ladderReportFactory ) {
+                                      final LadderReport.Factory ladderReportFactory,
+                                      final EventBus eventBus ) {
         _tournament = tournament;
         _i18n = i18n;
         _closeTournamentDialogModelProvider = closeTournamentDialogModelProvider;
         _chainTournamentDialogModelProvider = chainTournamentDialogModelProvider;
         _reportEngine = reportEngine;
         _ladderReportFactory = ladderReportFactory;
+        _eventBus = eventBus;
     }
 
     CloseTournamentDialogModel createCloseTournamentViewModel( ) {
@@ -59,7 +63,11 @@ public final class TournamentLadderViewModel {
     }
 
     public void firePrintLadder( ) {
-        _reportEngine.generate( _ladderReportFactory.create( _tournament ) );
+        _eventBus.post( new InformationEvent( _i18n.get( "document.generation.started" ) ) );
+        _reportEngine.generate( _ladderReportFactory.create( _tournament ) )
+                     .thenRun( ( ) -> {
+                         _eventBus.post( new InformationEvent( _i18n.get( "document.generation.finished" ) ) );
+                     } );
     }
 
     public ObservableTournament getTournament( ) {
@@ -77,4 +85,5 @@ public final class TournamentLadderViewModel {
 
     private final ReportEngine _reportEngine;
     private final LadderReport.Factory _ladderReportFactory;
+    private final EventBus _eventBus;
 }

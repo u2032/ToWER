@@ -137,6 +137,7 @@ final class ApplicationMenuBarModel {
                                .ifPresent( lang -> {
                                    _i18nService.loadAllBundles( lang.getCode( ), null );
                                    _preferences.save( "language", lang.getCode( ) );
+                                   _eventBus.post( new InformationEvent( _i18n.get( "information.saved" ) ) );
                                } );
     }
 

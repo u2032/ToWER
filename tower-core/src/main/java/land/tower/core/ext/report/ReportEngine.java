@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
@@ -56,14 +57,14 @@ public final class ReportEngine {
         _logoPathTmp = configuration.dataDirectory( ).resolve( "report-logo.png._COPYING_" );
     }
 
-    public void generate( final Report report ) {
-        _executorService.submit( ( ) -> {
+    public CompletableFuture<Void> generate( final Report report ) {
+        return CompletableFuture.runAsync( ( ) -> {
             try {
                 run( report );
             } catch ( final Exception e ) {
                 _logger.error( "Error during report generation", e );
             }
-        } );
+        }, _executorService );
     }
 
     private void run( final Report report ) {

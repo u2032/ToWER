@@ -24,6 +24,7 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.TournamentUpdatedEvent;
 import land.tower.data.PairingMode;
 
@@ -58,6 +59,7 @@ public final class DeleteRoundDialogModel {
         final ObservableRound lastRound = _tournament.getCurrentRound( );
         if ( lastRound != null ) {
             _tournament.getRounds( ).remove( lastRound );
+            _eventBus.post( new InformationEvent( _i18n.get( "round.deleted", lastRound.getNumero( ) ) ) );
         }
         _pairingSystem.get( _tournament.getHeader( ).getPairingMode( ) )
                       .getRankingComputer( )

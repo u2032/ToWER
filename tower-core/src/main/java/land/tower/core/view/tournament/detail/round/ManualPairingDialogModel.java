@@ -16,6 +16,7 @@ package land.tower.core.view.tournament.detail.round;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
+import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
+import land.tower.core.view.event.InformationEvent;
 import land.tower.data.Match;
 import land.tower.data.Teams;
 
@@ -46,11 +48,12 @@ public final class ManualPairingDialogModel {
     public ManualPairingDialogModel( @Assisted final ObservableTournament tournament,
                                      @Assisted final ObservableRound round,
                                      final I18nTranslator i18n,
-                                     final Stage owner ) {
+                                     final Stage owner, final EventBus eventBus ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
         _owner = owner;
+        _eventBus = eventBus;
 
         _matches = observableArrayList( _round.getMatches( ) );
         _teams = observableArrayList( tournament.getTeams( )
@@ -67,6 +70,7 @@ public final class ManualPairingDialogModel {
     public synchronized void fireSavePairing( ) {
         if ( !_matches.isEmpty( ) ) {
             _round.getMatches( ).setAll( _matches );
+            _eventBus.post( new InformationEvent( _i18n.get( "manuel.pairing.done" ) ) );
         }
     }
 
@@ -166,5 +170,6 @@ public final class ManualPairingDialogModel {
     private final ObservableList<ObservableTeam> _teams;
 
     private final List<Integer> _freePositions = new ArrayList<>( );
+    private final EventBus _eventBus;
     private static final Random _random = new Random( );
 }

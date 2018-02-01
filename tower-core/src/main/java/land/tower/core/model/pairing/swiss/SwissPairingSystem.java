@@ -76,7 +76,6 @@ public final class SwissPairingSystem implements PairingSystem {
     }
 
     private Pair<Integer, Round> makePairing( final Tournament tournament ) {
-        System.err.println( "MAKE PAIRING" );
         final List<Match> matches = new ArrayList<>( );
 
         // Compute groups of teams with same score
