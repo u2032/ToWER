@@ -19,8 +19,11 @@ import static land.tower.core.ext.binding.Strings.toUpperCase;
 import static land.tower.data.TournamentScoringMode.BY_POINTS;
 
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTimePicker;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -33,7 +36,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -43,6 +45,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -111,6 +114,8 @@ public final class TournamentInformationTab extends Tab {
 
         final ScrollPane scrollPane = new ScrollPane( mainPane );
         scrollPane.setFitToWidth( true );
+
+        final StackPane stackPane = new StackPane( scrollPane );
 
         final GridPane grid = new GridPane( );
         grid.setAlignment( Pos.TOP_CENTER );
@@ -196,7 +201,9 @@ public final class TournamentInformationTab extends Tab {
         }
 
         line++;
-        final DatePicker dateField = new DatePicker( );
+        final JFXDatePicker dateField = new JFXDatePicker( );
+        dateField.setDialogParent( stackPane );
+        dateField.setOverLay( true );
         dateField.setPromptText( "yyyy-mm-dd" );
         dateField.setShowWeekNumbers( false );
         dateField.setValue( _model.getTournament( ).getHeader( ).getDate( ).toLocalDate( ) );
@@ -231,70 +238,43 @@ public final class TournamentInformationTab extends Tab {
         grid.add( dateField, 1, line );
 
         line++;
-        final HBox timeCell = new HBox( );
-        timeCell.setSpacing( 3 );
-        final TextField hourField = new TextField( );
-        hourField.disableProperty( ).bind( tournamentOpened.not( ) );
-        hourField.setPrefWidth( 40 );
-        final int thour = _model.getTournament( ).getHeader( ).getDate( ).getHour( );
-        hourField.textProperty( )
-                 .setValue( ( thour < 10 ? "0" : "" ) + String.valueOf( thour ) );
-        hourField.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
-            if ( !newValue.matches( "[\\d]*" ) ) {
-                hourField.setText( newValue.replaceAll( "[^\\d]", "" ) );
-            }
-            if ( newValue.length( ) > 2 ) {
-                hourField.setText( newValue.substring( 0, 2 ) );
-            }
-            if ( !oldValue.equals( newValue ) ) {
-                int hour = 0;
-                try {
-                    hour = Integer.parseInt( newValue );
-                    hour = Math.max( hour, 0 );
-                    hour = Math.min( hour, 23 );
-                } catch ( final NumberFormatException ignored ) {
-                }
-                final ZonedDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
-                _model.getTournament( ).getHeader( ).setDate( tdate.withHour( hour ) );
-                hourField.setText( ( hour < 10 ? "0" : "" ) + String.valueOf( hour ) );
-            }
-        } );
 
-        final TextField minField = new TextField( );
-        minField.setPrefWidth( 40 );
-        minField.disableProperty( ).bind( tournamentOpened.not( ) );
-        final int tmin = _model.getTournament( ).getHeader( ).getDate( ).getMinute( );
-        minField.textProperty( ).setValue( ( tmin < 10 ? "0" : "" ) + String.valueOf( tmin ) );
-        minField.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
-            if ( !newValue.matches( "[\\d]*" ) ) {
-                minField.setText( newValue.replaceAll( "[^\\d]", "" ) );
+        final HBox timeCell = new HBox( );
+        timeCell.setSpacing( 5 );
+
+        final JFXTimePicker timePicker = new JFXTimePicker( );
+        timePicker.setDialogParent( stackPane );
+        timePicker.setOverLay( true );
+        timePicker.setIs24HourView( true );
+        timePicker.setEditable( false );
+        timePicker.setValue( _model.getTournament( ).getHeader( ).getDate( ).toLocalTime( ) );
+        timePicker.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+            final ZonedDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
+            _model.getTournament( ).getHeader( ).setDate( tdate.withHour( newValue.getHour( ) )
+                                                               .withMinute( newValue.getMinute( ) ) );
+        } );
+        timePicker.setConverter( new StringConverter<LocalTime>( ) {
+            @Override
+            public String toString( final LocalTime object ) {
+                return object.toString( );
             }
-            if ( newValue.length( ) > 2 ) {
-                minField.setText( newValue.substring( 0, 2 ) );
-            }
-            if ( !oldValue.equals( newValue ) ) {
-                int minute = 0;
-                try {
-                    minute = Integer.parseInt( newValue );
-                    minute = Math.max( minute, 0 );
-                    minute = Math.min( minute, 59 );
-                } catch ( final NumberFormatException ignored ) {
-                }
-                final ZonedDateTime tdate = _model.getTournament( ).getHeader( ).getDate( );
-                _model.getTournament( ).getHeader( ).setDate( tdate.withMinute( minute ) );
-                minField.setText( ( minute < 10 ? "0" : "" ) + String.valueOf( minute ) );
+
+            @Override
+            public LocalTime fromString( final String string ) {
+                return LocalTime.parse( string );
             }
         } );
+        timePicker.disableProperty( ).bind( tournamentOpened.not( ) );
+
         final Label zoneLabel = new Label( );
-        zoneLabel.setText( "  " + _model.getTournament( ).getHeader( ).getDate( )
-                                        .getZone( ).toString( ) );
+        zoneLabel.setText( _model.getTournament( ).getHeader( ).getDate( ).getZone( ).toString( ) );
         zoneLabel.setStyle( "-fx-font-style: italic" );
         timeCell.setAlignment( Pos.CENTER_LEFT );
-        timeCell.getChildren( ).addAll( hourField, new Label( ":" ), minField, zoneLabel );
+        timeCell.getChildren( ).addAll( timePicker, zoneLabel );
 
         final Label timeLabel = new Label( );
         timeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.time" ) );
-        timeLabel.setLabelFor( timeCell );
+        timeLabel.setLabelFor( timePicker );
         grid.add( timeLabel, 0, line );
         grid.add( timeCell, 1, line );
 
@@ -563,7 +543,7 @@ public final class TournamentInformationTab extends Tab {
 
         checkTournamentRules( );
 
-        return scrollPane;
+        return stackPane;
     }
 
     private void checkTournamentRules( ) {

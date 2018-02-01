@@ -16,6 +16,8 @@ package land.tower.core.view.player;
 
 import static java.util.Comparator.comparing;
 
+import com.jfoenix.controls.JFXDatePicker;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -146,7 +148,7 @@ public final class AddPlayerDialog extends Dialog<Player> {
         nationalityLabel.textProperty( ).bind( model.getI18n( ).get( "player.nationality" ) );
         nationalityLabel.setLabelFor( nationalityBox );
 
-        final DatePicker birthdayDatePicker = new DatePicker( );
+        final DatePicker birthdayDatePicker = new JFXDatePicker( );
         birthdayDatePicker.setPromptText( "yyyy-mm-dd" );
         birthdayDatePicker.setShowWeekNumbers( false );
         birthdayDatePicker.valueProperty( ).bindBidirectional( model.playerBirthdayProperty( ) );
