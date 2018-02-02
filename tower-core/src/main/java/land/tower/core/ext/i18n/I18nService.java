@@ -56,8 +56,8 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
     }
 
     public void loadAllBundles( final String langCode, final String countryCode ) {
-        loadBundle( "i18n", langCode, countryCode );
-        loadBundle( "nationalities", langCode, countryCode );
+        _configuration.i18nBundles( )
+                      .forEach( bundle -> loadBundle( bundle, langCode, countryCode ) );
     }
 
     private void loadBundle( final String bundle, final String langCode, final String countryCode ) {

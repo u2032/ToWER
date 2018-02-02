@@ -168,6 +168,13 @@ public final class Configuration {
                        .splitToList( get( "games" ) );
     }
 
+    public List<String> i18nBundles( ) {
+        return Splitter.on( "," )
+                       .omitEmptyStrings( )
+                       .trimResults( )
+                       .splitToList( get( "i18n.bundles" ) );
+    }
+
     private final Map<String, String> _config = Maps.newHashMap( );
     private List<Image> _icons;
     private OS _currentOs;
