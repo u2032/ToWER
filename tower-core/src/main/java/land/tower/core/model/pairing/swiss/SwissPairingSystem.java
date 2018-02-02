@@ -29,8 +29,6 @@ import java.util.stream.IntStream;
 import javafx.util.Pair;
 import javax.inject.Inject;
 import land.tower.core.model.pairing.PairingSystem;
-import land.tower.core.model.ranking.DefaultRankingComputer;
-import land.tower.core.model.ranking.IRankingComputer;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Match;
 import land.tower.data.Round;
@@ -46,8 +44,8 @@ import land.tower.data.Tournament;
 public final class SwissPairingSystem implements PairingSystem {
 
     @Inject
-    public SwissPairingSystem( final DefaultRankingComputer rankingComputer ) {
-        _rankingComputer = rankingComputer;
+    public SwissPairingSystem( ) {
+
     }
 
     @Override
@@ -68,11 +66,6 @@ public final class SwissPairingSystem implements PairingSystem {
     @Override
     public Round createFirstRoundFromInitialRanking( ObservableTournament tournament ) {
         return firstRound( tournament.getTournament( ) );
-    }
-
-    @Override
-    public IRankingComputer getRankingComputer( ) {
-        return _rankingComputer;
     }
 
     private Pair<Integer, Round> makePairing( final Tournament tournament ) {
@@ -257,5 +250,4 @@ public final class SwissPairingSystem implements PairingSystem {
     }
 
     private final Random _random = new Random( );
-    private final IRankingComputer _rankingComputer;
 }

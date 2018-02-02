@@ -14,16 +14,19 @@
 
 package land.tower.core.model.pairing;
 
-import land.tower.core.model.tournament.ObservableTournament;
-import land.tower.data.Round;
+import land.tower.core.model.ranking.IRankingComputer;
+import lombok.Builder;
+import lombok.Data;
 
 /**
- * Created on 30/12/2017
+ * Created on 02/02/2018
  * @author Cédric Longo
  */
-public interface PairingSystem {
+@Builder
+@Data
+public final class PairingRule {
 
-    Round createNewRound( ObservableTournament tournament );
+    private final PairingSystem pairingSystem;
+    private final IRankingComputer rankingComputer;
 
-    Round createFirstRoundFromInitialRanking( ObservableTournament tournament );
 }

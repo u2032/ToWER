@@ -30,7 +30,7 @@ import land.tower.core.model.tournament.ObservableTournament;
  * Created on 02/01/2018
  * @author Cédric Longo
  */
-final class DirectEliminiationRankingComputer implements IRankingComputer {
+public final class DirectEliminiationRankingComputer implements IRankingComputer {
 
     @Override
     public void computeRanking( final ObservableTournament tournament ) {

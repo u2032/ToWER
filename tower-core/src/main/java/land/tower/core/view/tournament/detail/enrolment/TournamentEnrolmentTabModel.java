@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.pairing.PairingRule;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -68,8 +68,8 @@ public final class TournamentEnrolmentTabModel {
 
     public void fireStartTournament( ) {
         _eventBus.post( new InformationEvent( _i18n.get( "round.generation.started" ) ) );
-        final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
-        final Round newRound = pairing.createNewRound( _tournament );
+        final PairingRule pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        final Round newRound = pairing.getPairingSystem( ).createNewRound( _tournament );
         _tournament.registerRound( new ObservableRound( newRound ) );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
         _eventBus.post( new InformationEvent( _i18n.get( "round.generation.finished", newRound.getNumero( ) ) ) );
@@ -79,14 +79,14 @@ public final class TournamentEnrolmentTabModel {
         _tournament.registerTeam( new ObservableTeam( team ) );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
         // Recompute ranking
-        final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        final PairingRule pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
         pairing.getRankingComputer( ).computeRanking( _tournament );
     }
 
     @Inject
     TournamentEnrolmentTabModel( final @Assisted ObservableTournament tournament, final I18nTranslator i18n,
                                  final AddTeamDialogModel.Factory addTeamDialogProvider,
-                                 final Map<PairingMode, PairingSystem> pairingSystems,
+                                 final Map<PairingMode, PairingRule> pairingSystems,
                                  final EventBus eventBus, final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
@@ -110,7 +110,7 @@ public final class TournamentEnrolmentTabModel {
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
     private final AddTeamDialogModel.Factory _addTeamDialogProvider;
-    private final Map<PairingMode, PairingSystem> _pairingSystems;
+    private final Map<PairingMode, PairingRule> _pairingSystems;
     private final EventBus _eventBus;
     private final Stage _owner;
 }

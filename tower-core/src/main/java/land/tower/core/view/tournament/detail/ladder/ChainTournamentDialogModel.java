@@ -26,7 +26,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.pairing.PairingRule;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -54,7 +54,7 @@ public final class ChainTournamentDialogModel {
                                        final Stage owner,
                                        @Assisted final ObservableTournament tournament,
                                        final TournamentRepository tournamentRepository,
-                                       final Map<PairingMode, PairingSystem> pairingSystems,
+                                       final Map<PairingMode, PairingRule> pairingSystems,
                                        final EventBus eventBus,
                                        final TournamentViewModel.Factory tournamentViewFactory ) {
         _i18n = translator;
@@ -184,8 +184,8 @@ public final class ChainTournamentDialogModel {
         } );
 
         // Registration of first round
-        final PairingSystem pairingSystem = _pairingSystems.get( _pairingMode.get( ) );
-        final Round firstRound = pairingSystem.createFirstRoundFromInitialRanking( newTournament );
+        final PairingRule pairingSystem = _pairingSystems.get( _pairingMode.get( ) );
+        final Round firstRound = pairingSystem.getPairingSystem( ).createFirstRoundFromInitialRanking( newTournament );
         newTournament.registerRound( new ObservableRound( firstRound ) );
         pairingSystem.getRankingComputer( ).computeRanking( newTournament );
 
@@ -205,7 +205,7 @@ public final class ChainTournamentDialogModel {
     private final ObservableTournament _tournament;
 
     private final TournamentRepository _tournamentRepository;
-    private final Map<PairingMode, PairingSystem> _pairingSystems;
+    private final Map<PairingMode, PairingRule> _pairingSystems;
     private final EventBus _eventBus;
     private final TournamentViewModel.Factory _tournamentViewFactory;
 }

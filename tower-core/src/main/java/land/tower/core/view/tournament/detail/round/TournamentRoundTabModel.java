@@ -30,7 +30,7 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.report.PairingReport;
 import land.tower.core.ext.report.ReportEngine;
 import land.tower.core.ext.report.ResultSlipReport;
-import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.pairing.PairingRule;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
@@ -57,7 +57,7 @@ public final class TournamentRoundTabModel {
                                     final SetScoreDialogModel.Factory setScoreDialogFactory,
                                     final ManualPairingDialogModel.Factory manualPairingDialogFactory,
                                     final EventBus eventBus,
-                                    final Map<PairingMode, PairingSystem> pairingSystems,
+                                    final Map<PairingMode, PairingRule> pairingSystems,
                                     final ReportEngine reportEngine,
                                     final PairingReport.Factory pairingReportFactory,
                                     final ResultSlipReport.Factory resultSlipReportFactory,
@@ -92,8 +92,8 @@ public final class TournamentRoundTabModel {
 
     public void fireStartNewRound( ) {
         _eventBus.post( new InformationEvent( _i18n.get( "round.generation.started" ) ) );
-        final PairingSystem pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
-        final Round newRound = pairing.createNewRound( _tournament );
+        final PairingRule pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        final Round newRound = pairing.getPairingSystem( ).createNewRound( _tournament );
         _tournament.registerRound( new ObservableRound( newRound ) );
 
         _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) )
@@ -168,7 +168,7 @@ public final class TournamentRoundTabModel {
 
     private final SimpleBooleanProperty _filterNotEmptySource = new SimpleBooleanProperty( );
     private final EventBus _eventBus;
-    private final Map<PairingMode, PairingSystem> _pairingSystems;
+    private final Map<PairingMode, PairingRule> _pairingSystems;
 
     private final ReportEngine _reportEngine;
     private final PairingReport.Factory _pairingReportFactory;

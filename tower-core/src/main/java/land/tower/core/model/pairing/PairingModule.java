@@ -21,7 +21,9 @@ import com.google.inject.Singleton;
 
 import java.util.Map;
 import land.tower.core.model.pairing.direct.DirectEliminationSystem;
+import land.tower.core.model.pairing.direct.DirectEliminiationRankingComputer;
 import land.tower.core.model.pairing.swiss.SwissPairingSystem;
+import land.tower.core.model.ranking.DefaultRankingComputer;
 import land.tower.data.PairingMode;
 
 /**
@@ -37,11 +39,21 @@ public final class PairingModule extends AbstractModule {
 
     @Provides
     @Singleton
-    Map<PairingMode, PairingSystem> pairingSystems( final SwissPairingSystem swissPairingSystem,
-                                                    final DirectEliminationSystem directEliminationSystem ) {
-        return ImmutableMap.<PairingMode, PairingSystem>builder( )
-                   .put( PairingMode.SWISS, swissPairingSystem )
-                   .put( PairingMode.DIRECT_ELIMINATION, directEliminationSystem )
+    Map<PairingMode, PairingRule> pairingSystems( final SwissPairingSystem swissPairingSystem,
+                                                  final DirectEliminationSystem directEliminationSystem,
+                                                  final DefaultRankingComputer defaultRankingComputer,
+                                                  final DirectEliminiationRankingComputer directRankingComputer ) {
+
+        return ImmutableMap.<PairingMode, PairingRule>builder( )
+                   .put( PairingMode.SWISS, PairingRule.builder( )
+                                                       .pairingSystem( swissPairingSystem )
+                                                       .rankingComputer( defaultRankingComputer )
+                                                       .build( ) )
+
+                   .put( PairingMode.DIRECT_ELIMINATION, PairingRule.builder( )
+                                                                    .pairingSystem( directEliminationSystem )
+                                                                    .rankingComputer( directRankingComputer )
+                                                                    .build( ) )
                    .build( );
     }
 }

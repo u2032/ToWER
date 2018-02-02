@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import land.tower.core.model.pairing.PairingSystem;
-import land.tower.core.model.ranking.IRankingComputer;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
@@ -40,8 +39,7 @@ import land.tower.data.TimerInfo;
 public final class DirectEliminationSystem implements PairingSystem {
 
     @Inject
-    public DirectEliminationSystem( final DirectEliminiationRankingComputer rankingComputer ) {
-        _rankingComputer = rankingComputer;
+    public DirectEliminationSystem( ) {
     }
 
     @Override
@@ -261,11 +259,6 @@ public final class DirectEliminationSystem implements PairingSystem {
         return round;
     }
 
-    @Override
-    public IRankingComputer getRankingComputer( ) {
-        return _rankingComputer;
-    }
 
     private final Random _random = new Random( );
-    private final DirectEliminiationRankingComputer _rankingComputer;
 }
