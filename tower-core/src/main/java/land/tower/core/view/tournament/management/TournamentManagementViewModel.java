@@ -66,6 +66,7 @@ final class TournamentManagementViewModel {
 
     void fireTournamentDeleted( final Tournament tournament ) {
         _tournamentRepository.remove( tournament );
+        _tournamentViewProvider.removeTournamentView( tournament.getId( ) );
         _eventBus.post( new InformationEvent( _i18n.get( "tournament.deleted" ) ) );
     }
 

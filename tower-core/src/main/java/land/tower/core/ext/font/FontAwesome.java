@@ -53,4 +53,6 @@ public final class FontAwesome {
     public static final String SCREEN = "\uf108";
     public static final String FULLSCREEN = "\uf065";
     public static final String PRINTER = "\uf02f";
+    public static final String EXPORT = "\uf093";
+    public static final String IMPORT = "\uf019";
 }

@@ -56,23 +56,17 @@ final class TournamentStorage implements ITournamentStorage {
     @Override
     public List<Tournament> loadTournaments( ) {
         final ArrayList<Tournament> result = new ArrayList<>( );
-        if ( !Files.exists( _tournamentStorage ) ) {
+        if ( !Files.exists( _tournamentStorage.getParent( ) ) ) {
             return result;
         }
-
         try {
             Files.walk( _tournamentStorage, 1 )
                  .filter( p -> p.getFileName( ).toString( ).endsWith( ".twr" ) )
                  .filter( p -> p.toFile( ).isFile( ) )
                  .forEach( p -> {
-                     try ( final BufferedReader fileReader = Files.newBufferedReader( p, StandardCharsets.UTF_8 ) ) {
-                         final Tournament t = new GsonBuilder( ).registerTypeAdapter( ZonedDateTime.class,
-                                                                                      new ZonedDateTimeAdapter( ) )
-                                                                .create( )
-                                                                .fromJson( fileReader, Tournament.class );
-                         result.add( t );
-                     } catch ( final Exception e ) {
-                         _logger.error( "Failure loading tournament from file: " + p.toAbsolutePath( ), e );
+                     final Tournament tournament = loadTournament( p );
+                     if ( tournament != null ) {
+                         result.add( tournament );
                      }
                  } );
         } catch ( final IOException e ) {
@@ -84,40 +78,56 @@ final class TournamentStorage implements ITournamentStorage {
     }
 
     @Override
+    public Tournament loadTournament( final Path file ) {
+        try ( final BufferedReader fileReader = Files.newBufferedReader( file, StandardCharsets.UTF_8 ) ) {
+            return new GsonBuilder( ).registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeAdapter( ) )
+                                     .create( )
+                                     .fromJson( fileReader, Tournament.class );
+        } catch ( final Exception e ) {
+            _logger.error( "Failure loading tournament from file: " + file.toAbsolutePath( ), e );
+            return null;
+        }
+    }
+
+    @Override
     public void saveTournament( final ObservableTournament otournament ) {
-        final Tournament tournament = otournament.getTournament( );
+        final Path file = _tournamentStorage.resolve( otournament.getTournament( ).getId( ).toString( ) + ".twr" );
         _scheduledExecutorService.schedule( ( ) -> {
-            if ( !Files.exists( _tournamentStorage ) ) {
-                try {
-                    Files.createDirectories( _tournamentStorage );
-                } catch ( final IOException e ) {
-                    _logger.error( "Can't create directories: " + _tournamentStorage.toAbsolutePath( ), e );
-                }
-            }
-
-            final String json = new GsonBuilder( )
-                                    .registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeAdapter( ) )
-                                    .create( )
-                                    .toJson( tournament );
-            final Path fileTmp = _tournamentStorage.resolve( tournament.getId( ).toString( ) + ".twr._COPYING_" );
-            try ( final BufferedWriter out = Files.newBufferedWriter( fileTmp, StandardCharsets.UTF_8 ) ) {
-                out.write( json );
-            } catch ( final IOException e ) {
-                otournament.markDirty( );
-                _logger.error( "Error caught during saving tournament" + tournament.getId( ) + " in storage", e );
-            }
-
-            try {
-                final Path file = _tournamentStorage.resolve( tournament.getId( ).toString( ) + ".twr" );
-                Files.move( fileTmp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE );
-                _logger.info( "Tournament saved into: {}", file );
-
-            } catch ( IOException e ) {
-                otournament.markDirty( );
-                _logger.error( "Error during saving tournament: " + tournament.getId( ), e );
-            }
-
+            saveTournament( otournament, file );
         }, 2, TimeUnit.SECONDS );
+    }
+
+    @Override
+    public void saveTournament( final ObservableTournament otournament, final Path file ) {
+        final Tournament tournament = otournament.getTournament( );
+        if ( !Files.exists( file.getParent( ) ) ) {
+            try {
+                Files.createDirectories( file.getParent( ) );
+            } catch ( final IOException e ) {
+                _logger.error( "Can't create directories: " + file.getParent( ).toAbsolutePath( ), e );
+            }
+        }
+
+        final String json = new GsonBuilder( )
+                                .registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeAdapter( ) )
+                                .create( )
+                                .toJson( tournament );
+        final Path fileTmp = file.getParent( ).resolve( file.getFileName( ).toString( ) + "._COPYING_" );
+        try ( final BufferedWriter out = Files.newBufferedWriter( fileTmp, StandardCharsets.UTF_8 ) ) {
+            out.write( json );
+        } catch ( final IOException e ) {
+            otournament.markDirty( );
+            _logger.error( "Error caught during saving tournament" + tournament.getId( ) + " in storage", e );
+        }
+
+        try {
+            Files.move( fileTmp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE );
+            _logger.info( "Tournament saved into: {}", file );
+
+        } catch ( IOException e ) {
+            otournament.markDirty( );
+            _logger.error( "Error during saving tournament: " + tournament.getId( ), e );
+        }
     }
 
     @Override

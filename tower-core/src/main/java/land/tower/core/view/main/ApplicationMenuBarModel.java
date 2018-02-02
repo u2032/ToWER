@@ -17,8 +17,18 @@ package land.tower.core.view.main;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
+import java.io.File;
+import java.util.Optional;
 import javafx.application.HostServices;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -27,6 +37,7 @@ import land.tower.core.ext.i18n.I18nService;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.model.player.PlayerRepository;
+import land.tower.core.model.tournament.ITournamentStorage;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.model.tournament.TournamentRepository;
 import land.tower.core.view.about.AboutDialog;
@@ -44,6 +55,7 @@ import land.tower.core.view.tournament.detail.round.DeleteRoundDialogModel.Facto
 import land.tower.core.view.tournament.management.TournamentManagementView;
 import land.tower.core.view.tournament.radiator.RadiatorDialogFactory;
 import land.tower.data.Player;
+import land.tower.data.Tournament;
 
 /**
  * Created on 18/12/2017
@@ -66,7 +78,9 @@ final class ApplicationMenuBarModel {
                              final I18nService i18nService,
                              final Preferences preferences,
                              final Configuration configuration, final HostServices hostServices,
-                             final PlayerRepository playerRepository ) {
+                             final PlayerRepository playerRepository,
+                             final Provider<Stage> owner,
+                             final ITournamentStorage tournamentStorage ) {
         _eventBus = eventBus;
         _tournamentManagementViewProvider = tournamentManagementViewProvider;
         _playerManagementViewProvider = playerManagementViewProvider;
@@ -79,6 +93,8 @@ final class ApplicationMenuBarModel {
         _configuration = configuration;
         _hostServices = hostServices;
         _playerRepository = playerRepository;
+        _owner = owner;
+        _tournamentStorage = tournamentStorage;
         _eventBus.register( this );
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
@@ -167,6 +183,74 @@ final class ApplicationMenuBarModel {
         _radiatorDialogFacotry.create( owner, _currentTournament.get( ) ).show( );
     }
 
+    public void fireFileExport( ) {
+        final FileChooser fileChooser = new FileChooser( );
+        fileChooser.setTitle( _i18n.get( "file.chooser.export" ).getValue( ) );
+        fileChooser.getExtensionFilters( )
+                   .addAll( new ExtensionFilter( "Tower Files", "*.twr" ) );
+        fileChooser.setInitialDirectory( new File( System.getProperty( "user.home" ) ) );
+        fileChooser.setInitialFileName( _currentTournament.get( ).getTournament( ).getId( ) + ".twr" );
+        final File file = fileChooser.showSaveDialog( _owner.get( ) );
+        if ( file != null ) {
+            _tournamentStorage.saveTournament( _currentTournament.get( ), file.toPath( ) );
+            _eventBus.post( new InformationEvent( _i18n.get( "tournament.exported" ) ) );
+        }
+    }
+
+    public void fireFileImport( ) {
+        final FileChooser fileChooser = new FileChooser( );
+        fileChooser.setTitle( _i18n.get( "file.chooser.import" ).getValue( ) );
+        fileChooser.getExtensionFilters( )
+                   .addAll( new ExtensionFilter( "Tower Files", "*.twr" ) );
+        fileChooser.setInitialDirectory( new File( System.getProperty( "user.home" ) ) );
+        final File file = fileChooser.showOpenDialog( _owner.get( ) );
+        if ( file != null ) {
+            final Tournament tournament = _tournamentStorage.loadTournament( file.toPath( ) );
+            if ( tournament != null ) {
+                final Optional<ObservableTournament> existing =
+                    _tournamentRepository.getTournament( tournament.getId( ) );
+                if ( !existing.isPresent( ) ) {
+                    final ObservableTournament otournament = new ObservableTournament( tournament );
+                    _tournamentRepository.add( otournament );
+                    _eventBus.post( new SceneRequestedEvent( _tournamentViewProvider.forTournament( otournament ) ) );
+                    _eventBus.post( new InformationEvent( _i18n.get( "tournament.imported" ) ) );
+
+                } else {
+                    final Alert alert = new Alert( AlertType.WARNING );
+                    alert.initOwner( _owner.get( ) );
+                    alert.headerTextProperty( ).bind( _i18n.get( "tournament.import.existing.warning" ) );
+                    alert.setContentText( _i18n.get( "tournament.import.existing.warning.message",
+                                                     existing.get( ).getHeader( ).getTitle( ) ) );
+
+                    final ButtonType eraseButtonType =
+                        new ButtonType( _i18n.get( "action.erase" ).get( ).toUpperCase( ), ButtonData.APPLY );
+                    final ButtonType cancelButtonType =
+                        new ButtonType( _i18n.get( "action.cancel" ).get( ).toUpperCase( ), ButtonData.CANCEL_CLOSE );
+                    alert.getDialogPane( ).getButtonTypes( ).setAll( eraseButtonType, cancelButtonType );
+
+                    final Button cancelButton = (Button) alert.getDialogPane( ).lookupButton( cancelButtonType );
+                    cancelButton.setDefaultButton( true );
+
+                    final Button eraseButton = (Button) alert.getDialogPane( ).lookupButton( eraseButtonType );
+                    eraseButton.setDefaultButton( false );
+
+                    final Optional<ButtonType> clicked = alert.showAndWait( );
+                    if ( clicked.isPresent( ) && clicked.get( ) == eraseButtonType ) {
+                        _tournamentViewProvider.removeTournamentView( tournament.getId( ) );
+                        _tournamentRepository.delete( tournament.getId( ) );
+                        final ObservableTournament otournament = new ObservableTournament( tournament );
+                        _tournamentRepository.add( otournament );
+                        _eventBus.post( new SceneRequestedEvent(
+                            _tournamentViewProvider.forTournament( otournament ) ) );
+                        _eventBus.post( new InformationEvent( _i18n.get( "tournament.imported" ) ) );
+                    }
+                }
+            } else {
+                _eventBus.post( new InformationEvent( _i18n.get( "tournament.imported.failure" ) ) );
+            }
+        }
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
     private final Provider<HomepageView> _homepageViewProvider;
@@ -189,4 +273,9 @@ final class ApplicationMenuBarModel {
     private final Configuration _configuration;
     private final HostServices _hostServices;
     private final PlayerRepository _playerRepository;
+    private final Provider<Stage> _owner;
+
+    private final ITournamentStorage _tournamentStorage;
 }
+
+

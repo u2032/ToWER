@@ -14,6 +14,7 @@
 
 package land.tower.core.model.tournament;
 
+import java.nio.file.Path;
 import java.util.List;
 import land.tower.data.Tournament;
 
@@ -21,11 +22,15 @@ import land.tower.data.Tournament;
  * Created on 17/12/2017
  * @author Cédric Longo
  */
-interface ITournamentStorage {
+public interface ITournamentStorage {
 
     List<Tournament> loadTournaments( );
 
+    Tournament loadTournament( Path path );
+
     void saveTournament( ObservableTournament tournament );
+
+    void saveTournament( ObservableTournament tournament, final Path file );
 
     void deleteTournament( Tournament tournament );
 }

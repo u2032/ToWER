@@ -126,6 +126,21 @@ public final class TournamentRepository implements IService {
         _storage.deleteTournament( tournament );
     }
 
+    public Optional<ObservableTournament> getTournament( final UUID id ) {
+        return _tournaments.stream( )
+                           .filter( t -> t.getTournament( ).getId( ).equals( id ) )
+                           .findAny( );
+    }
+
+    public void delete( final UUID id ) {
+        _tournaments.removeIf( t -> t.getTournament( ).getId( ).equals( id ) );
+    }
+
+    public void add( final ObservableTournament otournament ) {
+        otournament.markDirty( );
+        _tournaments.add( otournament );
+    }
+
     private final ObservableList<ObservableTournament> _tournaments =
         synchronizedObservableList( observableArrayList( ) );
 

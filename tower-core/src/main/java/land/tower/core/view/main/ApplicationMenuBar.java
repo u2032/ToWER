@@ -79,6 +79,19 @@ final class ApplicationMenuBar extends MenuBar {
 
         tournamentMenu.getItems( ).add( new SeparatorMenuItem( ) );
 
+        final MenuItem importMenu = new FaMenuItem( FontAwesome.IMPORT, "black" );
+        importMenu.textProperty( ).bind( _model.getI18n( ).get( "tournament.import" ) );
+        importMenu.setOnAction( event -> _model.fireFileImport( ) );
+        tournamentMenu.getItems( ).add( importMenu );
+
+        final MenuItem exportMenu = new FaMenuItem( FontAwesome.EXPORT, "black" );
+        exportMenu.textProperty( ).bind( _model.getI18n( ).get( "tournament.export" ) );
+        exportMenu.setOnAction( event -> _model.fireFileExport( ) );
+        exportMenu.disableProperty( ).bind( _model.currentTournamentProperty( ).isNull( ) );
+        tournamentMenu.getItems( ).add( exportMenu );
+
+        tournamentMenu.getItems( ).add( new SeparatorMenuItem( ) );
+
         final MenuItem radiatorMenu = new FaMenuItem( FontAwesome.SCREEN, "black" );
         radiatorMenu.textProperty( ).bind( _model.getI18n( ).get( "tournament.radiator.information" ) );
         final ApplicationMenuBar menuBar = this;

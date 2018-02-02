@@ -38,6 +38,10 @@ public final class TournamentViewProvider {
                                             id -> new TournamentView( _factory.forTournament( tournament ) ) );
     }
 
+    public void removeTournamentView( final UUID id ) {
+        _viewModels.remove( id );
+    }
+
     private final Map<UUID, TournamentView> _viewModels = Maps.newConcurrentMap( );
 
     private final TournamentViewModel.Factory _factory;
