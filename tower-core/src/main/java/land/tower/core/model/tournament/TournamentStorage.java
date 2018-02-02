@@ -56,7 +56,7 @@ final class TournamentStorage implements ITournamentStorage {
     @Override
     public List<Tournament> loadTournaments( ) {
         final ArrayList<Tournament> result = new ArrayList<>( );
-        if ( !Files.exists( _tournamentStorage.getParent( ) ) ) {
+        if ( !Files.exists( _tournamentStorage ) ) {
             return result;
         }
         try {
