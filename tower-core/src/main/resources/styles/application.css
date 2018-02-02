@@ -4,6 +4,16 @@
     -fx-font-smoothing-type: lcd;
 }
 
+.text-field:disabled, .text-field:disabled > *,
+.combo-box:disabled, .combo-box:disabled > *,
+.menu-item:disabled, .menu-item:disabled > *,
+.jfx-date-picker:disabled, .jfx-date-picker:disabled > *,
+.jfx-time-picker:disabled, .jfx-time-picker:disabled > * {
+    -fx-opacity: 0.8;
+    -fx-text-fill: grey;
+    -fx-cursor: default;
+}
+
 .menu-item {
     -fx-cursor: hand;
 }
