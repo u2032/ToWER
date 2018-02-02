@@ -80,7 +80,7 @@ import land.tower.core.view.tournament.radiator.InformationRadiatorModule;
  * Created on 09/11/2017
  * @author Cédric Longo
  */
-public final class Application extends javafx.application.Application {
+public class Application extends javafx.application.Application {
 
     public static void main( final String[] args ) {
         Application.launch( Application.class, args );
@@ -209,7 +209,7 @@ public final class Application extends javafx.application.Application {
         Font.loadFont( checkNotNull( fontStream, "Font %s not found", name ), -1 );
     }
 
-    private static ModuleResolver modules( ) {
+    protected ModuleResolver modules( ) {
         return ModuleResolver.withModules( new ConfigurationModule( ),
                                            new SingletonAppModule( ),
                                            new PreferenceModule( ),
