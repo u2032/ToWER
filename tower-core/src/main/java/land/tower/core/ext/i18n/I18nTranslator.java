@@ -44,5 +44,9 @@ public final class I18nTranslator {
         return String.format( get( key ).get( ), args );
     }
 
+    public boolean has( final String key ) {
+        return _texts.containsKey( key );
+    }
+
     private final Map<String, StringProperty> _texts = Collections.synchronizedMap( Maps.newHashMap( ) );
 }

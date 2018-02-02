@@ -103,7 +103,13 @@ public final class TournamentManagementView extends BorderPane {
 
         final TableColumn<ObservableTournament, String> gameCol = new TableColumn<>( );
         gameCol.textProperty( ).bind( model.getI18n( ).get( "tournament.game" ) );
-        gameCol.setCellValueFactory( param -> param.getValue( ).getHeader( ).gameProperty( ) );
+        gameCol.setCellValueFactory( param -> {
+            final String game = param.getValue( ).getHeader( ).getGame( );
+            if ( model.getI18n( ).has( "games." + game ) ) {
+                return model.getI18n( ).get( "games." + game );
+            }
+            return param.getValue( ).getHeader( ).gameProperty( );
+        } );
         tableView.getColumns( ).add( gameCol );
 
         final TableColumn<ObservableTournament, String> nameCol = new TableColumn<>( );
