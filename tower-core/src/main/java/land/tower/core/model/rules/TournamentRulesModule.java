@@ -14,8 +14,18 @@
 
 package land.tower.core.model.rules;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.Singleton;
+
+import java.util.Map;
+import land.tower.core.model.pairing.direct.DirectEliminationSystem;
+import land.tower.core.model.pairing.direct.DirectEliminiationRankingComputer;
+import land.tower.core.model.pairing.swiss.SwissPairingSystem;
+import land.tower.core.model.ranking.DefaultRankingComputer;
+import land.tower.data.PairingMode;
 
 /**
  * Created on 31/01/2018
@@ -27,5 +37,27 @@ public final class TournamentRulesModule extends AbstractModule {
     protected void configure( ) {
         bind( ITournamentRulesProvider.class ).to( TournamentRulesProvider.class )
                                               .in( Scopes.SINGLETON );
+    }
+
+    @Provides
+    @Singleton
+    Map<PairingMode, PairingRule> defaultRules( final SwissPairingSystem swissPairingSystem,
+                                                final DirectEliminationSystem directEliminationSystem,
+                                                final DefaultRankingComputer defaultRankingComputer,
+                                                final DirectEliminiationRankingComputer directRankingComputer ) {
+
+        return ImmutableMap.<PairingMode, PairingRule>builder( )
+                   .put( PairingMode.SWISS,
+                         PairingRule.builder( )
+                                    .pairingSystem( swissPairingSystem )
+                                    .rankingComputer( defaultRankingComputer )
+                                    .build( ) )
+
+                   .put( PairingMode.DIRECT_ELIMINATION,
+                         PairingRule.builder( )
+                                    .pairingSystem( directEliminationSystem )
+                                    .rankingComputer( directRankingComputer )
+                                    .build( ) )
+                   .build( );
     }
 }

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.inject.Inject;
+import land.tower.data.PairingMode;
 
 /**
  * Created on 31/01/2018
@@ -26,10 +27,11 @@ import javax.inject.Inject;
 public final class TournamentRulesProvider implements ITournamentRulesProvider {
 
     @Inject
-    public TournamentRulesProvider( ) {
+    public TournamentRulesProvider( final Map<PairingMode, PairingRule> defaultRules ) {
         _default = TournamentRules.builder( )
                                   .scoringMode( Optional.empty( ) )
                                   .scoreMax( Optional.empty( ) )
+                                  .pairingRules( defaultRules )
                                   .build( );
     }
 

@@ -19,7 +19,6 @@ import com.google.inject.assistedinject.Assisted;
 
 import org.controlsfx.control.Notifications;
 
-import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
@@ -30,12 +29,12 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.report.PairingReport;
 import land.tower.core.ext.report.ReportEngine;
 import land.tower.core.ext.report.ResultSlipReport;
-import land.tower.core.model.pairing.PairingRule;
+import land.tower.core.model.rules.PairingRule;
+import land.tower.core.model.rules.TournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.TournamentUpdatedEvent;
-import land.tower.data.PairingMode;
 import land.tower.data.Round;
 
 /**
@@ -57,18 +56,18 @@ public final class TournamentRoundTabModel {
                                     final SetScoreDialogModel.Factory setScoreDialogFactory,
                                     final ManualPairingDialogModel.Factory manualPairingDialogFactory,
                                     final EventBus eventBus,
-                                    final Map<PairingMode, PairingRule> pairingSystems,
                                     final ReportEngine reportEngine,
                                     final PairingReport.Factory pairingReportFactory,
                                     final ResultSlipReport.Factory resultSlipReportFactory,
-                                    final Stage owner ) {
+                                    final Stage owner,
+                                    final TournamentRulesProvider tournamentRules ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
         _setScoreDialogFactory = setScoreDialogFactory;
         _manualPairingDialogFactory = manualPairingDialogFactory;
         _eventBus = eventBus;
-        _pairingSystems = pairingSystems;
+        _tournamentRules = tournamentRules;
         _reportEngine = reportEngine;
         _pairingReportFactory = pairingReportFactory;
         _resultSlipReportFactory = resultSlipReportFactory;
@@ -92,13 +91,13 @@ public final class TournamentRoundTabModel {
 
     public void fireStartNewRound( ) {
         _eventBus.post( new InformationEvent( _i18n.get( "round.generation.started" ) ) );
-        final PairingRule pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        final PairingRule pairing = _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
+                                                    .getPairingRules( )
+                                                    .get( _tournament.getHeader( ).getPairingMode( ) );
         final Round newRound = pairing.getPairingSystem( ).createNewRound( _tournament );
         _tournament.registerRound( new ObservableRound( newRound ) );
 
-        _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) )
-                       .getRankingComputer( )
-                       .computeRanking( _tournament );
+        pairing.getRankingComputer( ).computeRanking( _tournament );
 
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
         _eventBus.post( new InformationEvent( _i18n.get( "round.generation.finished", newRound.getNumero( ) ) ) );
@@ -168,7 +167,7 @@ public final class TournamentRoundTabModel {
 
     private final SimpleBooleanProperty _filterNotEmptySource = new SimpleBooleanProperty( );
     private final EventBus _eventBus;
-    private final Map<PairingMode, PairingRule> _pairingSystems;
+    private final TournamentRulesProvider _tournamentRules;
 
     private final ReportEngine _reportEngine;
     private final PairingReport.Factory _pairingReportFactory;

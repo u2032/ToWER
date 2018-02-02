@@ -17,16 +17,14 @@ package land.tower.core.view.tournament.detail.round;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
-import java.util.Map;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.pairing.PairingRule;
+import land.tower.core.model.rules.TournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.TournamentUpdatedEvent;
-import land.tower.data.PairingMode;
 
 /**
  * Created on 31/12/2017
@@ -42,11 +40,11 @@ public final class DeleteRoundDialogModel {
     @Inject
     public DeleteRoundDialogModel( final I18nTranslator i18n,
                                    final @Assisted ObservableTournament tournament,
-                                   final Map<PairingMode, PairingRule> pairingSystem,
+                                   final TournamentRulesProvider tournamentRules,
                                    final EventBus eventBus, final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
-        _pairingSystem = pairingSystem;
+        _tournamentRules = tournamentRules;
         _eventBus = eventBus;
         _owner = owner;
     }
@@ -61,9 +59,11 @@ public final class DeleteRoundDialogModel {
             _tournament.getRounds( ).remove( lastRound );
             _eventBus.post( new InformationEvent( _i18n.get( "round.deleted", lastRound.getNumero( ) ) ) );
         }
-        _pairingSystem.get( _tournament.getHeader( ).getPairingMode( ) )
-                      .getRankingComputer( )
-                      .computeRanking( _tournament );
+        _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
+                        .getPairingRules( )
+                        .get( _tournament.getHeader( ).getPairingMode( ) )
+                        .getRankingComputer( )
+                        .computeRanking( _tournament );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
     }
 
@@ -73,7 +73,7 @@ public final class DeleteRoundDialogModel {
 
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
-    private final Map<PairingMode, PairingRule> _pairingSystem;
+    private final TournamentRulesProvider _tournamentRules;
     private final EventBus _eventBus;
     private final Stage _owner;
 }

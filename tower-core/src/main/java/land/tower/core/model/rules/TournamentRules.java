@@ -14,7 +14,9 @@
 
 package land.tower.core.model.rules;
 
+import java.util.Map;
 import java.util.Optional;
+import land.tower.data.PairingMode;
 import land.tower.data.TournamentScoringMode;
 import lombok.Builder;
 import lombok.Data;
@@ -29,5 +31,7 @@ public final class TournamentRules {
 
     private final Optional<TournamentScoringMode> scoringMode;
     private final Optional<Integer> scoreMax;
+
+    private final Map<PairingMode, PairingRule> pairingRules;
 
 }

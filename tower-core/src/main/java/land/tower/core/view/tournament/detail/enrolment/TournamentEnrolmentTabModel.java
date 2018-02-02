@@ -18,18 +18,17 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.Comparator;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.pairing.PairingRule;
+import land.tower.core.model.rules.PairingRule;
+import land.tower.core.model.rules.TournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.TournamentUpdatedEvent;
-import land.tower.data.PairingMode;
 import land.tower.data.Round;
 import land.tower.data.Team;
 
@@ -68,7 +67,9 @@ public final class TournamentEnrolmentTabModel {
 
     public void fireStartTournament( ) {
         _eventBus.post( new InformationEvent( _i18n.get( "round.generation.started" ) ) );
-        final PairingRule pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        final PairingRule pairing = _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
+                                                    .getPairingRules( )
+                                                    .get( _tournament.getHeader( ).getPairingMode( ) );
         final Round newRound = pairing.getPairingSystem( ).createNewRound( _tournament );
         _tournament.registerRound( new ObservableRound( newRound ) );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
@@ -79,19 +80,21 @@ public final class TournamentEnrolmentTabModel {
         _tournament.registerTeam( new ObservableTeam( team ) );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
         // Recompute ranking
-        final PairingRule pairing = _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) );
+        final PairingRule pairing = _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
+                                                    .getPairingRules( )
+                                                    .get( _tournament.getHeader( ).getPairingMode( ) );
         pairing.getRankingComputer( ).computeRanking( _tournament );
     }
 
     @Inject
     TournamentEnrolmentTabModel( final @Assisted ObservableTournament tournament, final I18nTranslator i18n,
                                  final AddTeamDialogModel.Factory addTeamDialogProvider,
-                                 final Map<PairingMode, PairingRule> pairingSystems,
+                                 final TournamentRulesProvider tournamentRules,
                                  final EventBus eventBus, final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
         _addTeamDialogProvider = addTeamDialogProvider;
-        _pairingSystems = pairingSystems;
+        _tournamentRules = tournamentRules;
         _eventBus = eventBus;
         _owner = owner;
 
@@ -110,7 +113,7 @@ public final class TournamentEnrolmentTabModel {
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
     private final AddTeamDialogModel.Factory _addTeamDialogProvider;
-    private final Map<PairingMode, PairingRule> _pairingSystems;
+    private final TournamentRulesProvider _tournamentRules;
     private final EventBus _eventBus;
     private final Stage _owner;
 }

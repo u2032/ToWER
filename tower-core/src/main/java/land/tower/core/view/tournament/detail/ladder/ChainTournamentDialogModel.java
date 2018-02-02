@@ -19,14 +19,14 @@ import com.google.inject.assistedinject.Assisted;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.pairing.PairingRule;
+import land.tower.core.model.rules.PairingRule;
+import land.tower.core.model.rules.TournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -54,14 +54,14 @@ public final class ChainTournamentDialogModel {
                                        final Stage owner,
                                        @Assisted final ObservableTournament tournament,
                                        final TournamentRepository tournamentRepository,
-                                       final Map<PairingMode, PairingRule> pairingSystems,
+                                       final TournamentRulesProvider tournamentRules,
                                        final EventBus eventBus,
                                        final TournamentViewModel.Factory tournamentViewFactory ) {
         _i18n = translator;
         _owner = owner;
         _tournament = tournament;
         _tournamentRepository = tournamentRepository;
-        _pairingSystems = pairingSystems;
+        _tournamentRules = tournamentRules;
         _eventBus = eventBus;
         _tournamentViewFactory = tournamentViewFactory;
 
@@ -184,7 +184,9 @@ public final class ChainTournamentDialogModel {
         } );
 
         // Registration of first round
-        final PairingRule pairingSystem = _pairingSystems.get( _pairingMode.get( ) );
+        final PairingRule pairingSystem = _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
+                                                          .getPairingRules( )
+                                                          .get( _tournament.getHeader( ).getPairingMode( ) );
         final Round firstRound = pairingSystem.getPairingSystem( ).createFirstRoundFromInitialRanking( newTournament );
         newTournament.registerRound( new ObservableRound( firstRound ) );
         pairingSystem.getRankingComputer( ).computeRanking( newTournament );
@@ -205,7 +207,7 @@ public final class ChainTournamentDialogModel {
     private final ObservableTournament _tournament;
 
     private final TournamentRepository _tournamentRepository;
-    private final Map<PairingMode, PairingRule> _pairingSystems;
+    private final TournamentRulesProvider _tournamentRules;
     private final EventBus _eventBus;
     private final TournamentViewModel.Factory _tournamentViewFactory;
 }

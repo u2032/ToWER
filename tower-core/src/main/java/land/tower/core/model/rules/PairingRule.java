@@ -12,8 +12,9 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.model.pairing;
+package land.tower.core.model.rules;
 
+import land.tower.core.model.pairing.PairingSystem;
 import land.tower.core.model.ranking.IRankingComputer;
 import lombok.Builder;
 import lombok.Data;

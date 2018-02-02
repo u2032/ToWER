@@ -17,7 +17,6 @@ package land.tower.core.view.tournament.detail.round;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
-import java.util.Map;
 import java.util.Optional;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
@@ -25,13 +24,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.pairing.PairingRule;
+import land.tower.core.model.rules.TournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.TournamentUpdatedEvent;
-import land.tower.data.PairingMode;
 
 /**
  * Created on 31/12/2017
@@ -49,13 +47,12 @@ public final class SetScoreDialogModel {
     SetScoreDialogModel( final I18nTranslator i18n,
                          @Assisted final ObservableTournament tournament,
                          @Assisted final ObservableRound round, final EventBus eventBus,
-                         final Map<PairingMode, PairingRule> pairingSystems,
-                         final Stage owner ) {
+                         final TournamentRulesProvider tournamentRules, final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
         _round = round;
         _eventBus = eventBus;
-        _pairingSystems = pairingSystems;
+        _tournamentRules = tournamentRules;
         _owner = owner;
 
         _errorInformation.bind( Bindings.createStringBinding( ( ) -> {
@@ -122,9 +119,11 @@ public final class SetScoreDialogModel {
 
         if ( _round.isEnded( ) ) {
             // If the round is ended, trigger ranking computing
-            _pairingSystems.get( _tournament.getHeader( ).getPairingMode( ) )
-                           .getRankingComputer( )
-                           .computeRanking( _tournament );
+            _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
+                            .getPairingRules( )
+                            .get( _tournament.getHeader( ).getPairingMode( ) )
+                            .getRankingComputer( )
+                            .computeRanking( _tournament );
         }
 
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
@@ -203,6 +202,6 @@ public final class SetScoreDialogModel {
     private final SimpleObjectProperty<Integer> _position = new SimpleObjectProperty<>( );
 
     private final EventBus _eventBus;
-    private final Map<PairingMode, PairingRule> _pairingSystems;
+    private final TournamentRulesProvider _tournamentRules;
     private final Stage _owner;
 }
