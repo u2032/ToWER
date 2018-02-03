@@ -24,13 +24,13 @@ import land.tower.core.model.tournament.ObservableTournament;
  * Created on 01/01/2018
  * @author Cédric Longo
  */
-final class CoonsSystem {
+public final class CoonsSystem {
 
     /**
      * Score of opponents when won + 1/2 of opponents scores when draw + 1/5 of opponents score when lost
      */
-    static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
-                        final ObservableTournament tournament ) {
+    public static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
+                               final ObservableTournament tournament ) {
 
         final AtomicInteger points = new AtomicInteger( );
         rounds.forEach( round -> {

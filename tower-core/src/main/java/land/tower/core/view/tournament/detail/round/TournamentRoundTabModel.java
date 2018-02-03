@@ -29,8 +29,8 @@ import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.report.PairingReport;
 import land.tower.core.ext.report.ReportEngine;
 import land.tower.core.ext.report.ResultSlipReport;
+import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.rules.PairingRule;
-import land.tower.core.model.rules.TournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
@@ -60,7 +60,7 @@ public final class TournamentRoundTabModel {
                                     final PairingReport.Factory pairingReportFactory,
                                     final ResultSlipReport.Factory resultSlipReportFactory,
                                     final Stage owner,
-                                    final TournamentRulesProvider tournamentRules ) {
+                                    final ITournamentRulesProvider tournamentRules ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
@@ -167,7 +167,7 @@ public final class TournamentRoundTabModel {
 
     private final SimpleBooleanProperty _filterNotEmptySource = new SimpleBooleanProperty( );
     private final EventBus _eventBus;
-    private final TournamentRulesProvider _tournamentRules;
+    private final ITournamentRulesProvider _tournamentRules;
 
     private final ReportEngine _reportEngine;
     private final PairingReport.Factory _pairingReportFactory;

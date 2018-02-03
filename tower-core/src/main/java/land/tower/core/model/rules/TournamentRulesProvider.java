@@ -24,7 +24,7 @@ import land.tower.data.PairingMode;
  * Created on 31/01/2018
  * @author Cédric Longo
  */
-public final class TournamentRulesProvider implements ITournamentRulesProvider {
+final class TournamentRulesProvider implements ITournamentRulesProvider {
 
     @Inject
     public TournamentRulesProvider( final Map<PairingMode, PairingRule> defaultRules ) {
@@ -40,6 +40,7 @@ public final class TournamentRulesProvider implements ITournamentRulesProvider {
         return _rules.getOrDefault( game, _default );
     }
 
+    @Override
     public void registerRules( final String game, final TournamentRules rules ) {
         _rules.put( game, rules );
     }

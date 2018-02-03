@@ -23,12 +23,12 @@ import land.tower.core.model.tournament.ObservableTeam;
  * Created on 01/01/2018
  * @author Cédric Longo
  */
-final class SumOfScoreSystem {
+public final class SumOfScoreSystem {
 
     /**
      * Sum of points
      */
-    static int compute( final ObservableTeam team, final List<ObservableRound> rounds ) {
+    public static int compute( final ObservableTeam team, final List<ObservableRound> rounds ) {
         final AtomicInteger points = new AtomicInteger( );
         rounds.forEach( round -> {
             round.getMatchFor( team )

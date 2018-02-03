@@ -22,8 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.rules.PairingRule;
-import land.tower.core.model.rules.TournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -89,7 +89,7 @@ public final class TournamentEnrolmentTabModel {
     @Inject
     TournamentEnrolmentTabModel( final @Assisted ObservableTournament tournament, final I18nTranslator i18n,
                                  final AddTeamDialogModel.Factory addTeamDialogProvider,
-                                 final TournamentRulesProvider tournamentRules,
+                                 final ITournamentRulesProvider tournamentRules,
                                  final EventBus eventBus, final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
@@ -113,7 +113,7 @@ public final class TournamentEnrolmentTabModel {
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
     private final AddTeamDialogModel.Factory _addTeamDialogProvider;
-    private final TournamentRulesProvider _tournamentRules;
+    private final ITournamentRulesProvider _tournamentRules;
     private final EventBus _eventBus;
     private final Stage _owner;
 }

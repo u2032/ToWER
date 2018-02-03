@@ -24,7 +24,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
-import land.tower.core.model.rules.TournamentRulesProvider;
+import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
@@ -47,7 +47,7 @@ public final class SetScoreDialogModel {
     SetScoreDialogModel( final I18nTranslator i18n,
                          @Assisted final ObservableTournament tournament,
                          @Assisted final ObservableRound round, final EventBus eventBus,
-                         final TournamentRulesProvider tournamentRules, final Stage owner ) {
+                         final ITournamentRulesProvider tournamentRules, final Stage owner ) {
         _i18n = i18n;
         _tournament = tournament;
         _round = round;
@@ -202,6 +202,6 @@ public final class SetScoreDialogModel {
     private final SimpleObjectProperty<Integer> _position = new SimpleObjectProperty<>( );
 
     private final EventBus _eventBus;
-    private final TournamentRulesProvider _tournamentRules;
+    private final ITournamentRulesProvider _tournamentRules;
     private final Stage _owner;
 }

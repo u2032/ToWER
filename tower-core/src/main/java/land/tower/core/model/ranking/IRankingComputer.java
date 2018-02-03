@@ -14,6 +14,13 @@
 
 package land.tower.core.model.ranking;
 
+import static land.tower.core.model.ranking.DefaultRankingComputer.RANKING_COMPARATOR;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import land.tower.core.model.tournament.ObservableRound;
+import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 
 /**
@@ -23,5 +30,26 @@ import land.tower.core.model.tournament.ObservableTournament;
 public interface IRankingComputer {
 
     void computeRanking( final ObservableTournament tournament );
+
+    default void setRanks( final List<ObservableTeam> teams, final List<ObservableRound> rounds ) {
+        // Set Rank
+        final AtomicInteger rank = new AtomicInteger( );
+        final AtomicReference<ObservableTeam> previous = new AtomicReference<>( );
+        teams.stream( )
+             .sorted( RANKING_COMPARATOR )
+             .forEach( team -> {
+                 if ( rounds.isEmpty( ) ) {
+                     team.getRanking( ).setRank( 0 );
+                     return;
+                 }
+
+                 if ( previous.get( ) != null && RANKING_COMPARATOR.compare( previous.get( ), team ) == 0 ) {
+                     team.getRanking( ).setRank( rank.get( ) );
+                 } else {
+                     team.getRanking( ).setRank( rank.incrementAndGet( ) );
+                 }
+                 previous.set( team );
+             } );
+    }
 
 }

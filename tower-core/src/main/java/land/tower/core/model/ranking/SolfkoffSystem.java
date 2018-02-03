@@ -29,13 +29,13 @@ import land.tower.core.model.tournament.ObservableTournament;
  * Created on 01/01/2018
  * @author Cédric Longo
  */
-final class SolfkoffSystem {
+public final class SolfkoffSystem {
 
     /**
      * Sum of opponent scores where a win gives a +1 and a loss a -1
      */
-    static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
-                        final ObservableTournament tournament ) {
+    public static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
+                               final ObservableTournament tournament ) {
 
         final Map<Integer, Integer> scores = Maps.newHashMap( );
 

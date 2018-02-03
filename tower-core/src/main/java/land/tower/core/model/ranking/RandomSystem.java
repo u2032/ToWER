@@ -12,15 +12,26 @@
  *  If not, see <http://www.gnu.org/licenses/>
  */
 
-package land.tower.core.model.rules;
+package land.tower.core.model.ranking;
+
+import java.util.List;
+import java.util.Random;
+import land.tower.core.model.tournament.ObservableRound;
+import land.tower.core.model.tournament.ObservableTeam;
 
 /**
- * Created on 31/01/2018
+ * Created on 01/01/2018
  * @author Cédric Longo
  */
-public interface ITournamentRulesProvider {
+public final class RandomSystem {
 
-    TournamentRules forGame( String game );
+    /**
+     * Random
+     */
+    public static int compute( final ObservableTeam team, final List<ObservableRound> rounds ) {
+        return RANDOM.nextInt( 1000 );
+    }
 
-    void registerRules( String game, TournamentRules rules );
+    private static final Random RANDOM = new Random( );
+
 }

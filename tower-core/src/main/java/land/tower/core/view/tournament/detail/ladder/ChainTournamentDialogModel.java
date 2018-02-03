@@ -25,8 +25,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.rules.PairingRule;
-import land.tower.core.model.rules.TournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -54,7 +54,7 @@ public final class ChainTournamentDialogModel {
                                        final Stage owner,
                                        @Assisted final ObservableTournament tournament,
                                        final TournamentRepository tournamentRepository,
-                                       final TournamentRulesProvider tournamentRules,
+                                       final ITournamentRulesProvider tournamentRules,
                                        final EventBus eventBus,
                                        final TournamentViewModel.Factory tournamentViewFactory ) {
         _i18n = translator;
@@ -207,7 +207,7 @@ public final class ChainTournamentDialogModel {
     private final ObservableTournament _tournament;
 
     private final TournamentRepository _tournamentRepository;
-    private final TournamentRulesProvider _tournamentRules;
+    private final ITournamentRulesProvider _tournamentRules;
     private final EventBus _eventBus;
     private final TournamentViewModel.Factory _tournamentViewFactory;
 }

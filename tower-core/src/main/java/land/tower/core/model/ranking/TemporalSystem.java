@@ -24,13 +24,13 @@ import land.tower.core.model.tournament.ObservableTournament;
  * Created on 02/01/2018
  * @author Cédric Longo
  */
-final class TemporalSystem {
+public final class TemporalSystem {
 
     /**
      * Sum of squared round numero where the player has loss
      */
-    static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
-                        final ObservableTournament tournament ) {
+    public static int compute( final ObservableTeam team, final List<ObservableRound> rounds,
+                               final ObservableTournament tournament ) {
 
         final AtomicInteger points = new AtomicInteger( );
         rounds.forEach( round -> {
