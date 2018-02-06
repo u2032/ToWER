@@ -16,7 +16,7 @@ You don't need to install it because it's packaged with the installer and it wil
 * Execute the installer to install the application
 * Launch the application from menu or shortcuts
 
-_Note: The recommended way is to download the "installer" package according to your operating system. This package installs the application on your computer in the proper way and integration. But, you can also prefer to have the application on a USB Key or without any integration. In this former case, you should download the "standalone" package, which is the application packaged inside a simple and unique directory._
+_Note: The recommended way is to download the "installer" package according to your operating system. This package installs the application on your computer in the proper way and integration. But, you can also prefer to have the application on a USB Key or without any integration. In this latter case, you should download the "standalone" package, which is the application packaged inside a simple and unique directory._
 
 
 ## User guide
