@@ -65,6 +65,7 @@ import land.tower.core.ext.thread.ThreadingModule;
 import land.tower.core.ext.updater.UpdateModule;
 import land.tower.core.model.pairing.PairingModule;
 import land.tower.core.model.player.PlayerModule;
+import land.tower.core.model.player.PlayerNumeroValidationModule;
 import land.tower.core.model.player.suggestion.PlayerSuggestionModule;
 import land.tower.core.model.ranking.RankingModule;
 import land.tower.core.model.rules.TournamentRulesModule;
@@ -231,6 +232,7 @@ public class Application extends javafx.application.Application {
                                            new TournamentViewModule( ),
                                            new InformationRadiatorModule( ),
                                            new PlayerSuggestionModule( ),
+                                           new PlayerNumeroValidationModule( ),
                                            new PairingModule( ),
                                            new RankingModule( ),
                                            new ReportModule( ),

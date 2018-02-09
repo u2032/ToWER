@@ -22,21 +22,24 @@ import land.tower.core.view.player.ObservablePlayer;
  * Created on 10/12/2017
  * @author Cédric Longo
  */
-public final class PlayerNumeroValidator {
+final class PlayerNumeroValidator implements IPlayerNumeroValidator {
 
     @Inject
     public PlayerNumeroValidator( final PlayerRepository playerRepository ) {
         _playerRepository = playerRepository;
     }
 
+    @Override
     public boolean isValid( final long numero ) {
         return numero > 0L;
     }
 
+    @Override
     public boolean exists( final long numero ) {
         return _playerRepository.getPlayer( numero ).isPresent( );
     }
 
+    @Override
     public OptionalLong generate( ) {
         final OptionalLong max = _playerRepository.getPlayersList( )
                                                   .stream( )

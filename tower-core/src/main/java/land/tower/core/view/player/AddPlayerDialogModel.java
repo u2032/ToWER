@@ -24,7 +24,7 @@ import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
-import land.tower.core.model.player.PlayerNumeroValidator;
+import land.tower.core.model.player.IPlayerNumeroValidator;
 import land.tower.data.PlayerNationality;
 
 /**
@@ -35,7 +35,7 @@ public final class AddPlayerDialogModel {
 
     @Inject
     public AddPlayerDialogModel( final I18nTranslator translator,
-                                 final PlayerNumeroValidator playerNumeroValidator,
+                                 final IPlayerNumeroValidator playerNumeroValidator,
                                  final Stage owner,
                                  final Preferences preferences ) {
         _playerNumeroValidator = playerNumeroValidator;
@@ -176,7 +176,7 @@ public final class AddPlayerDialogModel {
     private final SimpleObjectProperty<PlayerNationality> _playerNationality = new SimpleObjectProperty<>( );
     private final SimpleBooleanProperty _playerNumeroValidity = new SimpleBooleanProperty( );
 
-    private final PlayerNumeroValidator _playerNumeroValidator;
+    private final IPlayerNumeroValidator _playerNumeroValidator;
     private final I18nTranslator _i18n;
     private final Stage _owner;
     private final Preferences _preferences;
