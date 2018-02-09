@@ -81,7 +81,15 @@ public final class AddPlayerDialog extends Dialog<Player> {
         numeroText.setTextFormatter(
             new TextFormatter<>( new LongStringConverter( ),
                                  model.getPlayerNumero( ),
-                                 c -> Pattern.matches( "[\\d]*", c.getControlNewText( ) ) ? c : null ) );
+                                 c -> {
+                                     if ( !Pattern.matches( "[\\d]*", c.getControlNewText( ) ) ) {
+                                         return null;
+                                     }
+                                     if ( c.getControlNewText( ).length( ) > 10 ) {
+                                         return null;
+                                     }
+                                     return c;
+                                 } ) );
         model.playerNumeroValidityProperty( ).addListener( ( observable, oldValue, newValue ) -> {
             if ( newValue ) {
                 numeroText.setStyle( "-fx-text-fill: darkgreen" );
