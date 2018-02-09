@@ -45,10 +45,12 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import land.tower.core.ext.browser.BrowserModule;
 import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.config.ConfigurationModule;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.event.EventModule;
+import land.tower.core.ext.http.HttpModule;
 import land.tower.core.ext.i18n.I18nModule;
 import land.tower.core.ext.i18n.I18nService;
 import land.tower.core.ext.inject.ModuleResolver;
@@ -60,6 +62,7 @@ import land.tower.core.ext.service.ServiceManager;
 import land.tower.core.ext.service.ServiceModule;
 import land.tower.core.ext.singleton.SingletonAppModule;
 import land.tower.core.ext.thread.ThreadingModule;
+import land.tower.core.ext.updater.UpdateModule;
 import land.tower.core.model.pairing.PairingModule;
 import land.tower.core.model.player.PlayerModule;
 import land.tower.core.model.player.suggestion.PlayerSuggestionModule;
@@ -75,6 +78,7 @@ import land.tower.core.view.player.PlayerViewModule;
 import land.tower.core.view.tournament.detail.TournamentViewModule;
 import land.tower.core.view.tournament.management.TournamentManagementViewModule;
 import land.tower.core.view.tournament.radiator.InformationRadiatorModule;
+import land.tower.core.view.update.UpdateViewModule;
 
 /**
  * Created on 09/11/2017
@@ -229,7 +233,11 @@ public class Application extends javafx.application.Application {
                                            new PlayerSuggestionModule( ),
                                            new PairingModule( ),
                                            new RankingModule( ),
-                                           new ReportModule( ) );
+                                           new ReportModule( ),
+                                           new HttpModule( ),
+                                           new UpdateModule( ),
+                                           new UpdateViewModule( ),
+                                           new BrowserModule( ) );
     }
 
     private Module hostServiceModule( final HostServices hostServices ) {
