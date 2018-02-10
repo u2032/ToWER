@@ -17,10 +17,15 @@ package land.tower.core.view.tournament.detail.ladder;
 import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 
+import com.google.common.base.Joiner;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -85,6 +90,30 @@ public final class TournamentLadderView extends Tab {
         nameCol.textProperty( ).bind( _model.getI18n( ).get( "team.name" ) );
         nameCol.setCellValueFactory( new PropertyValueFactory<>( "name" ) );
         tableView.getColumns( ).add( nameCol );
+
+        final TableColumn<ObservableTeam, String> extraInfo = new TableColumn<>( );
+        extraInfo.textProperty( ).bind( _model.getI18n( ).get( "team.extraInfo" ) );
+        extraInfo.setCellValueFactory(
+            param -> {
+                final ObservableTeam value = param.getValue( );
+                final SimpleStringProperty extraInfoLabel = new SimpleStringProperty( );
+                extraInfoLabel.bind( Bindings.createStringBinding( ( ) -> {
+                    final List<String> extraInfos = new ArrayList<>( );
+                    for ( final String key : _model.getTeamExtraInformation( ).keySet( ) ) {
+                        final String v = value.getExtraInfo( ).get( key );
+                        if ( v != null ) {
+                            extraInfos.add( _model.getI18n( ).get( "team.extra." + key ).get( )
+                                            + ": " + _model.getI18n( ).get( "team.extra." + key + "." + v ).get( ) );
+                        }
+                    }
+                    return Joiner.on( ", " ).join( extraInfos );
+                }, _model.getI18n( ).get( "team.name" ) ) );
+                return extraInfoLabel;
+            } );
+        extraInfo.visibleProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+            return !_model.getTeamExtraInformation( ).isEmpty( );
+        }, _model.getTournament( ).getHeader( ).gameProperty( ) ) );
+        tableView.getColumns( ).add( extraInfo );
 
         final TableColumn<ObservableTeam, String> playersCol = new TableColumn<>( );
         playersCol.textProperty( ).bind( _model.getI18n( ).get( "team.players" ) );

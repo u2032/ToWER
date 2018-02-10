@@ -17,10 +17,12 @@ package land.tower.core.view.tournament.detail.ladder;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import java.util.Map;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.report.LadderReport;
 import land.tower.core.ext.report.ReportEngine;
+import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
 
@@ -29,6 +31,7 @@ import land.tower.core.view.event.InformationEvent;
  * @author Cédric Longo
  */
 public final class TournamentLadderViewModel {
+
 
     public interface Factory {
 
@@ -43,7 +46,8 @@ public final class TournamentLadderViewModel {
                                       final ChainTournamentDialogModel.Factory chainTournamentDialogModelProvider,
                                       final ReportEngine reportEngine,
                                       final LadderReport.Factory ladderReportFactory,
-                                      final EventBus eventBus ) {
+                                      final EventBus eventBus,
+                                      final ITournamentRulesProvider rulesProvider ) {
         _tournament = tournament;
         _i18n = i18n;
         _closeTournamentDialogModelProvider = closeTournamentDialogModelProvider;
@@ -51,6 +55,7 @@ public final class TournamentLadderViewModel {
         _reportEngine = reportEngine;
         _ladderReportFactory = ladderReportFactory;
         _eventBus = eventBus;
+        _rulesProvider = rulesProvider;
     }
 
     CloseTournamentDialogModel createCloseTournamentViewModel( ) {
@@ -78,6 +83,10 @@ public final class TournamentLadderViewModel {
         return _i18n;
     }
 
+    public Map<String, String[]> getTeamExtraInformation( ) {
+        return _rulesProvider.forGame( _tournament.getHeader( ).getGame( ) ).getTeamExtraInfo( );
+    }
+
     private final ObservableTournament _tournament;
     private final I18nTranslator _i18n;
     private final CloseTournamentDialogModel.Factory _closeTournamentDialogModelProvider;
@@ -86,4 +95,5 @@ public final class TournamentLadderViewModel {
     private final ReportEngine _reportEngine;
     private final LadderReport.Factory _ladderReportFactory;
     private final EventBus _eventBus;
+    private final ITournamentRulesProvider _rulesProvider;
 }

@@ -14,6 +14,7 @@
 
 package land.tower.core.model.rules;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +33,7 @@ final class TournamentRulesProvider implements ITournamentRulesProvider {
                                   .scoringMode( Optional.empty( ) )
                                   .scoreMax( Optional.empty( ) )
                                   .pairingRules( defaultRules )
+                                  .teamExtraInfo( Collections.emptyMap( ) )
                                   .build( );
     }
 

@@ -45,6 +45,9 @@ public final class Team {
     @SerializedName( "pairingFlags" )
     private Map<String, String> _pairingFlags = new HashMap<>( 0 );
 
+    @SerializedName( "extraInfo" )
+    private Map<String, String> _extraInfo = new HashMap<>( 0 );
+
     public String getName( ) {
         return _name;
     }
@@ -85,8 +88,11 @@ public final class Team {
         return _pairingFlags;
     }
 
+    public Map<String, String> getExtraInfo( ) {
+        return _extraInfo;
+    }
+
     public boolean hasPlayer( final Player p ) {
         return getPlayers( ).stream( ).anyMatch( p2 -> p.getNumero( ) == p2.getNumero( ) );
     }
-
 }

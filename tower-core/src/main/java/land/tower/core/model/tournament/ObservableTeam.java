@@ -53,6 +53,11 @@ public final class ObservableTeam {
         _pairingFlags.addListener( (MapChangeListener<String, String>) change -> {
             _dirty.set( true );
         } );
+
+        _extraInfo.set( FXCollections.observableMap( team.getExtraInfo( ) ) );
+        _extraInfo.addListener( (MapChangeListener<String, String>) change -> {
+            _dirty.set( true );
+        } );
     }
 
     public Team getTeam( ) {
@@ -119,6 +124,14 @@ public final class ObservableTeam {
         return _pairingFlags;
     }
 
+    public ObservableMap<String, String> getExtraInfo( ) {
+        return _extraInfo.get( );
+    }
+
+    public SimpleMapProperty<String, String> extraInfoProperty( ) {
+        return _extraInfo;
+    }
+
     public void markAsClean( ) {
         _ranking.setDirty( false );
         _dirty.set( false );
@@ -132,6 +145,7 @@ public final class ObservableTeam {
     private final SimpleIntegerProperty _id;
     private final ObservableRanking _ranking;
     private final SimpleMapProperty<String, String> _pairingFlags = new SimpleMapProperty<>( );
+    private final SimpleMapProperty<String, String> _extraInfo = new SimpleMapProperty<>( );
 
     public static final ObservableTeam BYE_TEAM = new ObservableTeam( Teams.BYE_TEAM );
 }

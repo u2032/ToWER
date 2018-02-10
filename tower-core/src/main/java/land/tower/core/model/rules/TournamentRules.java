@@ -34,4 +34,5 @@ public final class TournamentRules {
 
     private final Map<PairingMode, PairingRule> pairingRules;
 
+    private final Map<String, String[]> teamExtraInfo;
 }

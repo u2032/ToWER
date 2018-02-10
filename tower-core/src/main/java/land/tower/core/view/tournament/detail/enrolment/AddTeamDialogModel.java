@@ -19,7 +19,9 @@ import com.google.inject.assistedinject.Assisted;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -28,6 +30,7 @@ import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.player.suggestion.IPlayerSuggestionProvider;
+import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Player;
 import land.tower.data.Team;
@@ -55,13 +58,15 @@ public final class AddTeamDialogModel {
     @Inject
     public AddTeamDialogModel( final I18nTranslator translator, @Assisted final ObservableTournament tournament,
                                final Stage owner,
-                               final IPlayerSuggestionProvider playerSuggestionProvider ) {
+                               final IPlayerSuggestionProvider playerSuggestionProvider,
+                               final ITournamentRulesProvider rulesProvider ) {
         _i18n = translator;
         _tournament = tournament;
         _owner = owner;
         _playerSuggestionProvider = playerSuggestionProvider;
 
         _players = new Player[tournament.getHeader( ).getTeamSize( )];
+        _rulesProvider = rulesProvider;
         _defaultTeamName.set( _i18n.get( "team.name.prompt" ).get( ) );
     }
 
@@ -155,7 +160,25 @@ public final class AddTeamDialogModel {
             team.setName( teamName );
         }
         team.setPlayers( Arrays.asList( _players ) );
+        team.getExtraInfo( ).putAll( _extraInfo );
         return team;
+    }
+
+    public Map<String, String[]> getTeamExtraInfo( ) {
+        return _rulesProvider.forGame( _tournament.getHeader( ).getGame( ) )
+                             .getTeamExtraInfo( );
+    }
+
+    public void registerExtraInfo( final String key, final String newValue ) {
+        if ( newValue == null ) {
+            _extraInfo.remove( key );
+        } else {
+            _extraInfo.put( key, newValue );
+        }
+    }
+
+    public String getExtraInfo( String key ) {
+        return _extraInfo.get( key );
     }
 
     private final I18nTranslator _i18n;
@@ -169,4 +192,8 @@ public final class AddTeamDialogModel {
     private final SimpleIntegerProperty _selectedPlayerCount = new SimpleIntegerProperty( );
     private final SimpleStringProperty _teamName = new SimpleStringProperty( );
     private final SimpleStringProperty _defaultTeamName = new SimpleStringProperty( );
+    private final Map<String, String> _extraInfo = new HashMap<>( 0 );
+
+    private final ITournamentRulesProvider _rulesProvider;
+
 }

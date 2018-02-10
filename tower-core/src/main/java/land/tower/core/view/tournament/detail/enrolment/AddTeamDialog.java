@@ -17,9 +17,12 @@ package land.tower.core.view.tournament.detail.enrolment;
 import org.controlsfx.control.textfield.AutoCompletionBinding.AutoCompletionEvent;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -27,6 +30,7 @@ import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -90,6 +94,35 @@ final class AddTeamDialog extends Dialog<Team> {
         nameLabel.setLabelFor( nameField );
         grid.add( nameLabel, 0, line );
         grid.add( nameField, 1, line );
+
+        // TODO
+        final Map<String, String[]> teamExtraInfo = _model.getTeamExtraInfo( );
+        for ( Entry<String, String[]> e : teamExtraInfo.entrySet( ) ) {
+            line++;
+            final ComboBox<String> extraInfo = new ComboBox<>( );
+            extraInfo.setItems( FXCollections.observableArrayList( e.getValue( ) ) );
+            extraInfo.setConverter( new StringConverter<String>( ) {
+                @Override
+                public String toString( final String object ) {
+                    return _model.getI18n( ).get( "team.extra." + e.getKey( ) + "." + object ).get( );
+                }
+
+                @Override
+                public String fromString( final String string ) {
+                    return null;
+                }
+            } );
+            extraInfo.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+                _model.registerExtraInfo( e.getKey( ), newValue );
+            } );
+            extraInfo.setValue( _model.getExtraInfo( e.getKey( ) ) );
+
+            final Label extraInfoLabel = new Label( );
+            extraInfoLabel.textProperty( ).bind( _model.getI18n( ).get( "team.extra." + e.getKey( ) ) );
+            extraInfoLabel.setLabelFor( extraInfo );
+            grid.add( extraInfoLabel, 0, line );
+            grid.add( extraInfo, 1, line );
+        }
 
         line++;
         final Text errorLabel = new Text( );
