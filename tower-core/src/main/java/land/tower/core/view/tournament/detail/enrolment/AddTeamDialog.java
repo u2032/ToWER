@@ -14,6 +14,8 @@
 
 package land.tower.core.view.tournament.detail.enrolment;
 
+import com.jfoenix.controls.JFXComboBox;
+
 import org.controlsfx.control.textfield.AutoCompletionBinding.AutoCompletionEvent;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
@@ -95,11 +97,10 @@ final class AddTeamDialog extends Dialog<Team> {
         grid.add( nameLabel, 0, line );
         grid.add( nameField, 1, line );
 
-        // TODO
         final Map<String, String[]> teamExtraInfo = _model.getTeamExtraInfo( );
         for ( Entry<String, String[]> e : teamExtraInfo.entrySet( ) ) {
             line++;
-            final ComboBox<String> extraInfo = new ComboBox<>( );
+            final ComboBox<String> extraInfo = new JFXComboBox<>( );
             extraInfo.setItems( FXCollections.observableArrayList( e.getValue( ) ) );
             extraInfo.setConverter( new StringConverter<String>( ) {
                 @Override

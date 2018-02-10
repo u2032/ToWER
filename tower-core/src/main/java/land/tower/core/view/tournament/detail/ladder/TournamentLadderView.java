@@ -28,16 +28,20 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.view.component.FaButton;
@@ -93,6 +97,19 @@ public final class TournamentLadderView extends Tab {
 
         final TableColumn<ObservableTeam, String> extraInfo = new TableColumn<>( );
         extraInfo.textProperty( ).bind( _model.getI18n( ).get( "team.extraInfo" ) );
+        extraInfo.setCellFactory( tc -> {
+            final TableCell<ObservableTeam, String> cell = new TableCell<>( );
+            final Text text = new Text( );
+            cell.setGraphic( text );
+            cell.setPrefHeight( Control.USE_COMPUTED_SIZE );
+            //text.wrappingWidthProperty( ).bind( extraInfo.widthProperty( ) );
+            text.textProperty( ).bind( cell.itemProperty( ) );
+
+            final Tooltip tooltip = new Tooltip( );
+            tooltip.textProperty( ).bind( text.textProperty( ) );
+            cell.setTooltip( tooltip );
+            return cell;
+        } );
         extraInfo.setCellValueFactory(
             param -> {
                 final ObservableTeam value = param.getValue( );
