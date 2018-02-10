@@ -19,6 +19,7 @@ import com.jfoenix.controls.JFXComboBox;
 
 import java.util.regex.Pattern;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -104,26 +105,55 @@ final class ChainTournamentDialog extends Dialog<Void> {
         grid.add( teamCountField, 1, line );
 
         line++;
-        final CheckBox activeTeamsOnlyCheckbox = new JFXCheckBox( );
-        activeTeamsOnlyCheckbox.selectedProperty( ).bindBidirectional( model.activeTeamsOnlyProperty( ) );
+        _activeTeamsOnlyCheckbox = new JFXCheckBox( );
+        _activeTeamsOnlyCheckbox.selectedProperty( ).bindBidirectional( model.activeTeamsOnlyProperty( ) );
 
         final Label activeTeamOnlyLabel = new Label( );
         activeTeamOnlyLabel.getStyleClass( ).add( "important" );
         activeTeamOnlyLabel.textProperty( ).bind( model.getI18n( ).get( "tournament.chaining.active.teams.only" ) );
-        activeTeamOnlyLabel.setLabelFor( activeTeamsOnlyCheckbox );
+        activeTeamOnlyLabel.setLabelFor( _activeTeamsOnlyCheckbox );
         grid.add( activeTeamOnlyLabel, 0, line );
-        grid.add( activeTeamsOnlyCheckbox, 1, line );
+        grid.add( _activeTeamsOnlyCheckbox, 1, line );
 
-        final long activeTeams = _model.getTournament( ).getTeams( ).stream( )
-                                       .filter( ObservableTeam::isActive )
-                                       .count( );
-        if ( activeTeams < 2 ) {
-            activeTeamsOnlyCheckbox.setSelected( false );
-            activeTeamsOnlyCheckbox.setDisable( true );
+        line++;
+        final CheckBox selectedTeamsOnlyCheckbox = new JFXCheckBox( );
+        selectedTeamsOnlyCheckbox.selectedProperty( ).bindBidirectional( model.selectedTeamsOnlyProperty( ) );
+
+        final Label selectedTeamOnlyLabel = new Label( );
+        selectedTeamOnlyLabel.getStyleClass( ).add( "important" );
+        selectedTeamOnlyLabel.textProperty( ).bind( model.getI18n( ).get( "tournament.chaining.selected.teams.only" ) );
+        selectedTeamOnlyLabel.setLabelFor( selectedTeamOnlyLabel );
+        grid.add( selectedTeamOnlyLabel, 0, line );
+        grid.add( selectedTeamsOnlyCheckbox, 1, line );
+
+        if ( model.getSelectedTeams( ) == null || model.getSelectedTeams( ).size( ) < 2 ) {
+            selectedTeamsOnlyCheckbox.setSelected( false );
+            selectedTeamsOnlyCheckbox.setDisable( true );
         }
+
+        selectedTeamsOnlyCheckbox.selectedProperty( )
+                                 .addListener( ( observable, oldValue, newValue ) -> updateActiveTeamsCheckbox( ) );
+        updateActiveTeamsCheckbox( );
+
         getDialogPane( ).setContent( grid );
-        getDialogPane( ).setPrefWidth( 500 );
+        getDialogPane( ).setPrefWidth( 650 );
+    }
+
+    private void updateActiveTeamsCheckbox( ) {
+        final ObservableList<ObservableTeam> teams =
+            _model.isSelectedTeamsOnly( ) ? _model.getSelectedTeams( ) : _model.getTournament( ).getTeams( );
+
+        final long activeTeams = teams.stream( )
+                                      .filter( ObservableTeam::isActive )
+                                      .count( );
+        if ( activeTeams < 2 ) {
+            _activeTeamsOnlyCheckbox.setSelected( false );
+            _activeTeamsOnlyCheckbox.setDisable( true );
+        } else {
+            _activeTeamsOnlyCheckbox.setDisable( false );
+        }
     }
 
     private final ChainTournamentDialogModel _model;
+    private final CheckBox _activeTeamsOnlyCheckbox;
 }

@@ -18,11 +18,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.Map;
+import javafx.collections.ObservableList;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.report.LadderReport;
 import land.tower.core.ext.report.ReportEngine;
 import land.tower.core.model.rules.ITournamentRulesProvider;
+import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
 
@@ -31,7 +33,6 @@ import land.tower.core.view.event.InformationEvent;
  * @author Cédric Longo
  */
 public final class TournamentLadderViewModel {
-
 
     public interface Factory {
 
@@ -62,8 +63,9 @@ public final class TournamentLadderViewModel {
         return _closeTournamentDialogModelProvider.forTournament( _tournament );
     }
 
-    void fireChainTournamentDialog( ) {
-        final ChainTournamentDialogModel model = _chainTournamentDialogModelProvider.forTournament( _tournament );
+    void fireChainTournamentDialog( final ObservableList<ObservableTeam> selectedTeams ) {
+        final ChainTournamentDialogModel model =
+            _chainTournamentDialogModelProvider.forTournament( _tournament, selectedTeams );
         new ChainTournamentDialog( model ).show( );
     }
 

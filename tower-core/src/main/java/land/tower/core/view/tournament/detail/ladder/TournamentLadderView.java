@@ -32,6 +32,7 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -71,9 +72,10 @@ public final class TournamentLadderView extends Tab {
     }
 
     private TableView<ObservableTeam> buildTeamList( ) {
-        final TableView<ObservableTeam> tableView = new TableView<>( );
-        tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
-        tableView.itemsProperty( ).bind( new SimpleListProperty<>( _model.getTournament( ).getTeams( ) ) );
+        _tableView = new TableView<>( );
+        _tableView.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
+        _tableView.itemsProperty( ).bind( new SimpleListProperty<>( _model.getTournament( ).getTeams( ) ) );
+        _tableView.getSelectionModel( ).setSelectionMode( SelectionMode.MULTIPLE );
 
         final TableColumn<ObservableTeam, Integer> rankCol = new TableColumn<>( );
         rankCol.setPrefWidth( 50 );
@@ -81,19 +83,19 @@ public final class TournamentLadderView extends Tab {
         rankCol.setMaxWidth( 100 );
         rankCol.textProperty( ).bind( _model.getI18n( ).get( "ranking.rank" ) );
         rankCol.setCellValueFactory( param -> param.getValue( ).getRanking( ).rankProperty( ) );
-        tableView.getColumns( ).add( rankCol );
-        tableView.getSortOrder( ).add( rankCol );
+        _tableView.getColumns( ).add( rankCol );
+        _tableView.getSortOrder( ).add( rankCol );
         setOnSelectionChanged( t -> {
             if ( isSelected( ) ) {
-                tableView.sort( );
-                resetRowFactory( tableView );
+                _tableView.sort( );
+                resetRowFactory( _tableView );
             }
         } );
 
         final TableColumn<ObservableTeam, String> nameCol = new TableColumn<>( );
         nameCol.textProperty( ).bind( _model.getI18n( ).get( "team.name" ) );
         nameCol.setCellValueFactory( new PropertyValueFactory<>( "name" ) );
-        tableView.getColumns( ).add( nameCol );
+        _tableView.getColumns( ).add( nameCol );
 
         final TableColumn<ObservableTeam, String> extraInfo = new TableColumn<>( );
         extraInfo.textProperty( ).bind( _model.getI18n( ).get( "team.extraInfo" ) );
@@ -130,7 +132,7 @@ public final class TournamentLadderView extends Tab {
         extraInfo.visibleProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
             return !_model.getTeamExtraInformation( ).isEmpty( );
         }, _model.getTournament( ).getHeader( ).gameProperty( ) ) );
-        tableView.getColumns( ).add( extraInfo );
+        _tableView.getColumns( ).add( extraInfo );
 
         final TableColumn<ObservableTeam, String> playersCol = new TableColumn<>( );
         playersCol.textProperty( ).bind( _model.getI18n( ).get( "team.players" ) );
@@ -140,16 +142,16 @@ public final class TournamentLadderView extends Tab {
                                                                                p.getLastname( ).toUpperCase( ),
                                                                                p.getFirstname( ) ) )
                                                      .collect( Collectors.joining( ", " ) ) ) );
-        tableView.getColumns( ).add( playersCol );
+        _tableView.getColumns( ).add( playersCol );
 
         final TableColumn<ObservableTeam, Integer> pointsCol = new TableColumn<>( );
         pointsCol.textProperty( ).bind( _model.getI18n( ).get( "ranking.points" ) );
         pointsCol.setCellValueFactory( param -> param.getValue( ).getRanking( ).pointsProperty( ) );
-        tableView.getColumns( ).add( pointsCol );
+        _tableView.getColumns( ).add( pointsCol );
 
         final TableColumn<ObservableTeam, Integer> dCol = new TableColumn<>( );
         dCol.textProperty( ).bind( _model.getI18n( ).get( "ranking.tiebreakers" ) );
-        tableView.getColumns( ).add( dCol );
+        _tableView.getColumns( ).add( dCol );
 
         final TableColumn<ObservableTeam, Integer> d1Col = new TableColumn<>( );
         d1Col.setMaxWidth( 50 );
@@ -181,11 +183,11 @@ public final class TournamentLadderView extends Tab {
 
         final Label emptyLabel = new Label( );
         emptyLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.ranking.no.team" ) );
-        tableView.setPlaceholder( emptyLabel );
+        _tableView.setPlaceholder( emptyLabel );
 
-        resetRowFactory( tableView );
-        tableView.setOnSort( e -> resetRowFactory( tableView ) );
-        return tableView;
+        resetRowFactory( _tableView );
+        _tableView.setOnSort( e -> resetRowFactory( _tableView ) );
+        return _tableView;
     }
 
     private void resetRowFactory( final TableView<ObservableTeam> tableView ) {
@@ -223,7 +225,7 @@ public final class TournamentLadderView extends Tab {
         chainButton.getStyleClass( ).add( "rich-button" );
         chainButton.getStyleClass( ).add( "action-button" );
         chainButton.setOnAction( event -> {
-            _model.fireChainTournamentDialog( );
+            _model.fireChainTournamentDialog( _tableView.getSelectionModel( ).getSelectedItems( ) );
         } );
         chainButton.visibleProperty( ).bind( _model.getTournament( ).getHeader( ).statusProperty( )
                                                    .isEqualTo( TournamentStatus.CLOSED ) );
@@ -296,4 +298,5 @@ public final class TournamentLadderView extends Tab {
 
     private final TournamentLadderViewModel _model;
 
+    private TableView<ObservableTeam> _tableView;
 }

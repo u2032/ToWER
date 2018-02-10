@@ -14,14 +14,16 @@
 
 package land.tower.core.view.tournament.detail.ladder;
 
+import static java.util.Comparator.comparingInt;
+
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
@@ -46,13 +48,15 @@ public final class ChainTournamentDialogModel {
 
     public interface Factory {
 
-        ChainTournamentDialogModel forTournament( ObservableTournament tournament );
+        ChainTournamentDialogModel forTournament( ObservableTournament tournament,
+                                                  ObservableList<ObservableTeam> selectedTeams );
     }
 
     @Inject
     public ChainTournamentDialogModel( final I18nTranslator translator,
                                        final Stage owner,
                                        @Assisted final ObservableTournament tournament,
+                                       @Assisted final ObservableList<ObservableTeam> selectedTeams,
                                        final TournamentRepository tournamentRepository,
                                        final ITournamentRulesProvider tournamentRules,
                                        final EventBus eventBus,
@@ -60,6 +64,7 @@ public final class ChainTournamentDialogModel {
         _i18n = translator;
         _owner = owner;
         _tournament = tournament;
+        _selectedTeams = selectedTeams;
         _tournamentRepository = tournamentRepository;
         _tournamentRules = tournamentRules;
         _eventBus = eventBus;
@@ -144,8 +149,20 @@ public final class ChainTournamentDialogModel {
         return _activeTeamsOnly.get( );
     }
 
+    public boolean isSelectedTeamsOnly( ) {
+        return _selectedTeamsOnly.get( );
+    }
+
+    public SimpleBooleanProperty selectedTeamsOnlyProperty( ) {
+        return _selectedTeamsOnly;
+    }
+
     public ObservableTournament getTournament( ) {
         return _tournament;
+    }
+
+    public ObservableList<ObservableTeam> getSelectedTeams( ) {
+        return _selectedTeams;
     }
 
     public void fireCreateTournament( ) {
@@ -168,9 +185,10 @@ public final class ChainTournamentDialogModel {
         newTournament.getHeader( ).getAddress( ).setCountry( _tournament.getHeader( ).getAddress( ).getCountry( ) );
 
         // Registration of teams
-        final List<ObservableTeam> teams = _tournament.getTeams( ).stream( )
-                                                      .sorted(
-                                                          Comparator.comparingInt( t -> t.getRanking( ).getRank( ) ) )
+        final ObservableList<ObservableTeam> fromList =
+            isSelectedTeamsOnly( ) ? _selectedTeams : _tournament.getTeams( );
+        final List<ObservableTeam> teams = fromList.stream( )
+                                                   .sorted( comparingInt( t -> t.getRanking( ).getRank( ) ) )
                                                       .filter( t -> !_activeTeamsOnly.get( ) || t.isActive( ) )
                                                       .limit( _teamCount.get( ) )
                                                       .collect( Collectors.toList( ) );
@@ -200,12 +218,15 @@ public final class ChainTournamentDialogModel {
 
     private final SimpleObjectProperty<Long> _teamCount = new SimpleObjectProperty<>( );
     private final SimpleBooleanProperty _activeTeamsOnly = new SimpleBooleanProperty( );
-    private final SimpleObjectProperty<PairingMode> _pairingMode = new SimpleObjectProperty<>( PairingMode.DIRECT_ELIMINATION );
+    private final SimpleBooleanProperty _selectedTeamsOnly = new SimpleBooleanProperty( );
+    private final SimpleObjectProperty<PairingMode> _pairingMode =
+        new SimpleObjectProperty<>( PairingMode.DIRECT_ELIMINATION );
 
     private final I18nTranslator _i18n;
     private final Stage _owner;
     private final ObservableTournament _tournament;
 
+    private final ObservableList<ObservableTeam> _selectedTeams;
     private final TournamentRepository _tournamentRepository;
     private final ITournamentRulesProvider _tournamentRules;
     private final EventBus _eventBus;
