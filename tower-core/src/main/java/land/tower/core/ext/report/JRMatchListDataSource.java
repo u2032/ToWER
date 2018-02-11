@@ -70,6 +70,10 @@ final class JRMatchListDataSource implements JRRewindableDataSource {
         index = -1;
     }
 
+    List<ObservableMatch> getMatches( ) {
+        return _matches;
+    }
+
     private final ObservableTournament _tournament;
     private final List<ObservableMatch> _matches;
     private int index = -1;

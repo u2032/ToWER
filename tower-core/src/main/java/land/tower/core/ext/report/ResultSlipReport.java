@@ -16,8 +16,6 @@ package land.tower.core.ext.report;
 
 import com.google.inject.assistedinject.Assisted;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -57,7 +55,7 @@ public final class ResultSlipReport implements Report {
     }
 
     @Override
-    public JRDataSource getJRDataSource( ) {
+    public JRMatchListDataSource getJRDataSource( ) {
         final int NUMBER_BY_PAGE = 6; // according to the design of the template
         final List<ObservableMatch> byPosition = _round.getMatches( )
                                                        .stream( )

@@ -71,6 +71,10 @@ final class JRTeamListDataSource implements JRRewindableDataSource {
         index = -1;
     }
 
+    List<ObservableTeam> getTeams( ) {
+        return _teams;
+    }
+
     private final List<ObservableTeam> _teams;
     private int index = -1;
 }

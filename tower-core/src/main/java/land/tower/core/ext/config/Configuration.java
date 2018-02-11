@@ -17,6 +17,7 @@ package land.tower.core.ext.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 import com.google.common.base.StandardSystemProperty;
 import com.google.common.base.Throwables;
@@ -173,6 +174,11 @@ public final class Configuration {
                        .omitEmptyStrings( )
                        .trimResults( )
                        .splitToList( get( "i18n.bundles" ) );
+    }
+
+    @VisibleForTesting
+    void register( String key, String value ) {
+        _config.put( key, value );
     }
 
     private final Map<String, String> _config = Maps.newHashMap( );

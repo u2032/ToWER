@@ -33,7 +33,7 @@ import land.tower.core.ext.logger.Loggers;
  * Created on 21/01/2018
  * @author Cédric Longo
  */
-final class SingletonAppServer implements Runnable {
+class SingletonAppServer implements Runnable {
 
     @Inject
     SingletonAppServer( final EventBus eventBus, final Configuration configuration ) {

@@ -32,7 +32,7 @@ import land.tower.core.ext.logger.Loggers;
  * Created on 21/01/2018
  * @author Cédric Longo
  */
-final class SingletonAppClient {
+class SingletonAppClient {
 
     @Inject
     SingletonAppClient( final Configuration configuration ) {

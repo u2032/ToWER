@@ -16,8 +16,6 @@ package land.tower.core.ext.report;
 
 import com.google.inject.assistedinject.Assisted;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +47,7 @@ public final class LadderReport implements Report {
     }
 
     @Override
-    public JRDataSource getJRDataSource( ) {
+    public JRTeamListDataSource getJRDataSource( ) {
         return new JRTeamListDataSource( _tournament.getTeams( ),
                                          Comparator.comparing( t -> t.getRanking( ).getRank( ) ) );
     }

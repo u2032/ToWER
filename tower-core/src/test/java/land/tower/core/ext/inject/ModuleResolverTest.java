@@ -44,6 +44,20 @@ class ModuleResolverTest {
         assertThat( modules ).hasAtLeastOneElementOfType( ModuleB.class );
     }
 
+    @Test
+    @DisplayName( "Module resolver register requested modules" )
+    void withModuleTest( ) throws Exception {
+        // Setup
+        // Exercice
+        final List<Module> modules = ModuleResolver.withModules( new ModuleA( ) )
+                                                   .with( new ModuleC( ) )
+                                                   .getModules( );
+        // Verify
+        assertThat( modules ).hasSize( 2 );
+        assertThat( modules ).hasAtLeastOneElementOfType( ModuleC.class );
+        assertThat( modules ).hasAtLeastOneElementOfType( ModuleA.class );
+    }
+
     private class ModuleA extends AbstractModule {
 
         @Override

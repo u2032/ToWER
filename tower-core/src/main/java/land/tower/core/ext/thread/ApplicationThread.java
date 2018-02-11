@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  */
 @BindingAnnotation
 @Retention( RetentionPolicy.RUNTIME )
-@Target( { ElementType.METHOD, ElementType.PARAMETER } )
+@Target( { ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD } )
 public @interface ApplicationThread {
 
 }

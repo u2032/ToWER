@@ -14,10 +14,13 @@
 
 package land.tower.core.ext.config;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import land.tower.core.ext.i18n.Language;
 
 /**
  * Created on 15/12/2017
@@ -34,5 +37,41 @@ class ConfigurationTest {
         final String splashscreen = config.get( "splashscreen" );
         // Verify
         assertThat( splashscreen ).isEqualTo( "img/splashscreen.png" );
+    }
+
+    @Test
+    @DisplayName( "GetTitle returns title value" )
+    void getTitleTest( ) throws Exception {
+        // Setup
+        final Configuration config = new Configuration( "config.properties" );
+        config.register( "title", "mytitle" );
+        // Exercice
+        final String title = config.getTitle( );
+        // Verify
+        assertThat( title ).isEqualTo( "mytitle" );
+    }
+
+    @Test
+    @DisplayName( "GameList returns expected values" )
+    void gameListTest( ) throws Exception {
+        // Setup
+        final Configuration config = new Configuration( "config.properties" );
+        config.register( "games", "Game1, Game2" );
+        // Exercice
+        final List<String> games = config.gameList( );
+        // Verify
+        assertThat( games ).contains( "Game1", "Game2" );
+    }
+
+    @Test
+    @DisplayName( "Available languages returns expected values" )
+    void availableLanguageTest( ) throws Exception {
+        // Setup
+        final Configuration config = new Configuration( "config.properties" );
+        config.register( "languages", "en" );
+        // Exercice
+        final Language[] languages = config.availableLanguages( );
+        // Verify
+        assertThat( languages ).contains( Language.EN );
     }
 }

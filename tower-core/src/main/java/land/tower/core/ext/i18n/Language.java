@@ -41,8 +41,11 @@ public enum Language {
     }
 
     public static Optional<Language> fromCode( final String code ) {
+        if ( code == null ) {
+            return Optional.empty( );
+        }
         return Stream.of( values( ) )
-                     .filter( l -> l.getCode( ).startsWith( code ) )
+                     .filter( l -> code.startsWith( l.getCode( ) ) )
                      .findAny( );
     }
 

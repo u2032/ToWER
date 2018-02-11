@@ -20,10 +20,11 @@ import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -48,7 +49,7 @@ final class PreferenceService implements IService {
     @Override
     public void start( ) {
         final Path path = _configuration.dataDirectory( ).resolve( "preferences.json" );
-        try ( FileReader in = new FileReader( path.toFile( ) ) ) {
+        try ( final BufferedReader in = Files.newBufferedReader( path, StandardCharsets.UTF_8 ) ) {
             final Map<String, String> map = new Gson( )
                                                 .fromJson( in, new TypeToken<Map<String, String>>( ) {
                                                 }.getType( ) );
@@ -74,7 +75,7 @@ final class PreferenceService implements IService {
             _logger.error( "Can't create directories: " + path.getParent( ).toAbsolutePath( ), e );
         }
 
-        try ( final FileWriter out = new FileWriter( path.toFile( ) ) ) {
+        try ( final BufferedWriter out = Files.newBufferedWriter( path, StandardCharsets.UTF_8 ) ) {
             new Gson( ).toJson( _preferences.getItems( ), out );
             out.close( );
 

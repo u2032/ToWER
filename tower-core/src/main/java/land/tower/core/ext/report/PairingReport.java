@@ -16,8 +16,6 @@ package land.tower.core.ext.report;
 
 import com.google.inject.assistedinject.Assisted;
 
-import net.sf.jasperreports.engine.JRDataSource;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -59,7 +57,7 @@ public final class PairingReport implements Report {
     }
 
     @Override
-    public JRDataSource getJRDataSource( ) {
+    public JRMatchListDataSource getJRDataSource( ) {
         if ( !_byName ) {
             return new JRMatchListDataSource( _tournament, _round.getMatches( ),
                                               Comparator.comparing( ObservableMatch::getPosition ) );

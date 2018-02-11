@@ -62,6 +62,33 @@ class I18nTranslatorTest {
         assertThat(value).isEqualTo( "key3" );
     }
 
+    @Test
+    @DisplayName( "Getting text with parameters replaced correctly placeholders" )
+    void getWithParamaters( ) throws Exception {
+        // Setup
+        final Properties properties = new Properties( );
+        properties.setProperty( "key1", "value %1$s of %2$s or %1$s" );
+        properties.setProperty( "key2", "value2" );
+        _i18nTranslator.registerEntries( properties );
+        // Exercice
+        final String value = _i18nTranslator.get( "key1", "none", "any" );
+        // Verify
+        assertThat( value ).isEqualTo( "value none of any or none" );
+    }
+
+    @Test
+    @DisplayName( "Has method returns true is translator has key" )
+    void hasTest( ) throws Exception {
+        // Setup
+        final Properties properties = new Properties( );
+        properties.setProperty( "key1", "value %1$s of %2$s or %1$s" );
+        properties.setProperty( "key2", "value2" );
+        _i18nTranslator.registerEntries( properties );
+        // Exercice
+        // Verify
+        assertThat( _i18nTranslator.has( "key1" ) ).isTrue( );
+        assertThat( _i18nTranslator.has( "key3" ) ).isFalse( );
+    }
 
     private I18nTranslator _i18nTranslator;
 }
