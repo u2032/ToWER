@@ -41,6 +41,7 @@ final class ApplicationMenuBar extends MenuBar {
         getMenus( ).add( playerMenu( ) );
         getMenus( ).add( tournamentMenu( ) );
         getMenus( ).add( optionMenu( ) );
+        getMenus( ).addAll( _model.extraMenus( ) );
         getMenus( ).add( aboutMenu( ) );
     }
 

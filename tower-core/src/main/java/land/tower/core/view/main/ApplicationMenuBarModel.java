@@ -19,6 +19,7 @@ import com.google.common.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.Set;
 import javafx.application.HostServices;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Alert;
@@ -26,6 +27,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Menu;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -80,7 +82,8 @@ final class ApplicationMenuBarModel {
                              final Configuration configuration, final HostServices hostServices,
                              final PlayerRepository playerRepository,
                              final Provider<Stage> owner,
-                             final ITournamentStorage tournamentStorage ) {
+                             final ITournamentStorage tournamentStorage,
+                             final Set<Menu> extraMenus ) {
         _eventBus = eventBus;
         _tournamentManagementViewProvider = tournamentManagementViewProvider;
         _playerManagementViewProvider = playerManagementViewProvider;
@@ -95,6 +98,7 @@ final class ApplicationMenuBarModel {
         _playerRepository = playerRepository;
         _owner = owner;
         _tournamentStorage = tournamentStorage;
+        _extraMenus = extraMenus;
         _eventBus.register( this );
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
@@ -251,6 +255,10 @@ final class ApplicationMenuBarModel {
         }
     }
 
+    public Set<Menu> extraMenus( ) {
+        return _extraMenus;
+    }
+
     private final EventBus _eventBus;
     private final I18nTranslator _i18n;
     private final Provider<HomepageView> _homepageViewProvider;
@@ -276,6 +284,7 @@ final class ApplicationMenuBarModel {
     private final Provider<Stage> _owner;
 
     private final ITournamentStorage _tournamentStorage;
+    private final Set<Menu> _extraMenus;
 }
 
 

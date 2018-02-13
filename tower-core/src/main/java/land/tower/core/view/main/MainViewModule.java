@@ -16,6 +16,9 @@ package land.tower.core.view.main;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.google.inject.multibindings.Multibinder;
+
+import javafx.scene.control.Menu;
 
 /**
  * Created on 12/11/2017
@@ -31,5 +34,7 @@ public final class MainViewModule extends AbstractModule {
         bind( ApplicationMenuBarModel.class ).in( Scopes.SINGLETON );
         bind( ApplicationStatusBar.class ).in( Scopes.SINGLETON );
         bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
+
+        Multibinder.newSetBinder( binder( ), Menu.class );
     }
 }
