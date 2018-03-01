@@ -195,7 +195,6 @@ public final class TournamentInformationTab extends Tab {
             final Label gameLabel = new Label( );
             gameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.game" ) );
             gameLabel.setLabelFor( gameField );
-            gameField.disableProperty( ).bind( tournamentOpened.not( ) );
             grid.add( gameLabel, 0, line );
             grid.add( gameField, 1, line );
         }
