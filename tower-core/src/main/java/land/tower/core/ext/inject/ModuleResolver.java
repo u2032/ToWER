@@ -39,6 +39,13 @@ public final class ModuleResolver {
         return this;
     }
 
+    public ModuleResolver with( final List<Module> modules ) {
+        for ( final Module module : modules ) {
+            with( module );
+        }
+        return this;
+    }
+
     public ModuleResolver override( final Class mclass, final Module module ) {
         _modules.removeIf( mclass::isInstance );
         _modules.add( module );

@@ -181,6 +181,7 @@ final class ManualPairingDialog extends Dialog<Void> {
 
         final TableColumn<ObservableMatch, Integer> posCol = new TableColumn<>( );
         posCol.setEditable( false );
+        posCol.setMinWidth( 30 );
         posCol.setMaxWidth( 100 );
         posCol.textProperty( ).bind( _model.getI18n( ).get( "match.position" ) );
         posCol.setCellValueFactory( new PropertyValueFactory<>( "position" ) );

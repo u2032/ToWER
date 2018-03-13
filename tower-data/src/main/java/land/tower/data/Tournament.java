@@ -14,11 +14,17 @@
 
 package land.tower.data;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import land.tower.data.adapter.ZonedDateTimeAdapter;
 
 /**
  * Created on 16/12/2017
@@ -40,6 +46,9 @@ public final class Tournament {
 
     @SerializedName( "rounds" )
     private List<Round> _rounds = new ArrayList<>( 3 );
+
+    @SerializedName( "flags" )
+    private Map<String, String> _flags = new HashMap<>( 0 );
 
     // TODO Final ranking
 
@@ -78,4 +87,20 @@ public final class Tournament {
     public List<Round> getRounds( ) {
         return _rounds;
     }
+
+    public Map<String, String> getFlags( ) {
+        return _flags;
+    }
+
+    public String toJson( ) {
+        return GSON.toJson( this );
+    }
+
+    public static Tournament fromJson( String json ) {
+        return GSON.fromJson( json, Tournament.class );
+    }
+
+    private static final Gson GSON = new GsonBuilder( )
+                                         .registerTypeAdapter( ZonedDateTime.class, new ZonedDateTimeAdapter( ) )
+                                         .create( );
 }

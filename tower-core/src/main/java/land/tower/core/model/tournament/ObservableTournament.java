@@ -18,10 +18,13 @@ import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import land.tower.data.Teams;
 import land.tower.data.Tournament;
 import land.tower.data.TournamentStatus;
@@ -38,6 +41,11 @@ public final class ObservableTournament {
         _header.dirtyProperty( )
                .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
         _header.dateProperty( ).addListener( ( observable, oldValue, newValue ) -> updateStatus( ) );
+
+        _flags.set( FXCollections.observableMap( tournament.getFlags( ) ) );
+        _flags.addListener( (MapChangeListener<String, String>) change -> {
+            _dirty.set( true );
+        } );
 
         tournament.getTeams( )
                   .forEach( team -> {
@@ -155,6 +163,14 @@ public final class ObservableTournament {
         return _currentRound;
     }
 
+    public ObservableMap<String, String> getFlags( ) {
+        return _flags.get( );
+    }
+
+    public SimpleMapProperty<String, String> flagsProperty( ) {
+        return _flags;
+    }
+
     public void markAsClean( ) {
         getHeader( ).markAsClean( );
         getRounds( ).forEach( ObservableRound::markAsClean );
@@ -170,6 +186,7 @@ public final class ObservableTournament {
     private final ObservableTournamentHeader _header;
     private final ObservableList<ObservableTeam> _teams = FXCollections.observableArrayList( );
     private final ObservableList<ObservableRound> _rounds = FXCollections.observableArrayList( );
+    private final SimpleMapProperty<String, String> _flags = new SimpleMapProperty<>( );
 
     private final SimpleObjectProperty<ObservableRound> _currentRound = new SimpleObjectProperty<>( );
 
