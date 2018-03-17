@@ -29,6 +29,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.model.player.IPlayerNumeroValidator;
+import land.tower.core.model.player.PlayerRepository;
 import land.tower.core.model.player.suggestion.IPlayerSuggestionProvider;
 import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableTournament;
@@ -49,6 +51,10 @@ public final class AddTeamDialogModel {
         return _defaultTeamName;
     }
 
+    public IPlayerNumeroValidator getPlayerNumeroValidator( ) {
+        return _playerNumeroValidator;
+    }
+
     public interface Factory {
 
         AddTeamDialogModel forTournament( final ObservableTournament tournament );
@@ -59,7 +65,9 @@ public final class AddTeamDialogModel {
     public AddTeamDialogModel( final I18nTranslator translator, @Assisted final ObservableTournament tournament,
                                final Stage owner,
                                final IPlayerSuggestionProvider playerSuggestionProvider,
-                               final ITournamentRulesProvider rulesProvider ) {
+                               final ITournamentRulesProvider rulesProvider,
+                               final PlayerRepository playerRepository,
+                               final IPlayerNumeroValidator playerNumeroValidator ) {
         _i18n = translator;
         _tournament = tournament;
         _owner = owner;
@@ -67,6 +75,8 @@ public final class AddTeamDialogModel {
 
         _players = new Player[tournament.getHeader( ).getTeamSize( )];
         _rulesProvider = rulesProvider;
+        _playerRepository = playerRepository;
+        _playerNumeroValidator = playerNumeroValidator;
         _defaultTeamName.set( _i18n.get( "team.name.prompt" ).get( ) );
     }
 
@@ -103,6 +113,9 @@ public final class AddTeamDialogModel {
     }
 
     public void firePlayerAdded( final Player player, final int index ) {
+        if ( !_playerRepository.getPlayer( player.getNumero( ) ).isPresent( ) ) {
+            _playerRepository.registerPlayer( player );
+        }
         _players[index] = player;
         updateInfo( );
     }
@@ -195,5 +208,6 @@ public final class AddTeamDialogModel {
     private final Map<String, String> _extraInfo = new HashMap<>( 0 );
 
     private final ITournamentRulesProvider _rulesProvider;
-
+    private final PlayerRepository _playerRepository;
+    private final IPlayerNumeroValidator _playerNumeroValidator;
 }

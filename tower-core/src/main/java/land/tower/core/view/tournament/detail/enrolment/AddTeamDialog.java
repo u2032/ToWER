@@ -17,10 +17,15 @@ package land.tower.core.view.tournament.detail.enrolment;
 import com.jfoenix.controls.JFXComboBox;
 
 import org.controlsfx.control.textfield.AutoCompletionBinding.AutoCompletionEvent;
+import org.controlsfx.control.textfield.AutoCompletionBinding.ISuggestionRequest;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -42,6 +47,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import land.tower.core.ext.font.FontAwesome;
@@ -157,6 +163,15 @@ final class AddTeamDialog extends Dialog<Team> {
             new TextFormatter<>( new IntegerStringConverter( ),
                                  null,
                                  c -> Pattern.matches( "\\d*", c.getControlNewText( ) ) ? c : null ) );
+        numeroField.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+            numeroField.setStyle( "-fx-text-fill: darkred; -fx-background-color: lightpink" );
+            try {
+                if ( _model.getPlayerNumeroValidator( ).isValid( Long.parseLong( newValue ) ) ) {
+                    numeroField.setStyle( "-fx-text-fill: darkgreen" );
+                }
+            } catch ( NumberFormatException ignored ) {
+            }
+        } );
 
         if ( line == 0 ) {
             Platform.runLater( numeroField::requestFocus );
@@ -183,8 +198,7 @@ final class AddTeamDialog extends Dialog<Team> {
 
         // Configure autocompletion
 
-        final EventHandler<AutoCompletionEvent<Player>> playerSelectedHandler = event -> {
-            final Player player = event.getCompletion( );
+        final Function<Player, Void> playerSelectedHandler = player -> {
             final Label pLabel = new Label( );
             pLabel.textProperty( ).bind( Bindings.concat(
                 player.getNumero( ), " – ",
@@ -213,21 +227,33 @@ final class AddTeamDialog extends Dialog<Team> {
             hbox.getChildren( ).setAll( pLabel, resetButton );
 
             _model.firePlayerAdded( player, line );
+            return null;
+        };
+
+        final EventHandler<AutoCompletionEvent<Player>> autoCompletionHandler = event -> {
+            final Player player = event.getCompletion( );
+            Platform.runLater( ( ) -> playerSelectedHandler.apply( player ) );
         };
 
         final AutoCompletionTextFieldBinding<Player> autoCompleteName =
-            new AutoCompletionTextFieldBinding<Player>( lastnameField,
-                                                        param -> _model.getPlayerSuggestionsForName(
-                                                            param.getUserText( ) ),
-                                                        playerStringConverter );
-        autoCompleteName.setOnAutoCompleted( playerSelectedHandler );
+            new AutoCompletionTextFieldBinding<>( lastnameField,
+                                                  param -> _model.getPlayerSuggestionsForName( param.getUserText( ) ),
+                                                  playerStringConverter );
+        autoCompleteName.setOnAutoCompleted( autoCompletionHandler );
+        autoCompleteName.setHideOnEscape( false );
 
+        final Callback<ISuggestionRequest, Collection<Player>> suggestionProvider = param -> {
+            final List<Player> suggestions = _model.getPlayerSuggestionsForNumero( param.getUserText( ) );
+            if ( !_model.getPlayerNumeroValidator( ).generate( ).isPresent( ) && suggestions.size( ) == 1 ) {
+                Platform.runLater( ( ) -> playerSelectedHandler.apply( suggestions.get( 0 ) ) );
+                return Collections.emptyList( );
+            }
+            return suggestions;
+        };
         final AutoCompletionTextFieldBinding<Player> autoCompleteNumero =
-            new AutoCompletionTextFieldBinding<Player>( numeroField,
-                                                        param -> _model.getPlayerSuggestionsForNumero(
-                                                            param.getUserText( ) ),
-                                                        playerStringConverter );
-        autoCompleteNumero.setOnAutoCompleted( playerSelectedHandler );
+            new AutoCompletionTextFieldBinding<Player>( numeroField, suggestionProvider, playerStringConverter );
+        autoCompleteNumero.setOnAutoCompleted( autoCompletionHandler );
+        autoCompleteNumero.setHideOnEscape( false );
 
         hbox.getChildren( ).add( numeroField );
         hbox.getChildren( ).add( lastnameField );
