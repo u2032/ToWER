@@ -34,6 +34,7 @@ public interface IRankingComputer {
     default void setRanks( final List<ObservableTeam> teams, final List<ObservableRound> rounds ) {
         // Set Rank
         final AtomicInteger rank = new AtomicInteger( );
+        final AtomicInteger counter = new AtomicInteger( );
         final AtomicReference<ObservableTeam> previous = new AtomicReference<>( );
         teams.stream( )
              .sorted( RANKING_COMPARATOR )
@@ -43,10 +44,12 @@ public interface IRankingComputer {
                      return;
                  }
 
+                 counter.incrementAndGet( );
                  if ( previous.get( ) != null && RANKING_COMPARATOR.compare( previous.get( ), team ) == 0 ) {
                      team.getRanking( ).setRank( rank.get( ) );
                  } else {
-                     team.getRanking( ).setRank( rank.incrementAndGet( ) );
+                     rank.set( counter.get( ) );
+                     team.getRanking( ).setRank( rank.get( ) );
                  }
                  previous.set( team );
              } );

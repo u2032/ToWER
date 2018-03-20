@@ -14,12 +14,8 @@
 
 package land.tower.core.model.pairing.direct;
 
-import static land.tower.core.model.ranking.DefaultRankingComputer.RANKING_COMPARATOR;
-
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import land.tower.core.model.ranking.IRankingComputer;
 import land.tower.core.model.tournament.ObservableRound;
@@ -95,18 +91,7 @@ public final class DirectEliminiationRankingComputer implements IRankingComputer
         }
 
         // Set Rank
-        final AtomicInteger rank = new AtomicInteger( );
-        final AtomicReference<ObservableTeam> previous = new AtomicReference<>( );
-        teams.stream( )
-             .sorted( RANKING_COMPARATOR )
-             .forEach( team -> {
-                 if ( previous.get( ) != null && RANKING_COMPARATOR.compare( previous.get( ), team ) == 0 ) {
-                     team.getRanking( ).setRank( rank.get( ) );
-                 } else {
-                     team.getRanking( ).setRank( rank.incrementAndGet( ) );
-                 }
-                 previous.set( team );
-             } );
+        setRanks( teams, rounds );
     }
 
 }
