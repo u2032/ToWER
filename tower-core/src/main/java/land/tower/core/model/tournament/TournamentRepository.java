@@ -28,6 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
+import land.tower.core.ext.config.Configuration;
 import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.ext.service.IService;
@@ -49,10 +50,11 @@ public final class TournamentRepository implements IService {
     @Inject
     public TournamentRepository( final ITournamentStorage storage,
                                  final @ApplicationThread ScheduledExecutorService scheduler,
-                                 final Preferences preferences ) {
+                                 final Preferences preferences, final Configuration config ) {
         _storage = storage;
         _scheduler = scheduler;
         _preferences = preferences;
+        _config = config;
     }
 
     @Override
@@ -88,6 +90,9 @@ public final class TournamentRepository implements IService {
         final Tournament tournament = new Tournament( );
         tournament.setId( UUID.randomUUID( ) );
         tournament.setKey( UUID.randomUUID( ) );
+        tournament.getFlags( ).put( "app.name", _config.get( "app.name" ) );
+        tournament.getFlags( ).put( "app.version", _config.get( "version" ) );
+        tournament.getFlags( ).put( "app.bundle", _config.bundleType( ) );
 
         final TournamentHeader header = new TournamentHeader( );
         header.setTitle( "" );
@@ -147,6 +152,7 @@ public final class TournamentRepository implements IService {
     private final ITournamentStorage _storage;
     private final ScheduledExecutorService _scheduler;
     private final Preferences _preferences;
+    private final Configuration _config;
 
     private final Logger _logger = LoggerFactory.getLogger( Loggers.MAIN );
 }

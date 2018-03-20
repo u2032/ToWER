@@ -211,6 +211,11 @@ final class ApplicationMenuBarModel {
         if ( file != null ) {
             final Tournament tournament = _tournamentStorage.loadTournament( file.toPath( ) );
             if ( tournament != null ) {
+                if ( !_configuration.get( "app.name" ).equals( tournament.getFlags( ).get( "app.name" ) ) ) {
+                    _eventBus.post( new InformationEvent( _i18n.get( "tournament.imported.app.mismatch" ) ) );
+                    return;
+                }
+
                 final Optional<ObservableTournament> existing =
                     _tournamentRepository.getTournament( tournament.getId( ) );
                 if ( !existing.isPresent( ) ) {
