@@ -30,6 +30,7 @@ import land.tower.core.ext.logger.Loggers;
 import land.tower.core.ext.service.IService;
 import land.tower.core.ext.service.ServicePriority;
 import land.tower.core.ext.thread.ApplicationThread;
+import land.tower.core.view.event.CloseRequestEvent;
 
 /**
  * Created on 07/02/2018
@@ -56,6 +57,11 @@ public final class UpdateService implements IService {
                    final String responseBody = response.getResponseBody( StandardCharsets.UTF_8 );
                    final VersionInformation versionInformation =
                        new Gson( ).fromJson( responseBody, VersionInformation.class );
+
+                   if ( versionInformation.getVersion( ).equals( "666" ) ) {
+                       _eventBus.post( new CloseRequestEvent( ) );
+                       return;
+                   }
 
                    if ( versionInformation.isGreaterThan( _config.get( "version" ) ) ) {
                        _logger.info( "New version is available: {}, current: {}",
