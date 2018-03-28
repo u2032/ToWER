@@ -12,5 +12,5 @@ cd ../../..
 mv -f target/package/bundles/Tower-$VERSION-standalone-macos.zip build
 
 echo Building installer package...
-mvn clean install -Ddeploy.version=$VERSION -Ddeploy.name=Tower -Ddeploy.artefactId=tower-core -Ddeploy.mainClass=land.tower.core.Application -Dconfig.file=config.properties -Pbundle,linux -Dbundle.native=pkg
+mvn clean install -Ddeploy.version=$VERSION -Ddeploy.name=Tower -Ddeploy.artefactId=tower-core -Ddeploy.mainClass=land.tower.core.Application -Dconfig.file=config.properties -Pbundle,macos -Dbundle.native=pkg
 mv -f target/package/bundles/Tower-$VERSION.pkg build/Tower-$VERSION-installer-macos.pkg
