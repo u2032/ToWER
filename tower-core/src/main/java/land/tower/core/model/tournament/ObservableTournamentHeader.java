@@ -15,9 +15,16 @@
 package land.tower.core.model.tournament;
 
 import java.time.ZonedDateTime;
+import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import land.tower.core.view.player.ObservablePlayer;
 import land.tower.data.PairingMode;
 import land.tower.data.TournamentHeader;
 import land.tower.data.TournamentScoringMode;
@@ -76,11 +83,25 @@ public final class ObservableTournamentHeader {
         _scoringMode.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
         _address = new ObservableAddress( _header.getAddress( ) );
-
-        _dirty.setValue( false );
         _address.dirtyProperty( )
                 .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
 
+        _mainJudge = new SimpleObjectProperty<>( header.getMainJudge( ) != null ?
+                                                 new ObservablePlayer( header.getMainJudge( ) ) : null );
+        _mainJudge.addListener(
+            ( obs, oldValue, newValue ) -> header.setMainJudge( newValue == null ? null : newValue.getPlayer( ) ) );
+        _mainJudge.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
+        header.getJudges( )
+              .forEach( judge -> _judges.add( new ObservablePlayer( judge ) ) );
+        _judges.addListener( (ListChangeListener<ObservablePlayer>) c -> {
+            header.setJudges( _judges.stream( )
+                                     .map( ObservablePlayer::getPlayer )
+                                     .collect( Collectors.toList( ) ) );
+        } );
+        _judges.addListener( (ListChangeListener<ObservablePlayer>) c -> _dirty.set( true ) );
+
+        _dirty.setValue( false );
     }
 
     public String getTitle( ) {
@@ -219,9 +240,29 @@ public final class ObservableTournamentHeader {
         this._scoringMode.set( scoringMode );
     }
 
+    public ObservableList<ObservablePlayer> getJudges( ) {
+        return _judges;
+    }
+
+    public ObservablePlayer getMainJudge( ) {
+        return _mainJudge.get( );
+    }
+
+    public void setMainJudge( final ObservablePlayer mainJudge ) {
+        this._mainJudge.set( mainJudge );
+    }
+
+    public SimpleObjectProperty<ObservablePlayer> mainJudgeProperty( ) {
+        return _mainJudge;
+    }
+
     public void markAsClean( ) {
         _dirty.set( false );
         _address.markAsClean( );
+    }
+
+    public ObservableValue<ObservableList<ObservablePlayer>> judgesProperty( ) {
+        return new SimpleListProperty<>( _judges );
     }
 
     private final SimpleStringProperty _title;
@@ -235,6 +276,8 @@ public final class ObservableTournamentHeader {
     private final SimpleObjectProperty<Integer> _teamSize;
     private final SimpleObjectProperty<Integer> _scoreMax;
     private final ObservableAddress _address;
+    private final SimpleObjectProperty<ObservablePlayer> _mainJudge;
+    private final ObservableList<ObservablePlayer> _judges = FXCollections.observableArrayList( );
 
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 

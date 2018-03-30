@@ -15,6 +15,7 @@
 package land.tower.core.view.tournament.detail.information;
 
 import static javafx.beans.binding.Bindings.createBooleanBinding;
+import static javafx.scene.control.TableView.CONSTRAINED_RESIZE_POLICY;
 import static land.tower.core.ext.binding.Strings.toUpperCase;
 import static land.tower.data.TournamentScoringMode.BY_POINTS;
 
@@ -34,13 +35,20 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -54,6 +62,7 @@ import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.rules.TournamentRules;
 import land.tower.core.model.tournament.ObservableTournamentHeader;
 import land.tower.core.view.component.FaButton;
+import land.tower.core.view.player.ObservablePlayer;
 import land.tower.data.PairingMode;
 import land.tower.data.TournamentScoringMode;
 import land.tower.data.TournamentStatus;
@@ -472,7 +481,7 @@ public final class TournamentInformationTab extends Tab {
                         .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).nameProperty( ) );
         final Label addressNameLabel = new Label( );
         addressNameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.name" ) );
-        addressNameLabel.setLabelFor( addressNameLabel );
+        addressNameLabel.setLabelFor( addressNameField );
         grid.add( addressNameLabel, 0, line );
         grid.add( addressNameField, 1, line );
 
@@ -483,7 +492,7 @@ public final class TournamentInformationTab extends Tab {
                          .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).line1Property( ) );
         final Label addressLine1Label = new Label( );
         addressLine1Label.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.line1" ) );
-        addressLine1Label.setLabelFor( addressLine1Label );
+        addressLine1Label.setLabelFor( addressLine1Field );
         grid.add( addressLine1Label, 0, line );
         grid.add( addressLine1Field, 1, line );
 
@@ -494,7 +503,7 @@ public final class TournamentInformationTab extends Tab {
                          .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).line2Property( ) );
         final Label addressLine2Label = new Label( );
         addressLine2Label.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.line2" ) );
-        addressLine2Label.setLabelFor( addressLine2Label );
+        addressLine2Label.setLabelFor( addressLine2Field );
         grid.add( addressLine2Label, 0, line );
         grid.add( addressLine2Field, 1, line );
 
@@ -508,7 +517,7 @@ public final class TournamentInformationTab extends Tab {
                                   _model.getTournament( ).getHeader( ).getAddress( ).postalCodeProperty( ) );
         final Label addressPostalCodeLabel = new Label( );
         addressPostalCodeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.postalCode" ) );
-        addressPostalCodeLabel.setLabelFor( addressPostalCodeLabel );
+        addressPostalCodeLabel.setLabelFor( addressPostalCodeField );
         grid.add( addressPostalCodeLabel, 0, line );
         grid.add( addressPostalCodeField, 1, line );
 
@@ -519,7 +528,7 @@ public final class TournamentInformationTab extends Tab {
                         .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).cityProperty( ) );
         final Label addressCityLabel = new Label( );
         addressCityLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.city" ) );
-        addressCityLabel.setLabelFor( addressCityLabel );
+        addressCityLabel.setLabelFor( addressCityField );
         grid.add( addressCityLabel, 0, line );
         grid.add( addressCityField, 1, line );
 
@@ -530,11 +539,111 @@ public final class TournamentInformationTab extends Tab {
                            .bindBidirectional( _model.getTournament( ).getHeader( ).getAddress( ).countryProperty( ) );
         final Label addressCountryLabel = new Label( );
         addressCountryLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.address.country" ) );
-        addressCountryLabel.setLabelFor( addressCountryLabel );
+        addressCountryLabel.setLabelFor( addressCountryField );
         grid.add( addressCountryLabel, 0, line );
         grid.add( addressCountryField, 1, line );
 
-        // TODO Judge
+        /* Judges Section */
+        line++;
+        final Label judgeTitle = new Label( );
+        judgeTitle.textProperty( ).bind( _model.getI18n( ).get( "tournament.judges" ) );
+        judgeTitle.getStyleClass( ).add( "important" );
+        judgeTitle.getStyleClass( ).add( "medium" );
+        judgeTitle.setAlignment( Pos.CENTER );
+        judgeTitle.setPrefWidth( WIDTH );
+        grid.add( judgeTitle, 0, line, 2, 1 );
+
+        line++;
+        final HBox mainJudgeBox = new HBox( );
+        mainJudgeBox.setSpacing( 10 );
+        mainJudgeBox.setAlignment( Pos.CENTER_LEFT );
+
+        final Label mainJudgeName = new Label( );
+        mainJudgeName.textProperty( ).bind( Bindings.createStringBinding( ( ) -> {
+            final ObservablePlayer mainJudge = _model.getTournament( ).getHeader( ).getMainJudge( );
+            if ( mainJudge == null ) {
+                return "";
+            }
+            return mainJudge.getNumero( ) + " – " + mainJudge.getLastname( ) + " " + mainJudge.getFirstname( );
+        }, _model.getTournament( ).getHeader( ).mainJudgeProperty( ) ) );
+
+        final Button clearMainJudge = new FaButton( FontAwesome.CROSS, "black" );
+        clearMainJudge.setOnAction( e -> _model.fireClearMainJudge( ) );
+
+        final Button selectMainJudge = new FaButton( FontAwesome.SEARCH_ADD, "black" );
+        selectMainJudge.setOnAction( e -> _model.fireSelectMainJudge( ) );
+
+        final Runnable updateMainJudgeSelection = ( ) -> {
+            if ( _model.getTournament( ).getHeader( ).getMainJudge( ) != null ) {
+                mainJudgeBox.getChildren( ).setAll( mainJudgeName, clearMainJudge );
+            } else {
+                mainJudgeBox.getChildren( ).setAll( selectMainJudge );
+            }
+        };
+        updateMainJudgeSelection.run( );
+
+        _model.getTournament( ).getHeader( ).mainJudgeProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+            updateMainJudgeSelection.run( );
+        } );
+
+        final Label mainJudgeLabel = new Label( );
+        mainJudgeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.judge.main" ) );
+        mainJudgeLabel.setLabelFor( mainJudgeBox );
+        grid.add( mainJudgeLabel, 0, line );
+        grid.add( mainJudgeBox, 1, line );
+
+        line++;
+        final HBox secondaryJudgeBox = new HBox( );
+        secondaryJudgeBox.setSpacing( 10 );
+        secondaryJudgeBox.setAlignment( Pos.CENTER_LEFT );
+
+        final TableView<ObservablePlayer> secondaryJudgesTable = new TableView<>( );
+        secondaryJudgeBox.getChildren( ).add( secondaryJudgesTable );
+        secondaryJudgesTable.setColumnResizePolicy( CONSTRAINED_RESIZE_POLICY );
+        secondaryJudgesTable.itemsProperty( ).bind( _model.getTournament( ).getHeader( ).judgesProperty( ) );
+        secondaryJudgesTable.setFixedCellSize( 25 );
+        secondaryJudgesTable.prefWidthProperty( )
+                            .bind( scrollPane.widthProperty( ).divide( 3 ) );
+        secondaryJudgesTable.prefHeightProperty( )
+                            .bind( Bindings.size( secondaryJudgesTable.getItems( ) )
+                                           .add( 1 )
+                                           .multiply( secondaryJudgesTable.getFixedCellSize( ) )
+                                           .add( 25 ) );
+
+        final TableColumn<ObservablePlayer, Long> numeroCol = new TableColumn<>( );
+        numeroCol.textProperty( ).bind( _model.getI18n( ).get( "player.numero" ) );
+        numeroCol.setCellValueFactory( new PropertyValueFactory<>( "numero" ) );
+        secondaryJudgesTable.getColumns( ).add( numeroCol );
+
+        final TableColumn<ObservablePlayer, String> nameCol = new TableColumn<>( );
+        nameCol.textProperty( ).bind( _model.getI18n( ).get( "player.lastname" ) );
+        nameCol.setCellValueFactory( param -> param.getValue( ).lastnameProperty( )
+                                                   .concat( " " )
+                                                   .concat( param.getValue( ).getFirstname( ) ) );
+        secondaryJudgesTable.getColumns( ).add( nameCol );
+
+        final TableColumn<ObservablePlayer, Void> actionColumn = new TableColumn<>( );
+        actionColumn.setMaxWidth( 20 );
+        actionColumn.setMinWidth( 20 );
+        actionColumn.setResizable( false );
+        actionColumn.setCellFactory( param -> new DeleteJudgeCell( ) );
+        secondaryJudgesTable.getColumns( ).add( actionColumn );
+
+        final Label emptyLabel = new Label( );
+        emptyLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.judge.no.judge" ) );
+        secondaryJudgesTable.setPlaceholder( emptyLabel );
+
+        final Button selectSecondaryJudge = new FaButton( FontAwesome.SEARCH_ADD, "black" );
+        selectSecondaryJudge.setOnAction( e -> _model.fireSelectSecondaryJudge( ) );
+        secondaryJudgeBox.getChildren( ).add( selectSecondaryJudge );
+
+        final Label secondaryJudgeLabel = new Label( );
+        secondaryJudgeLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.judge.secondary" ) );
+        secondaryJudgeLabel.setLabelFor( secondaryJudgesTable );
+        GridPane.setValignment( secondaryJudgeLabel, VPos.TOP );
+        grid.add( secondaryJudgeLabel, 0, line );
+        grid.add( secondaryJudgeBox, 1, line );
+
         mainPane.getChildren( ).add( grid );
 
         _model.getTournament( ).getHeader( ).gameProperty( )
@@ -585,4 +694,28 @@ public final class TournamentInformationTab extends Tab {
     private JFXComboBox<TournamentScoringMode> _scoringModeBox;
     private TextField _scoreMaxField;
 
+    private class DeleteJudgeCell extends TableCell<ObservablePlayer, Void> {
+
+        final Label _button = new Label( FontAwesome.CROSS );
+
+        DeleteJudgeCell( ) {
+            _button.getStyleClass( ).add( FontAwesome.FA_STYLE_NAME );
+            _button.getStyleClass( ).add( "small" );
+            _button.setCursor( Cursor.HAND );
+            _button.setOnMouseClicked( t -> {
+                final ObservablePlayer player = getTableView( ).getItems( ).get( getIndex( ) );
+                _model.fireDeleteSecondaryJudge( player );
+            } );
+        }
+
+        @Override
+        protected void updateItem( Void t, boolean empty ) {
+            super.updateItem( t, empty );
+            if ( !empty ) {
+                setGraphic( _button );
+            } else {
+                setGraphic( null );
+            }
+        }
+    }
 }

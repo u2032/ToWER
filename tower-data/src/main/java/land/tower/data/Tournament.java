@@ -50,8 +50,6 @@ public final class Tournament {
     @SerializedName( "flags" )
     private Map<String, String> _flags = new HashMap<>( 0 );
 
-    // TODO Final ranking
-
     public Tournament( ) {
 
     }

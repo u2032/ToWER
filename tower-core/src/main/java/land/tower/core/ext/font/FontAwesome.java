@@ -55,4 +55,6 @@ public final class FontAwesome {
     public static final String PRINTER = "\uf02f";
     public static final String EXPORT = "\uf093";
     public static final String IMPORT = "\uf019";
+    public static final String CROSS = "\uf00d";
+    public static final String SEARCH_ADD = "\uf00e";
 }
