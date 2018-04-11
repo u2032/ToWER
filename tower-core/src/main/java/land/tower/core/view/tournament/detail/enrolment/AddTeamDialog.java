@@ -241,6 +241,7 @@ final class AddTeamDialog extends Dialog<Team> {
                                                   playerStringConverter );
         autoCompleteName.setOnAutoCompleted( autoCompletionHandler );
         autoCompleteName.setHideOnEscape( false );
+        autoCompleteName.setVisibleRowCount( 10 );
 
         final Callback<ISuggestionRequest, Collection<Player>> suggestionProvider = param -> {
             final List<Player> suggestions = _model.getPlayerSuggestionsForNumero( param.getUserText( ) );
