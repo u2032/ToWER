@@ -7,7 +7,7 @@
     <parent>
         <groupId>land.tower</groupId>
         <artifactId>tower-parent</artifactId>
-        <version>2018.1-SNAPSHOT</version>
+        <version>2018.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>tower-core</artifactId>
@@ -30,17 +30,17 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>4.1.0</version>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-multibindings</artifactId>
-            <version>4.1.0</version>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-assistedinject</artifactId>
-            <version>4.1.0</version>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.asynchttpclient</groupId>
             <artifactId>async-http-client</artifactId>
-            <version>2.3.0</version>
+            <version>2.4.6</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
