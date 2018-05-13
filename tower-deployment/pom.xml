@@ -20,13 +20,21 @@
         <deploy.mainClass>land.tower.core.Application</deploy.mainClass>
         <deploy.name>Tower</deploy.name>
         <config.file>config.properties</config.file>
+        <java.path>${env.JAVA_HOME}</java.path>
     </properties>
 
     <profiles>
         <profile>
+            <id>32bits</id>
+            <properties>
+                <java.path>${env.JAVA_HOME_32}</java.path>
+            </properties>
+        </profile>
+
+        <profile>
             <id>windows</id>
             <properties>
-                <bundle.executable>${env.JAVA_HOME}/bin/javapackager.exe</bundle.executable>
+                <bundle.executable>${java.path}/bin/javapackager.exe</bundle.executable>
                 <bundle.native>exe</bundle.native>
                 <bundle.icon>tower.ico</bundle.icon>
             </properties>
@@ -35,7 +43,7 @@
         <profile>
             <id>linux</id>
             <properties>
-                <bundle.executable>${env.JAVA_HOME}/bin/javapackager</bundle.executable>
+                <bundle.executable>${java.path}/bin/javapackager</bundle.executable>
                 <bundle.native>deb</bundle.native>
                 <bundle.icon>tower.png</bundle.icon>
             </properties>
@@ -44,7 +52,7 @@
         <profile>
             <id>macos</id>
             <properties>
-                <bundle.executable>${env.JAVA_HOME}/bin/javapackager</bundle.executable>
+                <bundle.executable>${java.path}/bin/javapackager</bundle.executable>
                 <bundle.native>pkg</bundle.native>
                 <bundle.icon>tower.icns</bundle.icon>
             </properties>
@@ -112,7 +120,7 @@
                                         <argument>${deploy.name}</argument>
                                         <argument>-description</argument>
                                         <argument>Tournament management app</argument>
-                                        <argument>-Bruntime=${env.JAVA_HOME}/jre</argument>
+                                        <argument>-Bruntime=${java.path}/jre</argument>
                                         <argument>-BappVersion=${deploy.version}</argument>
                                         <argument>-Bidentifier=land.tower.${deploy.name}</argument>
                                         <argument>-BmenuHint=true</argument>
