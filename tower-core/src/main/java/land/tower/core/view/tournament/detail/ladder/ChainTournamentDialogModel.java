@@ -175,6 +175,7 @@ public final class ChainTournamentDialogModel {
         newTournament.getHeader( ).setScoreMax( _tournament.getHeader( ).getScoreMax( ) );
         newTournament.getHeader( ).setType( _tournament.getHeader( ).getType( ) );
         newTournament.getHeader( ).setPairingMode( _pairingMode.get( ) );
+        newTournament.getHeader( ).setGame( _tournament.getHeader( ).getGame( ) );
 
         newTournament.getHeader( ).getAddress( ).setName( _tournament.getHeader( ).getAddress( ).getName( ) );
         newTournament.getHeader( ).getAddress( ).setLine1( _tournament.getHeader( ).getAddress( ).getLine1( ) );
@@ -189,9 +190,9 @@ public final class ChainTournamentDialogModel {
             isSelectedTeamsOnly( ) ? _selectedTeams : _tournament.getTeams( );
         final List<ObservableTeam> teams = fromList.stream( )
                                                    .sorted( comparingInt( t -> t.getRanking( ).getRank( ) ) )
-                                                      .filter( t -> !_activeTeamsOnly.get( ) || t.isActive( ) )
-                                                      .limit( _teamCount.get( ) )
-                                                      .collect( Collectors.toList( ) );
+                                                   .filter( t -> !_activeTeamsOnly.get( ) || t.isActive( ) )
+                                                   .limit( _teamCount.get( ) )
+                                                   .collect( Collectors.toList( ) );
         teams.forEach( ( ObservableTeam team ) -> {
             final Team newTeam = new Team( );
             newTeam.setName( team.getName( ) );
