@@ -30,6 +30,7 @@ import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
+import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
@@ -48,12 +49,14 @@ public final class ManualPairingDialogModel {
     public ManualPairingDialogModel( @Assisted final ObservableTournament tournament,
                                      @Assisted final ObservableRound round,
                                      final I18nTranslator i18n,
-                                     final Stage owner, final EventBus eventBus ) {
+                                     final Stage owner, final EventBus eventBus,
+                                     final ITournamentRulesProvider tournamentRules ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
         _owner = owner;
         _eventBus = eventBus;
+        _tournamentRules = tournamentRules;
 
         _matches = observableArrayList( _round.getMatches( ) );
         _teams = observableArrayList( tournament.getTeams( )
@@ -70,6 +73,17 @@ public final class ManualPairingDialogModel {
     public synchronized void fireSavePairing( ) {
         if ( !_matches.isEmpty( ) ) {
             _round.getMatches( ).setAll( _matches );
+
+            if ( _round.isEnded( ) ) {
+                // If the round is ended, trigger ranking computing
+                _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
+                                .getPairingRules( )
+                                .get( _tournament.getHeader( ).getPairingMode( ) )
+                                .getRankingComputer( )
+                                .computeRanking( _tournament );
+
+            }
+
             _eventBus.post( new InformationEvent( _i18n.get( "manuel.pairing.done" ) ) );
         }
     }
@@ -171,5 +185,6 @@ public final class ManualPairingDialogModel {
 
     private final List<Integer> _freePositions = new ArrayList<>( );
     private final EventBus _eventBus;
+    private final ITournamentRulesProvider _tournamentRules;
     private static final Random _random = new Random( );
 }

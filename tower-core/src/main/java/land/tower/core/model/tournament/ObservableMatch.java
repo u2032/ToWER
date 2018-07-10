@@ -170,6 +170,18 @@ public final class ObservableMatch {
         throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
     }
 
+    public int getScore( final ObservableTeam team ) {
+        final boolean isLeft = ( _leftTeamId.get( ) == team.getId( ) );
+        final boolean isRight = ( _rightTeamId.get( ) == team.getId( ) );
+        if ( isLeft ) {
+            return getScoreLeft( );
+        }
+        if ( isRight ) {
+            return getScoreRight( );
+        }
+        throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
+    }
+
     public void markAsClean( ) {
         _dirty.set( false );
     }
