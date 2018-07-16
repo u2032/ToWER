@@ -24,7 +24,8 @@ import java.util.stream.Stream;
 public enum Language {
 
     EN( "English", "en" ),
-    FR( "Français", "fr" );
+    FR( "Français", "fr" ),
+    ES( "Español", "es" );
 
     Language( final String name, final String code ) {
         _name = name;
