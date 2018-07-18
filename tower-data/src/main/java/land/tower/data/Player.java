@@ -73,6 +73,22 @@ public final class Player {
         return _nationality;
     }
 
+    public void setFirstname( final String firstname ) {
+        _firstname = firstname;
+    }
+
+    public void setLastname( final String lastname ) {
+        _lastname = lastname;
+    }
+
+    public void setBirthday( final String birthday ) {
+        _birthday = birthday;
+    }
+
+    public void setNationality( final PlayerNationality nationality ) {
+        _nationality = nationality;
+    }
+
     @Override
     public String toString( ) {
         return "Player{" +
