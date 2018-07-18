@@ -205,7 +205,7 @@ public final class ChainTournamentDialogModel {
         // Registration of first round
         final PairingRule pairingSystem = _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
                                                           .getPairingRules( )
-                                                          .get( _tournament.getHeader( ).getPairingMode( ) );
+                                                          .get( newTournament.getHeader( ).getPairingMode( ) );
         final Round firstRound = pairingSystem.getPairingSystem( ).createFirstRoundFromInitialRanking( newTournament );
         newTournament.registerRound( new ObservableRound( firstRound ) );
         pairingSystem.getRankingComputer( ).computeRanking( newTournament );
