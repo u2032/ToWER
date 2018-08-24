@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
@@ -87,9 +89,12 @@ public final class I18nService implements IService, Provider<I18nTranslator> {
             }
 
             LoggerFactory.getLogger( Loggers.MAIN ).info( "Loading text entries from: {}", name );
-            final Properties properties = new Properties( );
-            properties.load( in );
-            return Optional.of( properties );
+
+            try ( final InputStreamReader instream = new InputStreamReader( in, StandardCharsets.UTF_8 ) ) {
+                final Properties properties = new Properties( );
+                properties.load( instream );
+                return Optional.of( properties );
+            }
 
         } catch ( final IOException e ) {
             return Optional.empty( );
