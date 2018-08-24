@@ -25,7 +25,9 @@ public enum Language {
 
     EN( "English", "en" ),
     FR( "Français", "fr" ),
-    ES( "Español", "es" );
+    ES( "Español", "es" ),
+    IT( "Italiano", "it" ),
+    DE( "Deutsch", "de" ),;
 
     Language( final String name, final String code ) {
         _name = name;
