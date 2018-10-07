@@ -19,6 +19,8 @@ import static java.util.Comparator.comparingInt;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -168,8 +170,10 @@ public final class ChainTournamentDialogModel {
     public void fireCreateTournament( ) {
         final ObservableTournament newTournament = _tournamentRepository.create( );
 
-        // Copy of tournament information (except title)
-        newTournament.getHeader( ).setDate( _tournament.getHeader( ).getDate( ) );
+        // Copy of tournament information (except title and date)
+        newTournament.getHeader( ).setDate( ZonedDateTime.now( _tournament.getHeader( ).getDate( ).getZone( ) )
+                                                         .plusHours( 1 )
+                                                         .truncatedTo( ChronoUnit.HOURS ) );
         newTournament.getHeader( ).setMatchDuration( _tournament.getHeader( ).getMatchDuration( ) );
         newTournament.getHeader( ).setTeamSize( _tournament.getHeader( ).getTeamSize( ) );
         newTournament.getHeader( ).setScoreMax( _tournament.getHeader( ).getScoreMax( ) );
