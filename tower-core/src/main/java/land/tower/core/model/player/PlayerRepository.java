@@ -75,6 +75,15 @@ public final class PlayerRepository implements IService {
                        .findAny( );
     }
 
+    public void clear( ) {
+        _players.clear( );
+    }
+
+    public void registerAllPlayers( final List<Player> players ) {
+        players.forEach( p -> _players.add( new ObservablePlayer( p ) ) );
+        saveInStorage( );
+    }
+
     private void saveInStorage( ) {
         final List<Player> players = _players.stream( )
                                              .map( ObservablePlayer::getPlayer )

@@ -98,7 +98,7 @@ final class TournamentStorage implements ITournamentStorage {
     }
 
     @Override
-    public void saveTournament( final ObservableTournament otournament, final Path file ) {
+    public synchronized void saveTournament( final ObservableTournament otournament, final Path file ) {
         final Tournament tournament = otournament.getTournament( );
         if ( !Files.exists( file.getParent( ) ) ) {
             try {
@@ -133,17 +133,21 @@ final class TournamentStorage implements ITournamentStorage {
     @Override
     public void deleteTournament( final Tournament tournament ) {
         _scheduledExecutorService.schedule( ( ) -> {
-            if ( !Files.exists( _tournamentStorage ) ) {
-                return;
-            }
-
-            try {
-                final Path file = _tournamentStorage.resolve( tournament.getId( ).toString( ) + ".twr" );
-                Files.deleteIfExists( file );
-            } catch ( IOException e ) {
-                _logger.error( "Error during deleting tournament: " + tournament.getId( ), e );
-            }
+            doDeleteTournament( tournament );
         }, 2, TimeUnit.SECONDS );
+    }
+
+    private synchronized void doDeleteTournament( final Tournament tournament ) {
+        if ( !Files.exists( _tournamentStorage ) ) {
+            return;
+        }
+
+        try {
+            final Path file = _tournamentStorage.resolve( tournament.getId( ).toString( ) + ".twr" );
+            Files.deleteIfExists( file );
+        } catch ( IOException e ) {
+            _logger.error( "Error during deleting tournament: " + tournament.getId( ), e );
+        }
     }
 
     private final Configuration _configuration;

@@ -75,30 +75,31 @@ final class PlayerStorage implements IPlayerStorage {
 
     @Override
     public void savePlayers( final List<Player> players ) {
-        _scheduledExecutorService.schedule( ( ) -> {
-            final String json = new GsonBuilder( ).create( ).toJson( players );
+        _scheduledExecutorService.schedule( ( ) -> doSave( players ), 2, TimeUnit.SECONDS );
+    }
 
-            try {
-                Files.createDirectories( playerStorage.getParent( ) );
-            } catch ( final IOException e ) {
-                _logger.error( "Error caught during creating directory: " + playerStorage.toString( ), e );
-            }
+    private synchronized void doSave( final List<Player> players ) {
+        final String json = new GsonBuilder( ).create( ).toJson( players );
 
-            try ( final BufferedWriter out = Files.newBufferedWriter( playerStorageTmp, UTF_8 ) ) {
-                out.write( json );
-            } catch ( final IOException e ) {
-                _logger.error( "Error caught during saving storage", e );
-            }
+        try {
+            Files.createDirectories( playerStorage.getParent( ) );
+        } catch ( final IOException e ) {
+            _logger.error( "Error caught during creating directory: " + playerStorage.toString( ), e );
+        }
 
-            try {
-                Files.move( playerStorageTmp, playerStorage, REPLACE_EXISTING, ATOMIC_MOVE );
-            } catch ( final IOException e ) {
-                _logger.error( "Error caught during saving storage", e );
-            }
+        try ( final BufferedWriter out = Files.newBufferedWriter( playerStorageTmp, UTF_8 ) ) {
+            out.write( json );
+        } catch ( final IOException e ) {
+            _logger.error( "Error caught during saving storage", e );
+        }
 
-            _logger.info( "Player list saved: {} players in storage", players.size( ) );
+        try {
+            Files.move( playerStorageTmp, playerStorage, REPLACE_EXISTING, ATOMIC_MOVE );
+        } catch ( final IOException e ) {
+            _logger.error( "Error caught during saving storage", e );
+        }
 
-        }, 2, TimeUnit.SECONDS );
+        _logger.info( "Player list saved: {} players in storage", players.size( ) );
     }
 
     private final Configuration _configuration;
