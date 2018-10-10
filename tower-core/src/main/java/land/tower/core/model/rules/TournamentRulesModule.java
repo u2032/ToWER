@@ -23,6 +23,8 @@ import com.google.inject.Singleton;
 import java.util.Map;
 import land.tower.core.model.pairing.direct.DirectEliminationSystem;
 import land.tower.core.model.pairing.direct.DirectEliminiationRankingComputer;
+import land.tower.core.model.pairing.doubleElim.DoubleEliminationSystem;
+import land.tower.core.model.pairing.doubleElim.DoubleEliminiationRankingComputer;
 import land.tower.core.model.pairing.swiss.SwissPairingSystem;
 import land.tower.core.model.ranking.DefaultRankingComputer;
 import land.tower.data.PairingMode;
@@ -44,7 +46,9 @@ public final class TournamentRulesModule extends AbstractModule {
     Map<PairingMode, PairingRule> defaultRules( final SwissPairingSystem swissPairingSystem,
                                                 final DirectEliminationSystem directEliminationSystem,
                                                 final DefaultRankingComputer defaultRankingComputer,
-                                                final DirectEliminiationRankingComputer directRankingComputer ) {
+                                                final DirectEliminiationRankingComputer directRankingComputer,
+                                                final DoubleEliminationSystem doubleEliminationSystem,
+                                                final DoubleEliminiationRankingComputer doubleEliminiationRankingComputer ) {
 
         return ImmutableMap.<PairingMode, PairingRule>builder( )
                    .put( PairingMode.SWISS,
@@ -58,6 +62,13 @@ public final class TournamentRulesModule extends AbstractModule {
                                     .pairingSystem( directEliminationSystem )
                                     .rankingComputer( directRankingComputer )
                                     .build( ) )
+
+                   .put( PairingMode.DOUBLE_ELIMINATION,
+                         PairingRule.builder( )
+                                    .pairingSystem( doubleEliminationSystem )
+                                    .rankingComputer( doubleEliminiationRankingComputer )
+                                    .build( ) )
+
                    .build( );
     }
 }

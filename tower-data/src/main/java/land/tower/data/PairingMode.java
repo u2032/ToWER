@@ -21,6 +21,7 @@ package land.tower.data;
 public enum PairingMode {
 
     SWISS,
-    DIRECT_ELIMINATION
+    DIRECT_ELIMINATION,
+    DOUBLE_ELIMINATION
 
 }
