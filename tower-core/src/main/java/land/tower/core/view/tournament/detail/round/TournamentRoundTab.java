@@ -334,14 +334,11 @@ public class TournamentRoundTab extends Tab {
         startRoundButton.getStyleClass( ).add( "rich-button" );
         startRoundButton.getStyleClass( ).add( "action-button" );
         startRoundButton.setOnAction( event -> _model.fireStartNewRound( ) );
-        if ( _model.getRound( ).getRound( ).isFinal( ) ) {
-            startRoundButton.setDisable( true );
-        } else {
-            startRoundButton.disableProperty( )
-                            .bind( _model.getRound( ).endedProperty( ).not( )
-                                         .or( _model.getTournament( ).currentRoundProperty( )
-                                                    .isNotEqualTo( _model.getRound( ) ) ) );
-        }
+        startRoundButton.disableProperty( )
+                        .bind( _model.getRound( ).finalProperty( )
+                                     .or( _model.getRound( ).endedProperty( ).not( )
+                                                .or( _model.getTournament( ).currentRoundProperty( )
+                                                           .isNotEqualTo( _model.getRound( ) ) ) ) );
         hBox.getChildren( ).addAll( startRoundButton );
 
         hBox.visibleProperty( )
@@ -379,12 +376,8 @@ public class TournamentRoundTab extends Tab {
         manualPairing.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.manual.pairing" ) );
         manualPairing.setOnAction( e -> _model.fireManualPairing( ) );
         manualPairing.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
-            switch ( _model.getTournament( ).getHeader( ).getPairingMode( ) ) {
-                case SWISS:
-                    return false;
-                default:
-                    return true;
-            }
+            return !_model.getTournament( ).getHeader( ).getPairingMode( ).allowManualPairing( )
+                   && _model.getRound( ).getNumero( ) > 1; // allowed anyway for round #1
         }, _model.getTournament( ).getHeader( ).pairingModeProperty( ) ) );
         advancedButton.getItems( ).add( manualPairing );
 

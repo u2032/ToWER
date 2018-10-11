@@ -20,9 +20,13 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.assistedinject.Assisted;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.value.ObservableValue;
@@ -31,12 +35,14 @@ import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.rules.ITournamentRulesProvider;
+import land.tower.core.model.rules.PairingRule;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.data.Match;
+import land.tower.data.PairingMode;
 import land.tower.data.Teams;
 
 /**
@@ -50,13 +56,15 @@ public final class ManualPairingDialogModel {
                                      @Assisted final ObservableRound round,
                                      final I18nTranslator i18n,
                                      final Stage owner, final EventBus eventBus,
-                                     final ITournamentRulesProvider tournamentRules ) {
+                                     final ITournamentRulesProvider tournamentRules,
+                                     final Map<PairingMode, PairingRule> pairingRules ) {
         _tournament = tournament;
         _round = round;
         _i18n = i18n;
         _owner = owner;
         _eventBus = eventBus;
         _tournamentRules = tournamentRules;
+        _pairingRules = pairingRules;
 
         _matches = observableArrayList( _round.getMatches( ) );
         _teams = observableArrayList( tournament.getTeams( )
@@ -72,7 +80,16 @@ public final class ManualPairingDialogModel {
 
     public synchronized void fireSavePairing( ) {
         if ( !_matches.isEmpty( ) ) {
+            final AtomicInteger position = new AtomicInteger( );
+            _matches.stream( )
+                    .sorted( Comparator.comparing( ObservableMatch::getPosition ) )
+                    .forEach( m -> m.setPosition( position.incrementAndGet( ) ) );
+
             _round.getMatches( ).setAll( _matches );
+
+            _pairingRules.get( _tournament.getHeader( ).getPairingMode( ) )
+                         .getPairingSystem( )
+                         .roundValidity( _round );
 
             if ( _round.isEnded( ) ) {
                 // If the round is ended, trigger ranking computing
@@ -113,7 +130,7 @@ public final class ManualPairingDialogModel {
             final Match match = new Match( );
             match.setLeftTeamId( left.getId( ) );
             match.setRightTeamId( right.getId( ) );
-            match.setPosition( !_freePositions.isEmpty( ) ? _freePositions.remove( 0 )
+            match.setPosition( !_freePositions.isEmpty( ) ? _freePositions.pollFirst( )
                                                           : _matches
                                                                 .stream( )
                                                                 .mapToInt( ObservableMatch::getPosition )
@@ -150,7 +167,8 @@ public final class ManualPairingDialogModel {
             final Match match = new Match( );
             match.setLeftTeamId( left.getId( ) );
             match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
-            match.setPosition( !_freePositions.isEmpty( ) ? _freePositions.remove( 0 )
+            //noinspection ConstantConditions
+            match.setPosition( !_freePositions.isEmpty( ) ? _freePositions.pollFirst( )
                                                           : _matches
                                                                 .stream( )
                                                                 .mapToInt( ObservableMatch::getPosition )
@@ -183,8 +201,11 @@ public final class ManualPairingDialogModel {
     private final ObservableList<ObservableMatch> _matches;
     private final ObservableList<ObservableTeam> _teams;
 
-    private final List<Integer> _freePositions = new ArrayList<>( );
+    private final TreeSet<Integer> _freePositions = new TreeSet<>( );
     private final EventBus _eventBus;
     private final ITournamentRulesProvider _tournamentRules;
+
+    private final Map<PairingMode, PairingRule> _pairingRules;
+
     private static final Random _random = new Random( );
 }

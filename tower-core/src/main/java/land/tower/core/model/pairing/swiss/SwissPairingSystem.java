@@ -29,6 +29,7 @@ import java.util.stream.IntStream;
 import javafx.util.Pair;
 import javax.inject.Inject;
 import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Match;
 import land.tower.data.Round;
@@ -66,6 +67,11 @@ public final class SwissPairingSystem implements PairingSystem {
     @Override
     public Round createFirstRoundFromInitialRanking( ObservableTournament tournament ) {
         return firstRound( tournament.getTournament( ) );
+    }
+
+    @Override
+    public void roundValidity( final ObservableRound round ) {
+
     }
 
     private Pair<Integer, Round> makePairing( final Tournament tournament ) {

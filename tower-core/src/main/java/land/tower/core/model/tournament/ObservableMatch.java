@@ -125,6 +125,10 @@ public final class ObservableMatch {
         return _hasScore;
     }
 
+    public void setPosition( final int position ) {
+        _position.set( position );
+    }
+
     public boolean hasWon( final int teamId ) {
         final boolean isLeft = ( _leftTeamId.get( ) == teamId );
         final boolean isRight = ( _rightTeamId.get( ) == teamId );

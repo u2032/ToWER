@@ -177,6 +177,33 @@ public final class DirectEliminationSystem implements PairingSystem {
         return round;
     }
 
+    @Override
+    public void roundValidity( final ObservableRound round ) {
+        // Complete with bye matches
+        final AtomicInteger position = new AtomicInteger( round.getMatches( ).stream( )
+                                                               .mapToInt( ObservableMatch::getPosition )
+                                                               .max( )
+                                                               .orElse( 1 ) );
+
+        int teamCount = round.getMatches( ).size( ) * 2;
+        double p = Math.floor( Math.log( teamCount ) / Math.log( 2 ) );
+        final int maxTeamCountLower = (int) Math.pow( 2, p );
+        final int maxTeamCountUpper =
+            teamCount > maxTeamCountLower ? (int) Math.pow( 2, p + 1 ) : maxTeamCountLower;
+        final int matchCount = maxTeamCountUpper / 2;
+        while ( round.getMatches( ).size( ) < matchCount ) {
+            final Match match = new Match( );
+            match.setLeftTeamId( Teams.BYE_TEAM.getId( ) );
+            match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
+            match.setScoreLeft( 1 );
+            match.setScoreRight( 1 );
+            match.setPosition( position.incrementAndGet( ) );
+            round.getMatches( ).add( new ObservableMatch( match ) );
+        }
+
+        round.setFinal( round.getMatches( ).size( ) == 1 );
+    }
+
     private int indexOf( ObservableTeam[] array, int teamId ) {
         for ( int i = 0; i < array.length; i++ ) {
             if ( array[i] != null && teamId == array[i].getId( ) ) {
@@ -258,7 +285,6 @@ public final class DirectEliminationSystem implements PairingSystem {
         round.setFinal( isFinal );
         return round;
     }
-
 
     private final Random _random = new Random( );
 }

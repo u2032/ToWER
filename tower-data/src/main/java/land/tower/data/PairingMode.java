@@ -20,9 +20,18 @@ package land.tower.data;
  */
 public enum PairingMode {
 
-    SWISS,
-    DIRECT_ELIMINATION,
-    DOUBLE_ELIMINATION,
-    ROUND_ROBIN
+    SWISS( true ),
+    DIRECT_ELIMINATION( false ),
+    DOUBLE_ELIMINATION( false ),
+    ROUND_ROBIN( false );
 
+    PairingMode( final boolean allowManualPairing ) {
+        _allowManualPairing = allowManualPairing;
+    }
+
+    private final boolean _allowManualPairing;
+
+    public boolean allowManualPairing( ) {
+        return _allowManualPairing;
+    }
 }

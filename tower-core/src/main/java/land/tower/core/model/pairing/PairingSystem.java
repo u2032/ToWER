@@ -14,6 +14,7 @@
 
 package land.tower.core.model.pairing;
 
+import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Round;
 
@@ -26,4 +27,6 @@ public interface PairingSystem {
     Round createNewRound( ObservableTournament tournament );
 
     Round createFirstRoundFromInitialRanking( ObservableTournament tournament );
+
+    void roundValidity( ObservableRound round );
 }

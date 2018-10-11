@@ -37,6 +37,10 @@ public final class ObservableRound {
         _numero.addListener( ( observable, oldValue, newValue ) -> _round.setNumero( newValue.intValue( ) ) );
         _numero.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
 
+        _final.set( round.isFinal( ) );
+        _final.addListener( ( observable, oldValue, newValue ) -> _round.setFinal( newValue ) );
+        _final.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
+
         _timer = new ObservableTimer( round.getTimer( ) );
         _timer.dirtyProperty( )
               .addListener( ( observable, oldValue, newValue ) -> _dirty.set( isDirty( ) || newValue ) );
@@ -129,6 +133,18 @@ public final class ObservableRound {
         _dirty.set( false );
     }
 
+    public boolean isFinal( ) {
+        return _final.get( );
+    }
+
+    public SimpleBooleanProperty finalProperty( ) {
+        return _final;
+    }
+
+    public void setFinal( final boolean aFinal ) {
+        _final.set( aFinal );
+    }
+
     private final Round _round;
 
     private final SimpleIntegerProperty _numero = new SimpleIntegerProperty( );
@@ -136,5 +152,6 @@ public final class ObservableRound {
     private final ObservableTimer _timer;
 
     private final SimpleBooleanProperty _ended = new SimpleBooleanProperty( );
+    private final SimpleBooleanProperty _final = new SimpleBooleanProperty( );
     private final SimpleBooleanProperty _dirty = new SimpleBooleanProperty( );
 }

@@ -121,6 +121,11 @@ public final class RoundRobinSystem implements PairingSystem {
         return firstRound( tournament );
     }
 
+    @Override
+    public void roundValidity( final ObservableRound round ) {
+        round.setFinal( round.getNumero( ) >= ( round.getMatches( ).size( ) * 2 ) - 1 );
+    }
+
     private Round firstRound( final ObservableTournament tournament ) {
         final Round round = new Round( );
         round.setNumero( 1 );

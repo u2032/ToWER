@@ -78,7 +78,7 @@ public final class DirectEliminiationRankingComputer implements IRankingComputer
                          }
                      }
 
-                     if ( round.getRound( ).isFinal( ) ) {
+                     if ( round.isFinal( ) ) {
                          // For the final, we add one point for finalists
                          if ( leftTeam.getPairingFlags( ).get( "final" ) != null ) {
                              leftTeam.getRanking( ).setPoints( leftTeam.getRanking( ).getPoints( ) + 1 );
