@@ -210,9 +210,9 @@ public final class SwissPairingSystem implements PairingSystem {
         round.setNumero( 1 );
         round.setTimer( new TimerInfo( tournament.getHeader( ).getMatchDuration( ) ) );
 
-        final List<Team> availableTeams = new ArrayList<>( tournament.getTeams( ).stream( )
-                                                                     .filter( Team::isActive )
-                                                                     .collect( Collectors.toList( ) ) );
+        final List<Team> availableTeams = tournament.getTeams( ).stream( )
+                                                    .filter( Team::isActive )
+                                                    .collect( Collectors.toList( ) );
 
         final AtomicInteger position = new AtomicInteger( );
         while ( availableTeams.size( ) > 1 ) {

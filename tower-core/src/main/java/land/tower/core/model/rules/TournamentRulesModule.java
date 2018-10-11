@@ -25,6 +25,7 @@ import land.tower.core.model.pairing.direct.DirectEliminationSystem;
 import land.tower.core.model.pairing.direct.DirectEliminiationRankingComputer;
 import land.tower.core.model.pairing.doubleElim.DoubleEliminationSystem;
 import land.tower.core.model.pairing.doubleElim.DoubleEliminiationRankingComputer;
+import land.tower.core.model.pairing.robin.RoundRobinSystem;
 import land.tower.core.model.pairing.swiss.SwissPairingSystem;
 import land.tower.core.model.ranking.DefaultRankingComputer;
 import land.tower.data.PairingMode;
@@ -48,6 +49,7 @@ public final class TournamentRulesModule extends AbstractModule {
                                                 final DefaultRankingComputer defaultRankingComputer,
                                                 final DirectEliminiationRankingComputer directRankingComputer,
                                                 final DoubleEliminationSystem doubleEliminationSystem,
+                                                final RoundRobinSystem roundRobinSystem,
                                                 final DoubleEliminiationRankingComputer doubleEliminiationRankingComputer ) {
 
         return ImmutableMap.<PairingMode, PairingRule>builder( )
@@ -67,6 +69,12 @@ public final class TournamentRulesModule extends AbstractModule {
                          PairingRule.builder( )
                                     .pairingSystem( doubleEliminationSystem )
                                     .rankingComputer( doubleEliminiationRankingComputer )
+                                    .build( ) )
+
+                   .put( PairingMode.ROUND_ROBIN,
+                         PairingRule.builder( )
+                                    .pairingSystem( roundRobinSystem )
+                                    .rankingComputer( defaultRankingComputer )
                                     .build( ) )
 
                    .build( );

@@ -22,6 +22,7 @@ public enum PairingMode {
 
     SWISS,
     DIRECT_ELIMINATION,
-    DOUBLE_ELIMINATION
+    DOUBLE_ELIMINATION,
+    ROUND_ROBIN
 
 }
