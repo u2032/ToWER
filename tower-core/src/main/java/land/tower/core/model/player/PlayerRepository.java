@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javafx.collections.ObservableList;
 import javax.inject.Inject;
@@ -77,6 +78,14 @@ public final class PlayerRepository implements IService {
 
     public void clear( ) {
         _players.clear( );
+    }
+
+    public void removeAllPlayers( final List<Player> players ) {
+        final Set<Long> toRemove = players.stream( )
+                                          .map( Player::getNumero )
+                                          .collect( Collectors.toSet( ) );
+        _players.removeIf( p -> toRemove.contains( p.getNumero( ) ) );
+        saveInStorage( );
     }
 
     public void registerAllPlayers( final List<Player> players ) {
