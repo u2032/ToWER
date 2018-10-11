@@ -14,6 +14,8 @@
 
 package land.tower.core.model.pairing.doubleElim;
 
+import static land.tower.data.Teams.BYE_TEAM;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -31,7 +33,6 @@ import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Match;
 import land.tower.data.Round;
-import land.tower.data.Teams;
 import land.tower.data.TimerInfo;
 
 /**
@@ -205,22 +206,19 @@ public final class DoubleEliminationSystem implements PairingSystem {
     private Match createMatch( final ObservableTournament tournament, final ObservableTeam left,
                                final ObservableTeam right ) {
         final Match match = new Match( );
-        match.setLeftTeamId( left.getId( ) );
-        match.setRightTeamId( right.getId( ) );
+        match.setLeftTeamId( tournament.getTeam( left.getId( ) ).isActive( ) ? left.getId( ) : BYE_TEAM.getId( ) );
+        match.setRightTeamId( tournament.getTeam( right.getId( ) ).isActive( ) ? right.getId( ) : BYE_TEAM.getId( ) );
         setDefaultByeScore( match, tournament );
         return match;
     }
 
     private void setDefaultByeScore( final Match match, final ObservableTournament tournament ) {
-        final boolean byeLeft = match.getLeftTeamId( ) == Teams.BYE_TEAM.getId( );
-        final boolean byeRight = match.getRightTeamId( ) == Teams.BYE_TEAM.getId( );
+        final boolean byeLeft = match.getLeftTeamId( ) == BYE_TEAM.getId( );
+        final boolean byeRight = match.getRightTeamId( ) == BYE_TEAM.getId( );
         if ( byeLeft || byeRight ) {
             match.setScoreLeft( byeRight ? tournament.getHeader( ).getScoreMax( ) : 0 );
             match.setScoreDraw( 0 );
             match.setScoreRight( byeLeft ? tournament.getHeader( ).getScoreMax( ) : 0 );
-        } else {
-            // TODO REMOVE THAT
-            match.setScoreLeft( 1 );
         }
     }
 
@@ -271,11 +269,11 @@ public final class DoubleEliminationSystem implements PairingSystem {
         if ( isFinal ) {
             for ( final Match m : matches ) {
                 final ObservableTeam left = tournament.getTeam( m.getLeftTeamId( ) );
-                if ( left.getId( ) != Teams.BYE_TEAM.getId( ) ) {
+                if ( left.getId( ) != BYE_TEAM.getId( ) ) {
                     left.getPairingFlags( ).put( "final", String.valueOf( true ) );
                 }
                 final ObservableTeam right = tournament.getTeam( m.getRightTeamId( ) );
-                if ( right.getId( ) != Teams.BYE_TEAM.getId( ) ) {
+                if ( right.getId( ) != BYE_TEAM.getId( ) ) {
                     right.getPairingFlags( ).put( "final", String.valueOf( true ) );
                 }
             }
@@ -300,7 +298,7 @@ public final class DoubleEliminationSystem implements PairingSystem {
 
     private int opponentTeam( ObservableTeam[] array, int teamId, int max ) {
         int index = indexOf( array, teamId );
-        return array[max - 1 - index] == null ? Teams.BYE_TEAM.getId( ) : array[max - 1 - index].getId( );
+        return array[max - 1 - index] == null ? BYE_TEAM.getId( ) : array[max - 1 - index].getId( );
     }
 
     private int getWinningTeam( final ObservableMatch match ) {
