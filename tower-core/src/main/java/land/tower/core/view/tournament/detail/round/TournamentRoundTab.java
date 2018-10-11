@@ -378,6 +378,14 @@ public class TournamentRoundTab extends Tab {
         final MenuItem manualPairing = new FaMenuItem( FontAwesome.HAND, "black" );
         manualPairing.textProperty( ).bind( _model.getI18n( ).get( "tournament.round.manual.pairing" ) );
         manualPairing.setOnAction( e -> _model.fireManualPairing( ) );
+        manualPairing.disableProperty( ).bind( Bindings.createBooleanBinding( ( ) -> {
+            switch ( _model.getTournament( ).getHeader( ).getPairingMode( ) ) {
+                case SWISS:
+                    return false;
+                default:
+                    return true;
+            }
+        }, _model.getTournament( ).getHeader( ).pairingModeProperty( ) ) );
         advancedButton.getItems( ).add( manualPairing );
 
         return advancedButton;
