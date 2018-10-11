@@ -114,8 +114,6 @@ public final class RoundRobinSystem implements PairingSystem {
             match.setScoreLeft( byeRight ? tournament.getHeader( ).getScoreMax( ) : 0 );
             match.setScoreDraw( 0 );
             match.setScoreRight( byeLeft ? tournament.getHeader( ).getScoreMax( ) : 0 );
-        } else {
-            match.setScoreLeft( 1 );
         }
     }
 

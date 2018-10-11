@@ -83,9 +83,7 @@ public final class TournamentEnrolmentTab extends Tab {
         startTournamentButton.getStyleClass( ).add( "action-button" );
         startTournamentButton.setOnAction( event -> _model.fireStartTournament( ) );
         startTournamentButton.disableProperty( )
-                             .bind( new SimpleListProperty<>( _model.getTournament( ).getTeams( ) )
-                                        .sizeProperty( )
-                                        .lessThan( 2 ) );
+                             .bind( _model.activeTeamCountProperty( ).lessThan( 2 ) );
         startTournamentButton.visibleProperty( )
                              .bind( new SimpleListProperty<>( _model.getTournament( ).getRounds( ) ).emptyProperty( ) );
         hBox.getChildren( ).add( startTournamentButton );

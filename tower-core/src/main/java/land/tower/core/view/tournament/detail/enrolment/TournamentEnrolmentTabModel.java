@@ -19,6 +19,7 @@ import com.google.inject.assistedinject.Assisted;
 
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.stage.Stage;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
@@ -59,6 +60,10 @@ public final class TournamentEnrolmentTabModel {
         _tournament.getTeams( )
                    .sorted( Comparator.comparing( ObservableTeam::getId ) )
                    .forEach( t -> t.setId( idGen.incrementAndGet( ) ) );
+
+        _activeTeamCount.set( _tournament.getTeams( ).stream( )
+                                         .filter( ObservableTeam::isActive )
+                                         .count( ) );
     }
 
     public AddTeamDialogModel newAddTeamDialogModel( ) {
@@ -77,13 +82,27 @@ public final class TournamentEnrolmentTabModel {
     }
 
     public void fireTeamAdded( final Team team ) {
-        _tournament.registerTeam( new ObservableTeam( team ) );
+        final ObservableTeam oteam = new ObservableTeam( team );
+        _tournament.registerTeam( oteam );
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
         // Recompute ranking
         final PairingRule pairing = _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
                                                     .getPairingRules( )
                                                     .get( _tournament.getHeader( ).getPairingMode( ) );
         pairing.getRankingComputer( ).computeRanking( _tournament );
+
+        registerListenerOnTeam( oteam );
+        _activeTeamCount.set( _tournament.getTeams( ).stream( )
+                                         .filter( ObservableTeam::isActive )
+                                         .count( ) );
+    }
+
+    public long getActiveTeamCount( ) {
+        return _activeTeamCount.get( );
+    }
+
+    public SimpleLongProperty activeTeamCountProperty( ) {
+        return _activeTeamCount;
     }
 
     @Inject
@@ -99,16 +118,29 @@ public final class TournamentEnrolmentTabModel {
         _owner = owner;
 
         tournament.getTeams( )
-                  .forEach( t -> t.activeProperty( ).addListener( ( observable, oldValue, newValue ) -> {
-                      if ( !newValue ) {
-                          _eventBus.post( new InformationEvent( _i18n.get( "tournament.team.dropped" ) ) );
-                      }
-                  } ) );
+                  .forEach( this::registerListenerOnTeam );
+
+        _activeTeamCount.set( _tournament.getTeams( ).stream( )
+                                         .filter( ObservableTeam::isActive )
+                                         .count( ) );
+    }
+
+    private void registerListenerOnTeam( final ObservableTeam t ) {
+        t.activeProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+            if ( !newValue ) {
+                _eventBus.post( new InformationEvent( _i18n.get( "tournament.team.dropped" ) ) );
+            }
+            _activeTeamCount.set( _tournament.getTeams( ).stream( )
+                                             .filter( ObservableTeam::isActive )
+                                             .count( ) );
+        } );
     }
 
     public I18nTranslator getI18n( ) {
         return _i18n;
     }
+
+    public final SimpleLongProperty _activeTeamCount = new SimpleLongProperty( 0 );
 
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
