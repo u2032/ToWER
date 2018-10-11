@@ -14,6 +14,8 @@
 
 package land.tower.core.model.pairing.doubleElim;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -116,7 +118,7 @@ public final class DoubleEliminationSystem implements PairingSystem {
             final List<ObservableMatch> looserBracket = lastRoundMatches.subList( lastRoundMatches.size( ) / 2,
                                                                                   lastRoundMatches.size( ) );
 
-            final ArrayList<ObservableTeam> loosersFromWinnerBracket = new ArrayList<>( );
+            final List<ObservableTeam> loosersFromWinnerBracket = new ArrayList<>( );
 
             for ( int i = 0; i < winnerBracket.size( ); i += 2 ) {
                 final ObservableTeam winner1 = tournament.getTeam( getWinningTeam( winnerBracket.get( i ) ) );
@@ -131,6 +133,12 @@ public final class DoubleEliminationSystem implements PairingSystem {
                 loosersFromWinnerBracket.add( looser1 );
                 loosersFromWinnerBracket.add( looser2 );
             }
+
+            // Criss cross
+            final List<ObservableTeam> tmp = ImmutableList.copyOf( loosersFromWinnerBracket );
+            loosersFromWinnerBracket.clear( );
+            loosersFromWinnerBracket.addAll( tmp.subList( tmp.size( ) / 2, tmp.size( ) ) );
+            loosersFromWinnerBracket.addAll( tmp.subList( 0, tmp.size( ) / 2 ) );
 
             for ( int i = 0; i < loosersFromWinnerBracket.size( ); i++ ) {
                 final ObservableTeam winner = tournament.getTeam( getWinningTeam( looserBracket.get( i ) ) );
@@ -152,6 +160,14 @@ public final class DoubleEliminationSystem implements PairingSystem {
                     final ObservableTeam looser = tournament.getTeam( m.getOpponentId( winner ) );
                     loosersFromWinnerBracket.add( looser );
                 } );
+
+                // Criss cross
+                if ( lastRound.getNumero( ) % 4 == 2 ) {
+                    final List<ObservableTeam> tmp = ImmutableList.copyOf( loosersFromWinnerBracket );
+                    loosersFromWinnerBracket.clear( );
+                    loosersFromWinnerBracket.addAll( tmp.subList( tmp.size( ) / 2, tmp.size( ) ) );
+                    loosersFromWinnerBracket.addAll( tmp.subList( 0, tmp.size( ) / 2 ) );
+                }
 
                 for ( int i = 0; i < loosersFromWinnerBracket.size( ); i++ ) {
                     final ObservableTeam winner = tournament.getTeam( getWinningTeam( looserBracket.get( i ) ) );
@@ -202,6 +218,9 @@ public final class DoubleEliminationSystem implements PairingSystem {
             match.setScoreLeft( byeRight ? tournament.getHeader( ).getScoreMax( ) : 0 );
             match.setScoreDraw( 0 );
             match.setScoreRight( byeLeft ? tournament.getHeader( ).getScoreMax( ) : 0 );
+        } else {
+            // TODO REMOVE THAT
+            match.setScoreLeft( 1 );
         }
     }
 
