@@ -14,11 +14,8 @@
 
 package land.tower.core.model.pairing.doubleElim;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -63,24 +60,20 @@ public final class DoubleEliminationSystem implements PairingSystem {
                      .sorted( Comparator.comparing( ObservableMatch::getPosition ) )
                      .collect( Collectors.toList( ) );
 
-        final boolean isFinal = lastRoundMatches.size( ) == 2;
-
-        // Split round by winner/looser bracket
-        final List<ObservableMatch> winnerBracket;
-        final List<ObservableMatch> looserBracket;
-        if ( lastRound.getNumero( ) == 1 ) {
-            winnerBracket = lastRoundMatches;
-            looserBracket = Collections.emptyList( );
-        } else {
-            winnerBracket = lastRoundMatches.subList( 0, lastRoundMatches.size( ) / 2 );
-            looserBracket = lastRoundMatches.subList( lastRoundMatches.size( ) / 2, lastRoundMatches.size( ) );
-        }
+        final boolean isFinal = tournament.getRounds( ).size( ) >= 2
+                                && tournament.getRounds( ).stream( )
+                                             .sorted( Comparator.comparing( ObservableRound::getNumero ) )
+                                             .skip( tournament.getRounds( ).size( ) - 2 )
+                                             .limit( 1 )
+                                             .findFirst( )
+                                             .orElseThrow( IllegalStateException::new )
+                                             .getMatches( ).size( ) == 2;
 
         if ( isFinal ) {
-            final ObservableTeam winner1 = tournament.getTeam( getWinningTeam( winnerBracket.get( 0 ) ) );
+            final ObservableTeam winner1 = tournament.getTeam( getWinningTeam( lastRoundMatches.get( 0 ) ) );
             winner1.getPairingFlags( ).put( "final", "true" );
 
-            final ObservableTeam winner2 = tournament.getTeam( getWinningTeam( looserBracket.get( 0 ) ) );
+            final ObservableTeam winner2 = tournament.getTeam( getWinningTeam( lastRoundMatches.get( 1 ) ) );
             winner2.getPairingFlags( ).put( "final", "true" );
 
             final Match match = new Match( );
@@ -97,152 +90,109 @@ public final class DoubleEliminationSystem implements PairingSystem {
             return round;
         }
 
-        // Compute pairing for both brackets
-        final List<ObservableTeam> looserFromWinnerBracket = new ArrayList<>( );
+        final List<Match> matches = new ArrayList<>( );
 
-        final List<Match> winnerNewPairing;
+        if ( lastRound.getNumero( ) == 1 ) { // Pairing of round #2
+            // Pair winners with bye and init looser bracket
+            final ArrayList<Match> winnerBracketMatches = new ArrayList<>( );
+            final ArrayList<Match> looserBracketMatches = new ArrayList<>( );
+            for ( int i = 0; i < lastRoundMatches.size( ); i += 2 ) {
+                final ObservableTeam winner1 = tournament.getTeam( getWinningTeam( lastRoundMatches.get( i ) ) );
+                final ObservableTeam looser1 = tournament.getTeam( lastRoundMatches.get( i ).getOpponentId( winner1 ) );
 
-        if ( lastRound.getNumero( ) > 2 && lastRound.getNumero( ) % 2 == 1 ) {
-            // Bye for all winners at this round
-            winnerNewPairing = new ArrayList<>( );
-            for ( int i = 0; i < winnerBracket.size( ); i += 1 ) {
-                final ObservableTeam winner = tournament.getTeam( getWinningTeam( winnerBracket.get( i ) ) );
-                final ObservableTeam looser = tournament.getTeam( winnerBracket.get( i ).getOpponentId( winner ) );
-                looserFromWinnerBracket.add( looser );
+                final ObservableTeam winner2 = tournament.getTeam( getWinningTeam( lastRoundMatches.get( i + 1 ) ) );
+                final ObservableTeam looser2 = tournament.getTeam( lastRoundMatches.get( i + 1 )
+                                                                                   .getOpponentId( winner2 ) );
 
-                final Match match = new Match( );
-                match.setLeftTeamId( winner.isActive( ) ? winner.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
-                match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
-                setDefaultByeScore( match, tournament );
-                winnerNewPairing.add( match );
+                winnerBracketMatches.add( createMatch( tournament, winner1, winner2 ) );
+                looserBracketMatches.add( createMatch( tournament, looser1, looser2 ) );
             }
-        } else {
-            winnerNewPairing = directPairingFromLastMatches( tournament, winnerBracket, looserFromWinnerBracket );
-        }
 
-        final List<Match> looserNewPairing = new ArrayList<>( );
-        if ( lastRound.getNumero( ) == 1 ) {
-            // First round for looser bracket: We take loosers of winner bracket in order
-            for ( int i = 0; i < looserFromWinnerBracket.size( ); i += 2 ) {
-                final ObservableTeam team1 = looserFromWinnerBracket.get( i );
-                final ObservableTeam team2;
-                if ( looserFromWinnerBracket.size( ) > 1 ) {
-                    team2 = looserFromWinnerBracket.get( i + 1 );
-                } else {
-                    team2 = ObservableTeam.BYE_TEAM;
+            matches.addAll( winnerBracketMatches );
+            matches.addAll( looserBracketMatches );
+
+        } else if ( lastRound.getNumero( ) == 2 ) { // Pairing of round #3
+            final List<ObservableMatch> winnerBracket = lastRoundMatches.subList( 0, lastRoundMatches.size( ) / 2 );
+            final List<ObservableMatch> looserBracket = lastRoundMatches.subList( lastRoundMatches.size( ) / 2,
+                                                                                  lastRoundMatches.size( ) );
+
+            final ArrayList<ObservableTeam> loosersFromWinnerBracket = new ArrayList<>( );
+
+            for ( int i = 0; i < winnerBracket.size( ); i += 2 ) {
+                final ObservableTeam winner1 = tournament.getTeam( getWinningTeam( winnerBracket.get( i ) ) );
+                final ObservableTeam looser1 = tournament.getTeam( winnerBracket.get( i ).getOpponentId( winner1 ) );
+
+                final ObservableTeam winner2 = tournament.getTeam( getWinningTeam( winnerBracket.get( i + 1 ) ) );
+                final ObservableTeam looser2 = tournament.getTeam( winnerBracket.get( i + 1 )
+                                                                                .getOpponentId( winner2 ) );
+
+                matches.add( createMatch( tournament, winner1, ObservableTeam.BYE_TEAM ) );
+                matches.add( createMatch( tournament, winner2, ObservableTeam.BYE_TEAM ) );
+                loosersFromWinnerBracket.add( looser1 );
+                loosersFromWinnerBracket.add( looser2 );
+            }
+
+            for ( int i = 0; i < loosersFromWinnerBracket.size( ); i++ ) {
+                final ObservableTeam winner = tournament.getTeam( getWinningTeam( looserBracket.get( i ) ) );
+                matches.add( createMatch( tournament, loosersFromWinnerBracket.get( i ), winner ) );
+            }
+
+        } else {
+            final List<ObservableMatch> winnerBracket = lastRoundMatches.subList( 0, lastRoundMatches.size( ) / 2 );
+            final List<ObservableMatch> looserBracket = lastRoundMatches.subList( lastRoundMatches.size( ) / 2,
+                                                                                  lastRoundMatches.size( ) );
+
+            if ( winnerBracket.size( ) == 1 || lastRound.getNumero( ) % 2 == 0 ) {
+                final ArrayList<ObservableTeam> loosersFromWinnerBracket = new ArrayList<>( );
+
+                winnerBracket.forEach( m -> {
+                    final ObservableTeam winner = tournament.getTeam( getWinningTeam( m ) );
+                    matches.add( createMatch( tournament, winner, ObservableTeam.BYE_TEAM ) );
+
+                    final ObservableTeam looser = tournament.getTeam( m.getOpponentId( winner ) );
+                    loosersFromWinnerBracket.add( looser );
+                } );
+
+                for ( int i = 0; i < loosersFromWinnerBracket.size( ); i++ ) {
+                    final ObservableTeam winner = tournament.getTeam( getWinningTeam( looserBracket.get( i ) ) );
+                    matches.add( createMatch( tournament, loosersFromWinnerBracket.get( i ), winner ) );
                 }
-                final Match match = new Match( );
-                match.setLeftTeamId( team1.isActive( ) ? team1.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
-                match.setRightTeamId( team2.isActive( ) ? team2.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
-                setDefaultByeScore( match, tournament );
-                looserNewPairing.add( match );
-            }
 
-        } else {
-
-            // The looser bracket has already started: We pair loosers of winner bracket with a bye and winner of looser bracket with themself
-            final List<ObservableTeam> teams = new ArrayList<>( );
-            if ( lastRound.getNumero( ) % 2 == 0 ) {// Criss cross
-                teams.addAll( looserFromWinnerBracket.subList( looserFromWinnerBracket.size( ) / 2,
-                                                               looserFromWinnerBracket.size( ) ) );
-                teams.addAll( looserFromWinnerBracket.subList( 0, looserFromWinnerBracket.size( ) / 2 ) );
             } else {
-                teams.addAll( looserFromWinnerBracket );
-            }
-
-            teams.removeIf( t -> t.getId( ) == ObservableTeam.BYE_TEAM.getId( ) );
-
-            if ( lastRound.getNumero( ) > 2 && lastRound.getNumero( ) % 2 == 1 ) {
-                // We pair new looser with BYE
-                int index = 1;
-                final int teamSize = teams.size( );
-                for ( int k = 0; k < teamSize; k++ ) {
-                    teams.add( index, ObservableTeam.BYE_TEAM );
-                    index += 2;
+                // Pair winners and pair loosers
+                for ( int i = 0; i < winnerBracket.size( ); i += 2 ) {
+                    final ObservableTeam winner1 = tournament.getTeam( getWinningTeam( winnerBracket.get( i ) ) );
+                    final ObservableTeam winner2 = tournament.getTeam( getWinningTeam( winnerBracket.get( i + 1 ) ) );
+                    matches.add( createMatch( tournament, winner1, winner2 ) );
                 }
 
-                index = 2;
                 for ( int i = 0; i < looserBracket.size( ); i += 2 ) {
                     final ObservableTeam winner1 = tournament.getTeam( getWinningTeam( looserBracket.get( i ) ) );
                     final ObservableTeam winner2 = tournament.getTeam( getWinningTeam( looserBracket.get( i + 1 ) ) );
-                    teams.addAll( index, ImmutableList.of( winner1, winner2 ) );
-                    index += 4;
+                    matches.add( createMatch( tournament, winner1, winner2 ) );
                 }
-
-            } else {
-                teams.addAll( looserBracket.stream( )
-                                           .map( m -> tournament.getTeam( getWinningTeam( m ) ) )
-                                           .collect( Collectors.toList( ) ) );
-            }
-
-            for ( int i = 0; i < teams.size( ); i += 2 ) {
-                final Match match = new Match( );
-                match.setLeftTeamId( teams.get( i ).isActive( ) ? teams.get( i ).getTeam( ).getId( )
-                                                                : Teams.BYE_TEAM.getId( ) );
-                match.setRightTeamId( teams.get( i + 1 ).isActive( ) ? teams.get( i + 1 ).getTeam( ).getId( )
-                                                                     : Teams.BYE_TEAM.getId( ) );
-                setDefaultByeScore( match, tournament );
-                looserNewPairing.add( match );
             }
         }
-
-        // Add matches in winner bracket to have same match count
-        while ( winnerNewPairing.size( ) < looserNewPairing.size( ) ) {
-            final Match match = new Match( );
-            match.setLeftTeamId( ObservableTeam.BYE_TEAM.getId( ) );
-            match.setRightTeamId( ObservableTeam.BYE_TEAM.getId( ) );
-            setDefaultByeScore( match, tournament );
-            winnerNewPairing.add( match );
-        }
-
-        final ArrayList<Match> matches = new ArrayList<>( );
-        matches.addAll( winnerNewPairing );
-        matches.addAll( looserNewPairing );
 
         // Set position
         final AtomicInteger position = new AtomicInteger( );
-        for ( final Match m : matches ) {
-            m.setPosition( position.incrementAndGet( ) );
-        }
+        matches.forEach( m -> m.setPosition( position.incrementAndGet( ) ) );
 
         final Round round = new Round( );
         round.setNumero( tournament.getRounds( ).size( ) + 1 );
         round.setTimer( new TimerInfo( tournament.getHeader( ).getMatchDuration( ) ) );
         round.getMatches( ).addAll( matches );
-        round.setFinal( isFinal );
+        round.setFinal( false );
         return round;
     }
 
-    private List<Match> directPairingFromLastMatches( final ObservableTournament tournament,
-                                                      final List<ObservableMatch> lastRoundMatches,
-                                                      final List<ObservableTeam> looserCollector ) {
-
-        final List<Match> matches = new ArrayList<>( );
-        for ( int i = 0; i < lastRoundMatches.size( ); i += 2 ) {
-            // Pair winning teams
-            final ObservableMatch match1 = lastRoundMatches.get( i );
-            final ObservableTeam winningT1 = tournament.getTeam( getWinningTeam( match1 ) );
-            final ObservableTeam looserT1 = tournament.getTeam( match1.getOpponentId( winningT1 ) );
-            looserCollector.add( looserT1 );
-
-            final ObservableTeam winningT2;
-            if ( lastRoundMatches.size( ) > 1 ) {
-                final ObservableMatch match2 = lastRoundMatches.get( i + 1 );
-                winningT2 = tournament.getTeam( getWinningTeam( match2 ) );
-                final ObservableTeam looserT2 = tournament.getTeam( match2.getOpponentId( winningT2 ) );
-                looserCollector.add( looserT2 );
-            } else {
-                winningT2 = ObservableTeam.BYE_TEAM;
-            }
-
-            final Match match = new Match( );
-            match.setLeftTeamId( winningT1.isActive( ) ? winningT1.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
-            match.setRightTeamId( winningT2.isActive( ) ? winningT2.getTeam( ).getId( ) : Teams.BYE_TEAM.getId( ) );
-            setDefaultByeScore( match, tournament );
-            matches.add( match );
-        }
-
-        return matches;
+    private Match createMatch( final ObservableTournament tournament, final ObservableTeam left,
+                               final ObservableTeam right ) {
+        final Match match = new Match( );
+        match.setLeftTeamId( left.getId( ) );
+        match.setRightTeamId( right.getId( ) );
+        setDefaultByeScore( match, tournament );
+        return match;
     }
 
     private void setDefaultByeScore( final Match match, final ObservableTournament tournament ) {
@@ -252,9 +202,6 @@ public final class DoubleEliminationSystem implements PairingSystem {
             match.setScoreLeft( byeRight ? tournament.getHeader( ).getScoreMax( ) : 0 );
             match.setScoreDraw( 0 );
             match.setScoreRight( byeLeft ? tournament.getHeader( ).getScoreMax( ) : 0 );
-        } else {
-            // TODO REMOVE THAT
-            match.setScoreLeft( 1 );
         }
     }
 
