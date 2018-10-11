@@ -57,6 +57,7 @@ public final class DeleteRoundDialogModel {
         final ObservableRound lastRound = _tournament.getCurrentRound( );
         if ( lastRound != null ) {
             _tournament.getRounds( ).remove( lastRound );
+            _tournament.getTeams( ).forEach( team -> team.getPairingFlags( ).remove( "final" ) );
             _eventBus.post( new InformationEvent( _i18n.get( "round.deleted", lastRound.getNumero( ) ) ) );
         }
         _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
