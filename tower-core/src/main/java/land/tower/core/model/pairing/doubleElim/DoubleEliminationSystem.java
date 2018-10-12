@@ -310,9 +310,6 @@ public final class DoubleEliminationSystem implements PairingSystem {
             match.setScoreLeft( byeRight ? tournament.getHeader( ).getScoreMax( ) : 0 );
             match.setScoreDraw( 0 );
             match.setScoreRight( byeLeft ? tournament.getHeader( ).getScoreMax( ) : 0 );
-        } else {
-            // TODO REMOVE THAT
-            match.setScoreLeft( 1 );
         }
     }
 
