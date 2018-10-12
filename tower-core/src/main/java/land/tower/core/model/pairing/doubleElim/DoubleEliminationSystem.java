@@ -16,10 +16,9 @@ package land.tower.core.model.pairing.doubleElim;
 
 import static land.tower.data.Teams.BYE_TEAM;
 
-import com.google.common.collect.ImmutableList;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
@@ -215,10 +214,7 @@ public final class DoubleEliminationSystem implements PairingSystem {
             }
 
             // Criss cross
-            final List<ObservableTeam> tmp = ImmutableList.copyOf( loosersFromWinnerBracket );
-            loosersFromWinnerBracket.clear( );
-            loosersFromWinnerBracket.addAll( tmp.subList( tmp.size( ) / 2, tmp.size( ) ) );
-            loosersFromWinnerBracket.addAll( tmp.subList( 0, tmp.size( ) / 2 ) );
+            Collections.reverse( loosersFromWinnerBracket );
 
             for ( int i = 0; i < loosersFromWinnerBracket.size( ); i++ ) {
                 final ObservableTeam winner = tournament.getTeam( getWinningTeam( looserBracket.get( i ) ) );
@@ -242,8 +238,24 @@ public final class DoubleEliminationSystem implements PairingSystem {
                 } );
 
                 // Criss cross
-                if ( lastRound.getNumero( ) % 4 == 2 ) {
-                    final List<ObservableTeam> tmp = ImmutableList.copyOf( loosersFromWinnerBracket );
+                if ( lastRound.getNumero( ) % 8 == 2 ) {
+                    Collections.reverse( loosersFromWinnerBracket );
+
+                } else if ( lastRound.getNumero( ) % 8 == 4 ) {
+                    final List<ObservableTeam> tmp = new ArrayList<>( loosersFromWinnerBracket );
+                    loosersFromWinnerBracket.clear( );
+
+                    final List<ObservableTeam> part = new ArrayList<>( tmp.subList( 0, tmp.size( ) / 2 ) );
+                    Collections.reverse( part );
+                    loosersFromWinnerBracket.addAll( part );
+                    part.clear( );
+
+                    part.addAll( new ArrayList<>( tmp.subList( tmp.size( ) / 2, tmp.size( ) ) ) );
+                    Collections.reverse( part );
+                    loosersFromWinnerBracket.addAll( part );
+
+                } else if ( lastRound.getNumero( ) % 8 == 6 ) {
+                    final List<ObservableTeam> tmp = new ArrayList<>( loosersFromWinnerBracket );
                     loosersFromWinnerBracket.clear( );
                     loosersFromWinnerBracket.addAll( tmp.subList( tmp.size( ) / 2, tmp.size( ) ) );
                     loosersFromWinnerBracket.addAll( tmp.subList( 0, tmp.size( ) / 2 ) );
