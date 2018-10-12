@@ -114,6 +114,7 @@ public final class ObservableRound {
     }
 
     public boolean isEnded( ) {
+        updateEndedStatus( );
         return _ended.get( );
     }
 
