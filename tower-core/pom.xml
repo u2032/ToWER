@@ -7,7 +7,7 @@
     <parent>
         <groupId>land.tower</groupId>
         <artifactId>tower-parent</artifactId>
-        <version>2018.5-SNAPSHOT</version>
+        <version>2018.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>tower-core</artifactId>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>com.jfoenix</groupId>
             <artifactId>jfoenix</artifactId>
-            <version>8.0.1</version>
+            <version>8.0.6</version>
         </dependency>
         <dependency>
             <groupId>org.asynchttpclient</groupId>
@@ -81,13 +81,13 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.jasperreports</groupId>
             <artifactId>jasperreports</artifactId>
-            <version>6.6.0</version>
+            <version>6.7.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.bouncycastle</groupId>
