@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.model.player.IPlayerNumeroValidator;
+import land.tower.core.model.player.PlayerRepository;
 import land.tower.data.PlayerNationality;
 
 /**
@@ -36,10 +37,12 @@ public final class AddPlayerDialogModel {
     @Inject
     public AddPlayerDialogModel( final I18nTranslator translator,
                                  final IPlayerNumeroValidator playerNumeroValidator,
+                                 final PlayerRepository playerRepository,
                                  final Stage owner,
                                  final Preferences preferences ) {
         _playerNumeroValidator = playerNumeroValidator;
         _i18n = translator;
+        _playerRepository = playerRepository;
         _owner = owner;
         _preferences = preferences;
 
@@ -70,7 +73,7 @@ public final class AddPlayerDialogModel {
         } else {
             try {
                 final long numero = _playerNumero.get( );
-                if ( !_playerNumeroValidator.isValid( numero ) || _playerNumeroValidator.exists( numero ) ) {
+                if ( !_playerNumeroValidator.isValid( numero ) || _playerRepository.getPlayer( numero ).isPresent( ) ) {
                     _playerNumeroValidity.set( false );
                     _isValid.set( false );
                     return;
@@ -177,6 +180,7 @@ public final class AddPlayerDialogModel {
     private final SimpleBooleanProperty _playerNumeroValidity = new SimpleBooleanProperty( );
 
     private final IPlayerNumeroValidator _playerNumeroValidator;
+    private final PlayerRepository _playerRepository;
     private final I18nTranslator _i18n;
     private final Stage _owner;
     private final Preferences _preferences;

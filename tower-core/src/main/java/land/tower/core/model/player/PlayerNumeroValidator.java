@@ -35,11 +35,6 @@ final class PlayerNumeroValidator implements IPlayerNumeroValidator {
     }
 
     @Override
-    public boolean exists( final long numero ) {
-        return _playerRepository.getPlayer( numero ).isPresent( );
-    }
-
-    @Override
     public OptionalLong generate( ) {
         final OptionalLong max = _playerRepository.getPlayersList( )
                                                   .stream( )
