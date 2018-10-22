@@ -28,7 +28,7 @@ import javafx.util.converter.IntegerStringConverter;
  * Created on 31/12/2017
  * @author Cédric Longo
  */
-final class SetScoreByPointsDialog extends SetScoreDialog {
+public final class SetScoreByPointsDialog extends SetScoreDialog {
 
     public SetScoreByPointsDialog( final SetScoreDialogModel model ) {
         super( model );

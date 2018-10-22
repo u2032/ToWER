@@ -323,9 +323,7 @@ public class TournamentRoundTab extends Tab {
         setScoreButton.getStyleClass( ).add( "rich-button" );
         setScoreButton.getStyleClass( ).add( "action-button" );
         setScoreButton.setOnAction( event -> {
-            final SetScoreDialog setScoreDialog = _model.createSetScoreDialog( );
-            setScoreDialog.setOnCloseRequest( e -> Platform.runLater( this::resetFilter ) );
-            setScoreDialog.show( );
+            fireOpenScoreDialog( );
         } );
         hBox.getChildren( ).add( setScoreButton );
 
@@ -386,6 +384,12 @@ public class TournamentRoundTab extends Tab {
 
     public TournamentRoundTabModel getModel( ) {
         return _model;
+    }
+
+    public void fireOpenScoreDialog( ) {
+        final SetScoreDialog setScoreDialog = _model.createSetScoreDialog( );
+        setScoreDialog.setOnCloseRequest( e -> Platform.runLater( this::resetFilter ) );
+        setScoreDialog.show( );
     }
 
     private class PositionCell extends TableCell<ObservableMatch, Integer> {

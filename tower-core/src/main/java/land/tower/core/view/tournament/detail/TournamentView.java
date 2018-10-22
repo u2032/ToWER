@@ -60,6 +60,9 @@ public final class TournamentView extends BorderPane implements Displayable {
             tabPane.getSelectionModel( ).select( newValue );
         } );
 
+        tabPane.getSelectionModel( ).selectedItemProperty( )
+               .addListener( ( observable, oldValue, newValue ) -> _model.selectedTabProperty( ).set( newValue ) );
+
         setCenter( tabPane );
     }
 

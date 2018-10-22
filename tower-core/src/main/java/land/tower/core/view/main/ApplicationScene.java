@@ -42,5 +42,7 @@ public final class ApplicationScene extends Scene {
         } );
 
         model.initSnackBar( root );
+
+        getAccelerators( ).putAll( model.getAccelerators( ) );
     }
 }

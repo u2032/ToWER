@@ -18,9 +18,11 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.jfoenix.controls.JFXSnackbar;
 
+import java.util.Map;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -42,7 +44,9 @@ final class ApplicationSceneModel {
 
     @Inject
     public ApplicationSceneModel( final EventBus eventBus,
-                                  final HomepageView homepageView ) {
+                                  final HomepageView homepageView,
+                                  final Map<KeyCombination, Runnable> accelerators ) {
+        _accelerators = accelerators;
         eventBus.register( this );
         _current.setValue( homepageView );
     }
@@ -100,7 +104,11 @@ final class ApplicationSceneModel {
         return _snackbar;
     }
 
-    private final Property<Pane> _current = new SimpleObjectProperty<>( );
-    private JFXSnackbar _snackbar;
+    Map<KeyCombination, Runnable> getAccelerators( ) {
+        return _accelerators;
+    }
 
+    private final Property<Pane> _current = new SimpleObjectProperty<>( );
+    private final Map<KeyCombination, Runnable> _accelerators;
+    private JFXSnackbar _snackbar;
 }

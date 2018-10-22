@@ -14,11 +14,19 @@
 
 package land.tower.core.view.main;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 
+import java.util.Map;
 import javafx.scene.control.Menu;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import land.tower.core.view.main.accelerator.OpenScoreDialogAccelerator;
 
 /**
  * Created on 12/11/2017
@@ -36,5 +44,11 @@ public final class MainViewModule extends AbstractModule {
         bind( ApplicationStatusBarModel.class ).in( Scopes.SINGLETON );
 
         Multibinder.newSetBinder( binder( ), Menu.class );
+    }
+
+    @Provides
+    @Singleton
+    Map<KeyCombination, Runnable> accelerators( final OpenScoreDialogAccelerator openScoreDialogAccelerator ) {
+        return ImmutableMap.of( new KeyCodeCombination( KeyCode.A ), openScoreDialogAccelerator );
     }
 }

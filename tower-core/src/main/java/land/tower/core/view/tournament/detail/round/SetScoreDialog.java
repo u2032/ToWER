@@ -41,7 +41,7 @@ import land.tower.core.ext.font.FontAwesome;
  * Created on 31/12/2017
  * @author Cédric Longo
  */
-class SetScoreDialog extends Dialog<Void> {
+public class SetScoreDialog extends Dialog<Void> {
 
     public SetScoreDialog( final SetScoreDialogModel model ) {
         initOwner( model.getOwner( ) );
