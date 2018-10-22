@@ -15,6 +15,8 @@
 package land.tower.core.view.option;
 
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javax.inject.Inject;
 import land.tower.core.ext.i18n.Language;
 
@@ -27,6 +29,11 @@ public final class LanguageDialog extends ChoiceDialog<Language> {
     @Inject
     public LanguageDialog( LanguageDialogModel model ) {
         initOwner( model.getOwner( ) );
+        getDialogPane( ).addEventHandler( KeyEvent.KEY_RELEASED, ( KeyEvent event ) -> {
+            if ( KeyCode.ESCAPE == event.getCode( ) ) {
+                close( );
+            }
+        } );
 
         titleProperty( ).bind( model.getI18n( ).get( "option.language.title" ) );
         headerTextProperty( ).bind( model.getI18n( ).get( "option.language.message" ) );

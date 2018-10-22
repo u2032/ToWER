@@ -43,6 +43,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -63,6 +65,11 @@ final class AddTeamDialog extends Dialog<Team> {
 
     public AddTeamDialog( final AddTeamDialogModel model ) {
         initOwner( model.getOwner( ) );
+        getDialogPane( ).addEventHandler( KeyEvent.KEY_RELEASED, ( KeyEvent event ) -> {
+            if ( KeyCode.ESCAPE == event.getCode( ) ) {
+                close( );
+            }
+        } );
 
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "team.add.title" ) );

@@ -18,6 +18,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 /**
  * Created on 31/12/2017
@@ -28,6 +30,11 @@ public final class CloseTournamentDialog extends Alert {
     public CloseTournamentDialog( final CloseTournamentDialogModel model ) {
         super( AlertType.WARNING );
         initOwner( model.getOwner( ) );
+        getDialogPane( ).addEventHandler( KeyEvent.KEY_RELEASED, ( KeyEvent event ) -> {
+            if ( KeyCode.ESCAPE == event.getCode( ) ) {
+                close( );
+            }
+        } );
 
         titleProperty( ).bind( model.getI18n( ).get( "tournament.close.tournament.title" ) );
         headerTextProperty( ).bind( model.getI18n( ).get( "tournament.close.tournament.title" ) );

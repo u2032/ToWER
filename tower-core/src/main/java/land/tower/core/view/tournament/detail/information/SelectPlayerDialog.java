@@ -31,6 +31,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -48,6 +50,11 @@ final class SelectPlayerDialog extends Dialog<ObservablePlayer> {
     @Inject
     public SelectPlayerDialog( final SelectPlayerDialogModel model ) {
         initOwner( model.getOwner( ) );
+        getDialogPane( ).addEventHandler( KeyEvent.KEY_RELEASED, ( KeyEvent event ) -> {
+            if ( KeyCode.ESCAPE == event.getCode( ) ) {
+                close( );
+            }
+        } );
 
         titleProperty( ).bind( model.getI18n( ).get( "player.select.title" ) );
         //        headerTextProperty( ).bind( model.getI18n( ).get( "player.select.title" ) );

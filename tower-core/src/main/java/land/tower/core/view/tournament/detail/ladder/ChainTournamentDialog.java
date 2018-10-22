@@ -30,6 +30,8 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import javafx.util.converter.LongStringConverter;
@@ -44,6 +46,11 @@ final class ChainTournamentDialog extends Dialog<Void> {
 
     public ChainTournamentDialog( final ChainTournamentDialogModel model ) {
         initOwner( model.getOwner( ) );
+        getDialogPane( ).addEventHandler( KeyEvent.KEY_RELEASED, ( KeyEvent event ) -> {
+            if ( KeyCode.ESCAPE == event.getCode( ) ) {
+                close( );
+            }
+        } );
 
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "tournament.chaining.title" ) );

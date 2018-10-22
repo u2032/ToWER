@@ -18,6 +18,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import land.tower.core.ext.updater.VersionInformation;
 
 /**
@@ -30,6 +32,11 @@ final class UpdateDialog extends Alert {
         super( AlertType.INFORMATION );
         _model = model;
         initOwner( model.getOwner( ) );
+        getDialogPane( ).addEventHandler( KeyEvent.KEY_RELEASED, ( KeyEvent event ) -> {
+            if ( KeyCode.ESCAPE == event.getCode( ) ) {
+                close( );
+            }
+        } );
 
         setTitle( "" );
         setHeaderText( _model.getI18n( ).get( "update.available.title", version.getVersion( ) ) );

@@ -20,6 +20,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javax.inject.Inject;
@@ -35,6 +37,11 @@ public final class AboutDialog extends Dialog<Void> {
     @Inject
     public AboutDialog( final Stage owner, final Configuration config, final I18nTranslator translator ) {
         initOwner( owner );
+        getDialogPane( ).addEventHandler( KeyEvent.KEY_RELEASED, ( KeyEvent event ) -> {
+            if ( KeyCode.ESCAPE == event.getCode( ) ) {
+                close( );
+            }
+        } );
 
         final ButtonType saveButtonType =
             new ButtonType( translator.get( "action.ok" ).get( ).toUpperCase( ), ButtonData.OK_DONE );

@@ -40,6 +40,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
 import javafx.util.converter.LongStringConverter;
@@ -55,6 +57,11 @@ public final class AddPlayerDialog extends Dialog<Player> {
 
     public AddPlayerDialog( final AddPlayerDialogModel model ) {
         initOwner( model.getOwner( ) );
+        getDialogPane( ).addEventHandler( KeyEvent.KEY_RELEASED, ( KeyEvent event ) -> {
+            if ( KeyCode.ESCAPE == event.getCode( ) ) {
+                close( );
+            }
+        } );
 
         _model = model;
         titleProperty( ).bind( model.getI18n( ).get( "player.add.title" ) );
