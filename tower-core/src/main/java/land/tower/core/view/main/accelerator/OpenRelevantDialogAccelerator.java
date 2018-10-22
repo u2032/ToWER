@@ -20,47 +20,54 @@ import com.google.common.eventbus.Subscribe;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Inject;
 import land.tower.core.view.event.SceneRequestedEvent;
-import land.tower.core.view.event.TournamentRoundTabDisplayedEvent;
+import land.tower.core.view.event.TournamentTabDisplayedEvent;
 import land.tower.core.view.tournament.detail.TournamentView;
 import land.tower.core.view.tournament.detail.TournamentViewModel;
-import land.tower.core.view.tournament.detail.round.TournamentRoundTab;
 
 /**
  * Created on 22/10/2018
  * @author Cédric Longo
  */
-public final class OpenScoreDialogAccelerator implements Runnable {
+public final class OpenRelevantDialogAccelerator implements Runnable {
 
     @Inject
-    public OpenScoreDialogAccelerator( final EventBus eventBus ) {
+    public OpenRelevantDialogAccelerator( final EventBus eventBus ) {
         eventBus.register( this );
     }
 
     @Override
     public void run( ) {
-        if ( _roundTab.get( ) == null ) {
+        if ( _actor.get( ) == null ) {
             return;
         }
-        _roundTab.get( ).fireOpenScoreDialog( );
+        _actor.get( ).openRelevantDialog( );
     }
 
     @Subscribe
     private void sceneRequested( final SceneRequestedEvent event ) {
         if ( event.getView( ) instanceof TournamentView ) {
             final TournamentViewModel viewModel = ( (TournamentView) event.getView( ) ).getModel( );
-            if ( viewModel.getSelectedTab( ) instanceof TournamentRoundTab ) {
-                _roundTab.set( ( (TournamentRoundTab) viewModel.getSelectedTab( ) ) );
+            if ( viewModel.getSelectedTab( ) instanceof RelevantDialogActor ) {
+                _actor.set( ( (RelevantDialogActor) viewModel.getSelectedTab( ) ) );
                 return;
             }
         }
-        _roundTab.set( null );
+        if ( event.getView( ) instanceof RelevantDialogActor ) {
+            _actor.set( ( (RelevantDialogActor) event.getView( ) ) );
+            return;
+        }
+        _actor.set( null );
     }
 
     @Subscribe
-    private void roundDisplayed( final TournamentRoundTabDisplayedEvent event ) {
-        _roundTab.set( event.getRoundTab( ) );
+    private void tabDisplayed( final TournamentTabDisplayedEvent event ) {
+        if ( event.getTab( ) instanceof RelevantDialogActor ) {
+            _actor.set( ( (RelevantDialogActor) event.getTab( ) ) );
+        } else {
+            _actor.set( null );
+        }
     }
 
-    private final AtomicReference<TournamentRoundTab> _roundTab = new AtomicReference<>( );
+    private final AtomicReference<RelevantDialogActor> _actor = new AtomicReference<>( );
 
 }

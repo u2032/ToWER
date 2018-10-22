@@ -40,7 +40,7 @@ import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.model.tournament.TournamentRepository;
 import land.tower.core.view.event.SceneRequestedEvent;
-import land.tower.core.view.event.TournamentRoundTabDisplayedEvent;
+import land.tower.core.view.event.TournamentTabDisplayedEvent;
 import land.tower.core.view.home.HomepageView;
 import land.tower.core.view.tournament.detail.enrolment.TournamentEnrolmentTab;
 import land.tower.core.view.tournament.detail.enrolment.TournamentEnrolmentTabModel;
@@ -122,11 +122,7 @@ public final class TournamentViewModel {
         } );
         _tabViews.add( new TournamentLadderView( _ladderTabFactory.forTournament( _tournament ) ) );
         _selectedTab.addListener( ( observable, oldValue, newValue ) -> {
-            if ( newValue instanceof TournamentRoundTab ) {
-                _eventBus.post( new TournamentRoundTabDisplayedEvent( ( (TournamentRoundTab) newValue ) ) );
-            } else {
-                _eventBus.post( new TournamentRoundTabDisplayedEvent( null ) );
-            }
+            _eventBus.post( new TournamentTabDisplayedEvent( newValue ) );
         } );
 
         selectDefaultTab( );

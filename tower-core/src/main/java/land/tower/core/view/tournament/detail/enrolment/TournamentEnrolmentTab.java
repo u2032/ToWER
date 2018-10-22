@@ -44,6 +44,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.model.tournament.ObservableTeam;
 import land.tower.core.view.component.FaButton;
+import land.tower.core.view.main.accelerator.RelevantDialogActor;
 import land.tower.data.Team;
 import land.tower.data.TournamentStatus;
 
@@ -51,7 +52,7 @@ import land.tower.data.TournamentStatus;
  * Created on 20/12/2017
  * @author Cédric Longo
  */
-public final class TournamentEnrolmentTab extends Tab {
+public final class TournamentEnrolmentTab extends Tab implements RelevantDialogActor {
 
     @Inject
     public TournamentEnrolmentTab( final TournamentEnrolmentTabModel model ) {
@@ -92,12 +93,7 @@ public final class TournamentEnrolmentTab extends Tab {
         addTeamButton.textProperty( ).bind( toUpperCase( _model.getI18n( ).get( "tournament.enrolment.add.team" ) ) );
         addTeamButton.getStyleClass( ).add( "rich-button" );
         addTeamButton.getStyleClass( ).add( "action-button" );
-        addTeamButton.setOnAction( event -> {
-            // Open Add team dialog
-            new AddTeamDialog( _model.newAddTeamDialogModel( ) )
-                .showAndWait( )
-                .ifPresent( _model::fireTeamAdded );
-        } );
+        addTeamButton.setOnAction( event -> fireAddTeamDialog( ) );
         hBox.getChildren( ).add( addTeamButton );
 
         hBox.visibleProperty( )
@@ -106,6 +102,18 @@ public final class TournamentEnrolmentTab extends Tab {
                 _model.getTournament( ).getHeader( ).statusProperty( ) ) );
 
         return hBox;
+    }
+
+    @Override
+    public void openRelevantDialog( ) {
+        fireAddTeamDialog( );
+    }
+
+    private void fireAddTeamDialog( ) {
+        // Open Add team dialog
+        new AddTeamDialog( _model.newAddTeamDialogModel( ) )
+            .showAndWait( )
+            .ifPresent( _model::fireTeamAdded );
     }
 
     private TableView<ObservableTeam> buildTeamList( ) {

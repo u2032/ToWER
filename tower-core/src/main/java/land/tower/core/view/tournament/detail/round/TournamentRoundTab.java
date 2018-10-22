@@ -60,13 +60,14 @@ import land.tower.core.model.tournament.ObservableTimer;
 import land.tower.core.view.component.FaButton;
 import land.tower.core.view.component.FaMenu;
 import land.tower.core.view.component.FaMenuItem;
+import land.tower.core.view.main.accelerator.RelevantDialogActor;
 import land.tower.data.TournamentStatus;
 
 /**
  * Created on 30/12/2017
  * @author Cédric Longo
  */
-public class TournamentRoundTab extends Tab {
+public class TournamentRoundTab extends Tab implements RelevantDialogActor {
 
     public TournamentRoundTab( final TournamentRoundTabModel model ) {
         _model = model;
@@ -384,6 +385,11 @@ public class TournamentRoundTab extends Tab {
 
     public TournamentRoundTabModel getModel( ) {
         return _model;
+    }
+
+    @Override
+    public void openRelevantDialog( ) {
+        fireOpenScoreDialog( );
     }
 
     public void fireOpenScoreDialog( ) {

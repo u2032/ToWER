@@ -46,13 +46,14 @@ import land.tower.core.ext.binding.Strings;
 import land.tower.core.ext.effect.Effects;
 import land.tower.core.ext.font.FontAwesome;
 import land.tower.core.view.component.FaButton;
+import land.tower.core.view.main.accelerator.RelevantDialogActor;
 import land.tower.data.Player;
 
 /**
  * Created on 09/12/2017
  * @author Cédric Longo
  */
-public final class PlayerManagementView extends BorderPane {
+public final class PlayerManagementView extends BorderPane implements RelevantDialogActor {
 
     @Inject
     public PlayerManagementView( final PlayerManagementViewModel model ) {
@@ -66,11 +67,7 @@ public final class PlayerManagementView extends BorderPane {
         final Button addButton = new FaButton( FontAwesome.PLUS, "white" );
         addButton.textProperty( )
                  .bind( Bindings.concat( Strings.toUpperCase( model.getI18n( ).get( "player.add.action" ) ) ) );
-        addButton.setOnMouseClicked( e -> {
-            new AddPlayerDialog( model.newAddPlayerDialogModel( ) )
-                .showAndWait( )
-                .ifPresent( _model::firePlayerCreated );
-        } );
+        addButton.setOnMouseClicked( e -> fireAddPlayerDialog( ) );
         addButton.getStyleClass( ).add( "rich-button" );
         addButton.getStyleClass( ).add( "action-button" );
 
@@ -134,6 +131,17 @@ public final class PlayerManagementView extends BorderPane {
         tableView.setPlaceholder( emptyLabel );
 
         setCenter( tableView );
+    }
+
+    @Override
+    public void openRelevantDialog( ) {
+        fireAddPlayerDialog( );
+    }
+
+    private void fireAddPlayerDialog( ) {
+        new AddPlayerDialog( _model.newAddPlayerDialogModel( ) )
+            .showAndWait( )
+            .ifPresent( _model::firePlayerCreated );
     }
 
     private final PlayerManagementViewModel _model;

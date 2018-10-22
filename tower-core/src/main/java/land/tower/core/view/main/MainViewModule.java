@@ -26,7 +26,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import land.tower.core.view.main.accelerator.OpenScoreDialogAccelerator;
+import land.tower.core.view.main.accelerator.OpenRelevantDialogAccelerator;
 
 /**
  * Created on 12/11/2017
@@ -48,7 +48,7 @@ public final class MainViewModule extends AbstractModule {
 
     @Provides
     @Singleton
-    Map<KeyCombination, Runnable> accelerators( final OpenScoreDialogAccelerator openScoreDialogAccelerator ) {
-        return ImmutableMap.of( new KeyCodeCombination( KeyCode.A ), openScoreDialogAccelerator );
+    Map<KeyCombination, Runnable> accelerators( final OpenRelevantDialogAccelerator openRelevantDialogAccelerator ) {
+        return ImmutableMap.of( new KeyCodeCombination( KeyCode.A ), openRelevantDialogAccelerator );
     }
 }

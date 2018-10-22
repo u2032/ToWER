@@ -14,21 +14,21 @@
 
 package land.tower.core.view.event;
 
-import land.tower.core.view.tournament.detail.round.TournamentRoundTab;
+import javafx.scene.control.Tab;
 
 /**
  * Created on 31/12/2017
  * @author Cédric Longo
  */
-public final class TournamentRoundTabDisplayedEvent {
+public final class TournamentTabDisplayedEvent {
 
-    public TournamentRoundTabDisplayedEvent( final TournamentRoundTab roundTab ) {
-        _roundTab = roundTab;
+    public TournamentTabDisplayedEvent( final Tab tab ) {
+        _tab = tab;
     }
 
-    public TournamentRoundTab getRoundTab( ) {
-        return _roundTab;
+    public Tab getTab( ) {
+        return _tab;
     }
 
-    private final TournamentRoundTab _roundTab;
+    private final Tab _tab;
 }
