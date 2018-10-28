@@ -106,7 +106,9 @@ public final class TournamentEnrolmentTab extends Tab implements RelevantDialogA
 
     @Override
     public void openRelevantDialog( ) {
-        fireAddTeamDialog( );
+        if ( _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED ) {
+            fireAddTeamDialog( );
+        }
     }
 
     private void fireAddTeamDialog( ) {

@@ -389,7 +389,9 @@ public class TournamentRoundTab extends Tab implements RelevantDialogActor {
 
     @Override
     public void openRelevantDialog( ) {
-        fireOpenScoreDialog( );
+        if ( _model.getTournament( ).getHeader( ).getStatus( ) != TournamentStatus.CLOSED ) {
+            fireOpenScoreDialog( );
+        }
     }
 
     public void fireOpenScoreDialog( ) {
