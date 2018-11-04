@@ -56,6 +56,12 @@ public final class TournamentHeader {
     @SerializedName( "scoreMax" )
     private int _scoreMax = 1;
 
+    @SerializedName( "doubleScore" )
+    private boolean _doubleScore = false;
+
+    @SerializedName( "scoreMaxBis" )
+    private int _scoreMaxBis = 1;
+
     @SerializedName( "teamSize" )
     private int _teamSize;
 
@@ -167,5 +173,21 @@ public final class TournamentHeader {
 
     public void setScoringMode( final TournamentScoringMode scoringMode ) {
         _scoringMode = scoringMode;
+    }
+
+    public boolean isDoubleScore( ) {
+        return _doubleScore;
+    }
+
+    public void setDoubleScore( final boolean doubleScore ) {
+        _doubleScore = doubleScore;
+    }
+
+    public int getScoreMaxBis( ) {
+        return _scoreMaxBis;
+    }
+
+    public void setScoreMaxBis( final int scoreMaxBis ) {
+        _scoreMaxBis = scoreMaxBis;
     }
 }

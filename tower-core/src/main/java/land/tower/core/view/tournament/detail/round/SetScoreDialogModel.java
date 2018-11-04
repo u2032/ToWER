@@ -59,6 +59,8 @@ public final class SetScoreDialogModel {
             final int leftWins = _leftScore.get( ) == null ? 0 : _leftScore.get( );
             final int draws = _draws.get( ) == null ? 0 : _draws.get( );
             final int rightWins = _rightScore.get( ) == null ? 0 : _rightScore.get( );
+            final int leftWinsBis = _leftScoreBis.get( ) == null ? 0 : _leftScoreBis.get( );
+            final int rightWinsBis = _rightScoreBis.get( ) == null ? 0 : _rightScoreBis.get( );
             final int position = _position.get( ) == null ? 0 : _position.get( );
 
             if ( leftWins > tournament.getHeader( ).getScoreMax( ) ) {
@@ -73,6 +75,14 @@ public final class SetScoreDialogModel {
                 return _i18n.get( "tournament.round.scoring.error.empty" ).get( );
             }
 
+            if ( leftWinsBis > tournament.getHeader( ).getScoreMaxBis( ) ) {
+                return _i18n.get( "tournament.round.scoring.error.too.high", leftWinsBis );
+            }
+
+            if ( rightWinsBis > tournament.getHeader( ).getScoreMaxBis( ) ) {
+                return _i18n.get( "tournament.round.scoring.error.too.high", rightWinsBis );
+            }
+
             if ( position == 0 ) {
                 // No error message but not valid
                 return " ";
@@ -85,7 +95,7 @@ public final class SetScoreDialogModel {
             }
 
             return null;
-        }, _leftScore, _draws, _rightScore, _position ) );
+        }, _leftScore, _draws, _rightScore, _leftScoreBis, _rightScoreBis, _position ) );
 
         _teamInfo.bind( Bindings.createStringBinding( ( ) -> {
             if ( _position.get( ) == null || _position.get( ) == 0 ) {
@@ -117,6 +127,11 @@ public final class SetScoreDialogModel {
         match.scoreDrawProperty( ).set( _draws.get( ) == null ? 0 : _draws.getValue( ) );
         match.scoreRightProperty( ).set( _rightScore.get( ) == null ? 0 : _rightScore.getValue( ) );
 
+        if ( useDoubleScore( ) ) {
+            match.scoreLeftBisProperty( ).set( _leftScoreBis.get( ) == null ? 0 : _leftScoreBis.get( ) );
+            match.scoreRightBisProperty( ).set( _rightScoreBis.get( ) == null ? 0 : _rightScoreBis.get( ) );
+        }
+
         if ( _round.isEnded( ) ) {
             // If the round is ended, trigger ranking computing
             _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) )
@@ -127,6 +142,10 @@ public final class SetScoreDialogModel {
         }
 
         _eventBus.post( new TournamentUpdatedEvent( _tournament ) );
+    }
+
+    boolean useDoubleScore( ) {
+        return _tournament.getHeader( ).getDoubleScore( );
     }
 
     public Stage getOwner( ) {
@@ -189,6 +208,22 @@ public final class SetScoreDialogModel {
         return _teamInfo;
     }
 
+    public Integer getLeftScoreBis( ) {
+        return _leftScoreBis.get( );
+    }
+
+    public SimpleObjectProperty<Integer> leftScoreBisProperty( ) {
+        return _leftScoreBis;
+    }
+
+    public Integer getRightScoreBis( ) {
+        return _rightScoreBis.get( );
+    }
+
+    public SimpleObjectProperty<Integer> rightScoreBisProperty( ) {
+        return _rightScoreBis;
+    }
+
     private final I18nTranslator _i18n;
     private final ObservableTournament _tournament;
     private final ObservableRound _round;
@@ -199,6 +234,10 @@ public final class SetScoreDialogModel {
     private final SimpleObjectProperty<Integer> _leftScore = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _draws = new SimpleObjectProperty<>( );
     private final SimpleObjectProperty<Integer> _rightScore = new SimpleObjectProperty<>( );
+
+    private final SimpleObjectProperty<Integer> _leftScoreBis = new SimpleObjectProperty<>( );
+    private final SimpleObjectProperty<Integer> _rightScoreBis = new SimpleObjectProperty<>( );
+
     private final SimpleObjectProperty<Integer> _position = new SimpleObjectProperty<>( );
 
     private final EventBus _eventBus;

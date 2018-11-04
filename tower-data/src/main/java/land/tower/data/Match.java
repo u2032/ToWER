@@ -40,6 +40,12 @@ public final class Match {
     @SerializedName( value = "scoreRight", alternate = { "_scoreRight" } )
     private int _scoreRight;
 
+    @SerializedName( value = "scoreLeftBis" )
+    private int _scoreLeftBis;
+
+    @SerializedName( value = "scoreRightBis" )
+    private int _scoreRightBis;
+
     public int getLeftTeamId( ) {
         return _leftTeamId;
     }
@@ -86,5 +92,21 @@ public final class Match {
 
     public void setScoreRight( final int scoreRight ) {
         _scoreRight = scoreRight;
+    }
+
+    public int getScoreLeftBis( ) {
+        return _scoreLeftBis;
+    }
+
+    public void setScoreLeftBis( final int scoreLeftBis ) {
+        _scoreLeftBis = scoreLeftBis;
+    }
+
+    public int getScoreRightBis( ) {
+        return _scoreRightBis;
+    }
+
+    public void setScoreRightBis( final int scoreRightBis ) {
+        _scoreRightBis = scoreRightBis;
     }
 }

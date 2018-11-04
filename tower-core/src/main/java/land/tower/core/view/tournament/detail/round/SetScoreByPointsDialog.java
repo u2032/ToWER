@@ -73,7 +73,9 @@ public final class SetScoreByPointsDialog extends SetScoreDialog {
 
     @Override
     protected void configureAutoFocus( final TextField leftWinsField, final TextField drawsField,
-                                       final TextField rightWinsField, final TextField positionField ) {
+                                       final TextField rightWinsField,
+                                       final TextField leftScore2Field, final TextField rightScore2Field,
+                                       final TextField positionField ) {
         setOnShowing( e -> Platform.runLater( leftWinsField::requestFocus ) );
     }
 }

@@ -152,6 +152,8 @@ public class TournamentRoundTab extends Tab implements RelevantDialogActor {
                         setScoreDialog.getModel( ).leftScoreProperty( ).set( match.getScoreLeft( ) );
                         setScoreDialog.getModel( ).drawsProperty( ).set( match.getScoreDraw( ) );
                         setScoreDialog.getModel( ).rightScoreProperty( ).set( match.getScoreRight( ) );
+                        setScoreDialog.getModel( ).leftScoreBisProperty( ).set( match.getScoreLeftBis( ) );
+                        setScoreDialog.getModel( ).rightScoreBisProperty( ).set( match.getScoreRightBis( ) );
                     }
                     setScoreDialog.setOnCloseRequest( e -> Platform.runLater( this::resetFilter ) );
                     setScoreDialog.show( );
@@ -178,8 +180,13 @@ public class TournamentRoundTab extends Tab implements RelevantDialogActor {
                 final ObservableMatch match = param.getValue( );
                 final SimpleStringProperty value = new SimpleStringProperty( );
                 value.bind( Bindings.createStringBinding( ( ) -> {
+                    if ( _model.useDoubleScore( ) ) {
+                        return match.hasScore( ) ? String.format( "%s [%s]",
+                                                                  match.getScoreLeft( ),
+                                                                  match.getScoreLeftBis( ) ) : "";
+                    }
                     return match.hasScore( ) ? String.valueOf( match.getScoreLeft( ) ) : "";
-                }, match.hasScoreProperty( ), match.scoreLeftProperty( ) ) );
+                }, match.hasScoreProperty( ), match.scoreLeftProperty( ), match.scoreLeftBisProperty( ) ) );
                 return value;
             } );
         scoreCol.getColumns( ).add( winsLeftCol );
@@ -208,8 +215,13 @@ public class TournamentRoundTab extends Tab implements RelevantDialogActor {
             final ObservableMatch match = param.getValue( );
             final SimpleStringProperty value = new SimpleStringProperty( );
             value.bind( Bindings.createStringBinding( ( ) -> {
+                if ( _model.useDoubleScore( ) ) {
+                    return match.hasScore( ) ? String.format( "%s [%s]",
+                                                              match.getScoreRight( ),
+                                                              match.getScoreRightBis( ) ) : "";
+                }
                 return match.hasScore( ) ? String.valueOf( match.getScoreRight( ) ) : "";
-            }, match.hasScoreProperty( ), match.scoreRightProperty( ) ) );
+            }, match.hasScoreProperty( ), match.scoreRightProperty( ), match.scoreRightBisProperty( ) ) );
             return value;
         } );
         scoreCol.getColumns( ).add( winsRightCol );

@@ -39,6 +39,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -446,6 +447,38 @@ public final class TournamentInformationTab extends Tab {
         grid.add( _scoreMaxField, 1, line );
 
         line++;
+        _doubleScoreCheckbox = new CheckBox( );
+        _doubleScoreCheckbox.selectedProperty( )
+                            .bindBidirectional( _model.getTournament( ).getHeader( ).doubleScoreProperty( ) );
+
+        final Label doubleScoreLabel = new Label( );
+        doubleScoreLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.doubleScore" ) );
+        doubleScoreLabel.setLabelFor( _doubleScoreCheckbox );
+        grid.add( doubleScoreLabel, 0, line );
+        grid.add( _doubleScoreCheckbox, 1, line );
+
+        line++;
+        _scoreMaxBisField = new TextField( );
+        _scoreMaxBisField.setPrefWidth( 40 );
+        _scoreMaxBisField.setMaxWidth( Pane.USE_PREF_SIZE );
+        _scoreMaxBisField.textProperty( )
+                         .bindBidirectional( _model.getTournament( ).getHeader( ).scoreMaxBisProperty( ),
+                                             new IntegerStringConverter( ) );
+        _scoreMaxBisField.setTextFormatter(
+            new TextFormatter<>( new IntegerStringConverter( ),
+                                 _model.getTournament( ).getHeader( ).getScoreMax( ),
+                                 c -> {
+                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
+                                     return matches ? c : null;
+                                 } ) );
+
+        final Label scoreMaxBisLabel = new Label( );
+        scoreMaxBisLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.scoreMaxBis" ) );
+        scoreMaxBisLabel.setLabelFor( _scoreMaxBisField );
+        grid.add( scoreMaxBisLabel, 0, line );
+        grid.add( _scoreMaxBisField, 1, line );
+
+        line++;
         final TextField matchDurationField = new TextField( );
         matchDurationField.disableProperty( ).bind( tournamentOpened.not( ) );
         matchDurationField.setPrefWidth( 40 );
@@ -688,11 +721,31 @@ public final class TournamentInformationTab extends Tab {
             _scoreMaxField.disableProperty( ).unbind( );
             _scoreMaxField.disableProperty( ).bind( tournamentNotStarted );
         }
+
+        if ( rules.getScoreMaxBis( ).isPresent( ) ) {
+            _doubleScoreCheckbox.disableProperty( ).unbind( );
+            _doubleScoreCheckbox.setDisable( true );
+            header.setDoubleScore( true );
+
+            _scoreMaxBisField.disableProperty( ).unbind( );
+            _scoreMaxBisField.setDisable( true );
+            header.setScoreMaxBis( rules.getScoreMaxBis( ).get( ) );
+
+        } else {
+            _doubleScoreCheckbox.disableProperty( ).unbind( );
+            _doubleScoreCheckbox.disableProperty( ).bind( tournamentNotStarted );
+
+            _scoreMaxBisField.disableProperty( ).unbind( );
+            _scoreMaxBisField.disableProperty( )
+                             .bind( tournamentNotStarted.or( header.doubleScoreProperty( ).not( ) ) );
+        }
     }
 
     private final TournamentInformationTabModel _model;
     private JFXComboBox<TournamentScoringMode> _scoringModeBox;
     private TextField _scoreMaxField;
+    private TextField _scoreMaxBisField;
+    private CheckBox _doubleScoreCheckbox;
 
     private class DeleteJudgeCell extends TableCell<ObservablePlayer, Void> {
 

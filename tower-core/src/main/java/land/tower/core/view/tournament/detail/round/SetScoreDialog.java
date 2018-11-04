@@ -103,6 +103,42 @@ public class SetScoreDialog extends Dialog<Void> {
         grid.add( scoreLabel, 0, line );
         grid.add( scoreBox, 1, line );
 
+        TextField leftMovField = null;
+        TextField rightMovField = null;
+        if ( _model.useDoubleScore( ) ) {
+            line++;
+
+            final HBox movBox = new HBox( );
+            movBox.setSpacing( 20 );
+
+            leftMovField =
+                buildScoreBisField( Bindings.concat( getModel( ).getI18n( ).get( "match.score.points" ),
+                                                     " ",
+                                                     getModel( ).getI18n( ).get( "match.team.left" ) ),
+                                    _model.leftScoreBisProperty( ) );
+            movBox.getChildren( ).add( leftMovField );
+
+            if ( drawsField != null ) {
+                final TextField placeholder = new TextField( );
+                placeholder.setVisible( false );
+                movBox.getChildren( ).add( placeholder );
+            }
+
+            rightMovField =
+                buildScoreBisField( Bindings.concat( getModel( ).getI18n( ).get( "match.score.points" ),
+                                                     " ",
+                                                     getModel( ).getI18n( ).get( "match.team.right" ) ),
+                                    _model.rightScoreBisProperty( ) );
+            movBox.getChildren( ).add( rightMovField );
+
+            final Label scoreBisLabel = new Label( );
+            scoreBisLabel.getStyleClass( ).add( "important" );
+            scoreBisLabel.textProperty( ).bind( _model.getI18n( ).get( "match.score.bis" ) );
+            scoreBisLabel.setLabelFor( drawsField );
+            grid.add( scoreBisLabel, 0, line );
+            grid.add( movBox, 1, line );
+        }
+
         line++;
         final TextField positionField = new TextField( );
         positionField.setAlignment( Pos.CENTER );
@@ -159,7 +195,7 @@ public class SetScoreDialog extends Dialog<Void> {
 
         getDialogPane( ).setContent( grid );
 
-        configureAutoFocus( leftWinsField, drawsField, rightWinsField, positionField );
+        configureAutoFocus( leftWinsField, drawsField, rightWinsField, leftMovField, rightMovField, positionField );
     }
 
     protected TextField buildRightWinsField( ) {
@@ -203,8 +239,26 @@ public class SetScoreDialog extends Dialog<Void> {
         return field;
     }
 
+    private TextField buildScoreBisField( final ObservableStringValue promptText,
+                                          final SimpleObjectProperty<Integer> integerSimpleObjectProperty ) {
+        final TextField field = new TextField( );
+        field.setAlignment( Pos.CENTER );
+        field.promptTextProperty( ).bind( promptText );
+        field.setTextFormatter(
+            new TextFormatter<>( new IntegerStringConverter( ),
+                                 null,
+                                 c -> {
+                                     final boolean matches = Pattern.matches( "\\d*", c.getControlNewText( ) );
+                                     return matches ? c : null;
+                                 } ) );
+        field.textProperty( ).bindBidirectional( integerSimpleObjectProperty, new IntegerStringConverter( ) );
+        return field;
+    }
+
     protected void configureAutoFocus( final TextField leftWinsField, final TextField drawsField,
-                                       final TextField rightWinsField, final TextField positionField ) {
+                                       final TextField rightWinsField,
+                                       final TextField leftScore2Field, final TextField rightScore2Field,
+                                       final TextField positionField ) {
         // Configure autofocus
         leftWinsField.setOnKeyTyped( event -> {
             Platform.runLater( ( ) -> {
@@ -223,7 +277,11 @@ public class SetScoreDialog extends Dialog<Void> {
         rightWinsField.setOnKeyTyped( event -> {
             Platform.runLater( ( ) -> {
                 if ( !Strings.isNullOrEmpty( rightWinsField.getText( ) ) ) {
-                    Platform.runLater( positionField::requestFocus );
+                    if ( leftScore2Field == null ) {
+                        Platform.runLater( positionField::requestFocus );
+                    } else {
+                        Platform.runLater( leftScore2Field::requestFocus );
+                    }
                 }
             } );
         } );

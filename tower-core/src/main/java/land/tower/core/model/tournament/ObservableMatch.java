@@ -44,6 +44,16 @@ public final class ObservableMatch {
         _scoreRight.addListener( ( observable, oldValue, newValue ) -> match.setScoreRight( newValue.intValue( ) ) );
         _scoreRight.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
 
+        _scoreLeftBis.set( _match.getScoreLeftBis( ) );
+        _scoreLeftBis.addListener( ( observable, oldValue, newValue ) ->
+                                       match.setScoreLeftBis( newValue.intValue( ) ) );
+        _scoreLeftBis.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
+
+        _scoreRightBis.set( _match.getScoreRightBis( ) );
+        _scoreRightBis.addListener( ( observable, oldValue, newValue ) ->
+                                        match.setScoreRightBis( newValue.intValue( ) ) );
+        _scoreRightBis.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
+
         _leftTeamId.set( _match.getLeftTeamId( ) );
         _leftTeamId.addListener( ( observable, oldValue, newValue ) -> match.setLeftTeamId( newValue.intValue( ) ) );
         _leftTeamId.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
@@ -53,8 +63,9 @@ public final class ObservableMatch {
         _rightTeamId.addListener( ( observable, oldValue, newValue ) -> _dirty.set( true ) );
 
         _hasScore.bind( Bindings.createBooleanBinding( ( ) -> {
-            return _scoreLeft.get( ) != 0 || _scoreDraw.get( ) != 0 || _scoreRight.get( ) != 0;
-        }, _scoreLeft, _scoreRight, _scoreDraw ) );
+            return _scoreLeft.get( ) != 0 || _scoreDraw.get( ) != 0 || _scoreRight.get( ) != 0
+                   || _scoreLeftBis.get( ) != 0 || _scoreRightBis.get( ) != 0;
+        }, _scoreLeft, _scoreRight, _scoreDraw, _scoreLeftBis, _scoreRightBis ) );
     }
 
     public Match getMatch( ) {
@@ -109,6 +120,22 @@ public final class ObservableMatch {
         return _scoreRight;
     }
 
+    public int getScoreLeftBis( ) {
+        return _scoreLeftBis.get( );
+    }
+
+    public SimpleIntegerProperty scoreLeftBisProperty( ) {
+        return _scoreLeftBis;
+    }
+
+    public int getScoreRightBis( ) {
+        return _scoreRightBis.get( );
+    }
+
+    public SimpleIntegerProperty scoreRightBisProperty( ) {
+        return _scoreRightBis;
+    }
+
     public boolean isDirty( ) {
         return _dirty.get( );
     }
@@ -133,10 +160,10 @@ public final class ObservableMatch {
         final boolean isLeft = ( _leftTeamId.get( ) == teamId );
         final boolean isRight = ( _rightTeamId.get( ) == teamId );
         if ( isLeft ) {
-            return _scoreLeft.get( ) > _scoreRight.get( );
+            return _scoreLeft.get( ) > _scoreRight.get( ) || _scoreLeftBis.get( ) > _scoreRightBis.get( );
         }
         if ( isRight ) {
-            return _scoreRight.get( ) > _scoreLeft.get( );
+            return _scoreRight.get( ) > _scoreLeft.get( ) || _scoreRightBis.get( ) > _scoreLeftBis.get( );
         }
         throw new IllegalArgumentException( "The team " + teamId + " has not played in this match" );
 
@@ -150,16 +177,20 @@ public final class ObservableMatch {
         final boolean isLeft = ( _leftTeamId.get( ) == team.getId( ) );
         final boolean isRight = ( _rightTeamId.get( ) == team.getId( ) );
         if ( isLeft ) {
-            return _scoreLeft.get( ) < _scoreRight.get( );
+            return _scoreLeft.get( ) < _scoreRight.get( )
+                   || ( _scoreLeft.get( ) == _scoreRight.get( )
+                        && _scoreLeftBis.get( ) < _scoreRightBis.get( ) );
         }
         if ( isRight ) {
-            return _scoreRight.get( ) < _scoreLeft.get( );
+            return _scoreRight.get( ) < _scoreLeft.get( )
+                   || ( _scoreLeft.get( ) == _scoreRight.get( )
+                        && _scoreRightBis.get( ) < _scoreLeftBis.get( ) );
         }
         throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
     }
 
     public boolean isDraw( ) {
-        return _scoreLeft.get( ) == _scoreRight.get( );
+        return _scoreLeft.get( ) == _scoreRight.get( ) && _scoreLeftBis.get( ) == _scoreRightBis.get( );
     }
 
     public int getOpponentId( final ObservableTeam team ) {
@@ -198,6 +229,9 @@ public final class ObservableMatch {
     private final SimpleIntegerProperty _scoreLeft = new SimpleIntegerProperty( );
     private final SimpleIntegerProperty _scoreDraw = new SimpleIntegerProperty( );
     private final SimpleIntegerProperty _scoreRight = new SimpleIntegerProperty( );
+
+    private final SimpleIntegerProperty _scoreLeftBis = new SimpleIntegerProperty( );
+    private final SimpleIntegerProperty _scoreRightBis = new SimpleIntegerProperty( );
 
     private final SimpleBooleanProperty _hasScore = new SimpleBooleanProperty( );
 

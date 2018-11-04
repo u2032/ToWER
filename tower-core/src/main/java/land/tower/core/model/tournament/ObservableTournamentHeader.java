@@ -74,6 +74,16 @@ public final class ObservableTournamentHeader {
             ( obs, oldValue, newValue ) -> header.setScoreMax( newValue != null ? newValue : 1 ) );
         _scoreMax.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
 
+        _scoreMaxBis = new SimpleObjectProperty<>( header.getScoreMaxBis( ) );
+        _scoreMaxBis.addListener(
+            ( obs, oldValue, newValue ) -> header.setScoreMaxBis( newValue != null ? newValue : 1 ) );
+        _scoreMaxBis.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
+        _doubleScore = new SimpleBooleanProperty( header.isDoubleScore( ) );
+        _doubleScore.addListener(
+            ( obs, oldValue, newValue ) -> header.setDoubleScore( newValue != null ? newValue : false ) );
+        _doubleScore.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
+
         _type = new SimpleObjectProperty<>( header.getTournamentType( ) );
         _type.addListener( ( obs, oldValue, newValue ) -> header.setTournamentType( newValue ) );
         _type.addListener( ( obs, oldValue, newValue ) -> _dirty.set( true ) );
@@ -256,6 +266,30 @@ public final class ObservableTournamentHeader {
         return _mainJudge;
     }
 
+    public Boolean getDoubleScore( ) {
+        return _doubleScore.get( );
+    }
+
+    public SimpleBooleanProperty doubleScoreProperty( ) {
+        return _doubleScore;
+    }
+
+    public Integer getScoreMaxBis( ) {
+        return _scoreMaxBis.get( );
+    }
+
+    public SimpleObjectProperty<Integer> scoreMaxBisProperty( ) {
+        return _scoreMaxBis;
+    }
+
+    public void setDoubleScore( final Boolean doubleScore ) {
+        this._doubleScore.set( doubleScore );
+    }
+
+    public void setScoreMaxBis( final Integer scoreMaxBis ) {
+        this._scoreMaxBis.set( scoreMaxBis );
+    }
+
     public void markAsClean( ) {
         _dirty.set( false );
         _address.markAsClean( );
@@ -275,6 +309,8 @@ public final class ObservableTournamentHeader {
     private final SimpleObjectProperty<Integer> _matchDuration;
     private final SimpleObjectProperty<Integer> _teamSize;
     private final SimpleObjectProperty<Integer> _scoreMax;
+    private final SimpleBooleanProperty _doubleScore;
+    private final SimpleObjectProperty<Integer> _scoreMaxBis;
     private final ObservableAddress _address;
     private final SimpleObjectProperty<ObservablePlayer> _mainJudge;
     private final ObservableList<ObservablePlayer> _judges = FXCollections.observableArrayList( );

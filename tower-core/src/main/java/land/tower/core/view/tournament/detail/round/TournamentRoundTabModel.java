@@ -135,6 +135,10 @@ public final class TournamentRoundTabModel {
                      } );
     }
 
+    boolean useDoubleScore( ) {
+        return _tournament.getHeader( ).getDoubleScore( );
+    }
+
     public void firePrintResultSlips( ) {
         _eventBus.post( new InformationEvent( _i18n.get( "document.generation.started" ) ) );
         _reportEngine.generate( _resultSlipReportFactory.create( _tournament, _round ) )

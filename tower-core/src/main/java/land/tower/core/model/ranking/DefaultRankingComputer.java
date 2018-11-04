@@ -51,18 +51,35 @@ public final class DefaultRankingComputer implements IRankingComputer {
             teams.forEach( team -> team.getRanking( ).setPoints( SumOfScoreSystem.compute( team, rounds ) ) );
         }
 
-        // Compute secondary points
-        teams.forEach( team -> {
-            team.getRanking( ).setD1( SolfkoffSystem.compute( team, rounds, tournament ) );
-            team.getRanking( ).setD3( TemporalSystem.compute( team, rounds, tournament ) );
-            team.getRanking( ).setD4( CoonsSystem.compute( team, rounds, tournament ) );
-        } );
+        if ( tournament.getHeader( ).getDoubleScore( ) ) {
+            // Compute secondary points
+            teams.forEach( team -> {
+                team.getRanking( ).setD1( SumOfScoreBisSystem.compute( team, rounds ) );
+                team.getRanking( ).setD2( SolfkoffSystem.compute( team, rounds, tournament ) );
+                team.getRanking( ).setD4( TemporalSystem.compute( team, rounds, tournament ) );
+            } );
 
-        // D2 needs D1 so it's computed after
-        teams.forEach( team -> {
-            team.getRanking( ).setD2( OpponentRankingAccumulator.compute( team, rounds, tournament,
-                                                                          ObservableRanking::getD1 ) );
-        } );
+            // D3 needs D2 so it's computed after
+            teams.forEach( team -> {
+                team.getRanking( ).setD3( OpponentRankingAccumulator.compute( team, rounds, tournament,
+                                                                              ObservableRanking::getD2 ) );
+            } );
+
+        } else {
+            // Compute secondary points
+            teams.forEach( team -> {
+                team.getRanking( ).setD1( SolfkoffSystem.compute( team, rounds, tournament ) );
+                team.getRanking( ).setD3( TemporalSystem.compute( team, rounds, tournament ) );
+                team.getRanking( ).setD4( CoonsSystem.compute( team, rounds, tournament ) );
+            } );
+
+            // D2 needs D1 so it's computed after
+            teams.forEach( team -> {
+                team.getRanking( ).setD2( OpponentRankingAccumulator.compute( team, rounds, tournament,
+                                                                              ObservableRanking::getD1 ) );
+            } );
+
+        }
 
         setRanks( teams, rounds );
     }
