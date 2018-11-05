@@ -18,6 +18,7 @@
     <parameter name="round.numero" class="java.lang.Integer"/>
     <parameter name="page.title" class="java.lang.String"/>
     <parameter name="logo.path" class="java.lang.String"/>
+    <parameter name="double.score" class="java.lang.Boolean"/>
     <queryString>
         <![CDATA[]]>
     </queryString>
@@ -83,8 +84,8 @@
                     <textFieldExpression><![CDATA[$F{team.right}]]></textFieldExpression>
                 </textField>
                 <frame>
-                    <reportElement x="207" y="40" width="50" height="50" uuid="de3f9843-7784-4b78-9acb-f8ccc37e762a">
-                        <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
+                    <reportElement x="202" y="43" width="62" height="50" uuid="de3f9843-7784-4b78-9acb-f8ccc37e762a">
+                        <printWhenExpression><![CDATA[$F{position} != null && !$P{double.score}]]></printWhenExpression>
                     </reportElement>
                     <box>
                         <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -94,8 +95,8 @@
                     </box>
                 </frame>
                 <frame>
-                    <reportElement x="296" y="40" width="50" height="50" uuid="5eab3f69-091d-4fe9-8bf1-9397d36c512a">
-                        <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
+                    <reportElement x="292" y="43" width="62" height="50" uuid="5eab3f69-091d-4fe9-8bf1-9397d36c512a">
+                        <printWhenExpression><![CDATA[$F{position} != null && !$P{double.score}]]></printWhenExpression>
                     </reportElement>
                     <box>
                         <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -105,7 +106,7 @@
                     </box>
                 </frame>
                 <textField>
-                    <reportElement x="201" y="90" width="62" height="14" uuid="8f4cb9d8-df76-4743-a6bf-2ed7e7a9b774">
+                    <reportElement x="202" y="93" width="62" height="14" uuid="8f4cb9d8-df76-4743-a6bf-2ed7e7a9b774">
                         <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
                     </reportElement>
                     <textElement textAlignment="Center" verticalAlignment="Top">
@@ -114,7 +115,7 @@
                     <textFieldExpression><![CDATA[$P{points}]]></textFieldExpression>
                 </textField>
                 <textField>
-                    <reportElement x="291" y="90" width="62" height="14" uuid="bb40f04f-b7f6-41b8-bb94-472118512870">
+                    <reportElement x="292" y="93" width="62" height="14" uuid="bb40f04f-b7f6-41b8-bb94-472118512870">
                         <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
                     </reportElement>
                     <textElement textAlignment="Center" verticalAlignment="Top">
@@ -122,6 +123,50 @@
                     </textElement>
                     <textFieldExpression><![CDATA[$P{points}]]></textFieldExpression>
                 </textField>
+                <frame>
+                    <reportElement x="202" y="37" width="62" height="25" uuid="f99f149c-2cbd-49b0-902e-9276aa2d5d1a">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <frame>
+                    <reportElement x="202" y="68" width="62" height="25" uuid="c94b333f-b1a8-40ba-8696-23cb05e5bd6f">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <frame>
+                    <reportElement x="292" y="37" width="62" height="25" uuid="32bf087c-6f0f-433c-9824-056814aefed4">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <frame>
+                    <reportElement x="292" y="68" width="62" height="25" uuid="b64a33cc-936a-41a0-9b49-aa8931e5d44d">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
             </frame>
         </band>
     </detail>

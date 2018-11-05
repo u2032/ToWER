@@ -19,6 +19,8 @@
     <parameter name="round.numero" class="java.lang.Integer"/>
     <parameter name="page.title" class="java.lang.String"/>
     <parameter name="logo.path" class="java.lang.String"/>
+    <parameter name="double.score" class="java.lang.Boolean"/>
+    <parameter name="points" class="java.lang.String"/>
     <queryString>
         <![CDATA[]]>
     </queryString>
@@ -83,8 +85,8 @@
                     <textFieldExpression><![CDATA[$F{team.right}]]></textFieldExpression>
                 </textField>
                 <frame>
-                    <reportElement x="191" y="40" width="50" height="50" uuid="de3f9843-7784-4b78-9acb-f8ccc37e762a">
-                        <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
+                    <reportElement x="191" y="45" width="50" height="50" uuid="de3f9843-7784-4b78-9acb-f8ccc37e762a">
+                        <printWhenExpression><![CDATA[$F{position} != null && !$P{double.score}]]></printWhenExpression>
                     </reportElement>
                     <box>
                         <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -94,8 +96,8 @@
                     </box>
                 </frame>
                 <frame>
-                    <reportElement x="314" y="40" width="50" height="50" uuid="5eab3f69-091d-4fe9-8bf1-9397d36c512a">
-                        <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
+                    <reportElement x="314" y="45" width="50" height="50" uuid="5eab3f69-091d-4fe9-8bf1-9397d36c512a">
+                        <printWhenExpression><![CDATA[$F{position} != null && !$P{double.score}]]></printWhenExpression>
                     </reportElement>
                     <box>
                         <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -105,8 +107,8 @@
                     </box>
                 </frame>
                 <frame>
-                    <reportElement x="252" y="40" width="50" height="50" uuid="fb7aa51d-d359-4361-b6de-a151e1aedaae">
-                        <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
+                    <reportElement x="252" y="45" width="50" height="50" uuid="fb7aa51d-d359-4361-b6de-a151e1aedaae">
+                        <printWhenExpression><![CDATA[$F{position} != null && !$P{double.score}]]></printWhenExpression>
                     </reportElement>
                     <box>
                         <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -116,8 +118,8 @@
                     </box>
                 </frame>
                 <textField>
-                    <reportElement x="185" y="90" width="62" height="14" uuid="8f4cb9d8-df76-4743-a6bf-2ed7e7a9b774">
-                        <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
+                    <reportElement x="185" y="95" width="62" height="14" uuid="8f4cb9d8-df76-4743-a6bf-2ed7e7a9b774">
+                        <printWhenExpression><![CDATA[$F{position} != null && !$P{double.score}]]></printWhenExpression>
                     </reportElement>
                     <textElement textAlignment="Center" verticalAlignment="Top">
                         <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
@@ -125,8 +127,8 @@
                     <textFieldExpression><![CDATA[$P{victory}]]></textFieldExpression>
                 </textField>
                 <textField>
-                    <reportElement x="247" y="90" width="62" height="14" uuid="efa789c8-2e71-4eee-9776-d39d37d1d3b0">
-                        <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
+                    <reportElement x="247" y="95" width="62" height="14" uuid="efa789c8-2e71-4eee-9776-d39d37d1d3b0">
+                        <printWhenExpression><![CDATA[$F{position} != null && !$P{double.score}]]></printWhenExpression>
                     </reportElement>
                     <textElement textAlignment="Center" verticalAlignment="Top">
                         <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
@@ -134,13 +136,113 @@
                     <textFieldExpression><![CDATA[$P{draws}]]></textFieldExpression>
                 </textField>
                 <textField>
-                    <reportElement x="309" y="90" width="62" height="14" uuid="bb40f04f-b7f6-41b8-bb94-472118512870">
-                        <printWhenExpression><![CDATA[$F{position} != null]]></printWhenExpression>
+                    <reportElement x="309" y="95" width="62" height="14" uuid="bb40f04f-b7f6-41b8-bb94-472118512870">
+                        <printWhenExpression><![CDATA[$F{position} != null && !$P{double.score}]]></printWhenExpression>
                     </reportElement>
                     <textElement textAlignment="Center" verticalAlignment="Top">
                         <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
                     </textElement>
                     <textFieldExpression><![CDATA[$P{victory}]]></textFieldExpression>
+                </textField>
+                <frame>
+                    <reportElement x="191" y="39" width="50" height="25" uuid="3a54d947-038a-4462-b405-5f43e07fc480">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <frame>
+                    <reportElement x="191" y="70" width="50" height="25" uuid="e7c45aa9-3436-43cb-872d-9607b721738f">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <frame>
+                    <reportElement x="252" y="39" width="50" height="25" uuid="83c3444c-98be-4e7d-bf40-4ebf838b01e9">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <frame>
+                    <reportElement x="314" y="39" width="50" height="25" uuid="dc2efb11-d9a1-4799-8a58-993d9cee790e">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <frame>
+                    <reportElement x="314" y="70" width="50" height="25" uuid="76409ddc-53ed-437d-a158-27966bd7fa90">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <box>
+                        <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                        <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    </box>
+                </frame>
+                <textField>
+                    <reportElement x="186" y="25" width="62" height="14" uuid="c6c2f326-02a0-4a7f-9ac0-1e9fcaaa34be">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <textElement textAlignment="Center" verticalAlignment="Top">
+                        <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{victory}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="248" y="25" width="62" height="14" uuid="9b23322b-a7c3-48e5-990a-d16645ce7c11">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <textElement textAlignment="Center" verticalAlignment="Top">
+                        <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{draws}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="310" y="25" width="62" height="14" uuid="2326463e-e880-41c7-9831-6125d4bb7d64">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <textElement textAlignment="Center" verticalAlignment="Top">
+                        <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{victory}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="185" y="96" width="62" height="14" uuid="75860ed2-1f41-46a1-8d79-95969c21cfd5">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <textElement textAlignment="Center" verticalAlignment="Top">
+                        <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{points}]]></textFieldExpression>
+                </textField>
+                <textField>
+                    <reportElement x="309" y="96" width="62" height="14" uuid="44fd07b7-3a8e-4d76-b402-33ae45c805ae">
+                        <printWhenExpression><![CDATA[$F{position} != null && $P{double.score}]]></printWhenExpression>
+                    </reportElement>
+                    <textElement textAlignment="Center" verticalAlignment="Top">
+                        <font fontName="Noto Sans" size="10" isBold="false" isItalic="true"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA[$P{points}]]></textFieldExpression>
                 </textField>
             </frame>
         </band>
