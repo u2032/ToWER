@@ -29,6 +29,8 @@ import java.util.stream.IntStream;
 import javafx.util.Pair;
 import javax.inject.Inject;
 import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.rules.ITournamentRulesProvider;
+import land.tower.core.model.rules.TournamentRules;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.data.Match;
@@ -45,8 +47,8 @@ import land.tower.data.Tournament;
 public final class SwissPairingSystem implements PairingSystem {
 
     @Inject
-    public SwissPairingSystem( ) {
-
+    public SwissPairingSystem( final ITournamentRulesProvider rulesProvider ) {
+        _rulesProvider = rulesProvider;
     }
 
     @Override
@@ -162,9 +164,14 @@ public final class SwissPairingSystem implements PairingSystem {
                 match.setLeftTeamId( match.getRightTeamId( ) );
                 match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
             }
-            match.setScoreLeft( tournament.getHeader( ).getScoreMax( ) );
+            final TournamentRules tournamentRules = _rulesProvider.forGame( tournament.getHeader( ).getGame( ) );
+            match.setScoreLeft( tournamentRules.getByeScore( ).orElse( tournament.getHeader( ).getScoreMax( ) ) );
             match.setScoreDraw( 0 );
             match.setScoreRight( 0 );
+            if ( tournament.getHeader( ).isDoubleScore( ) ) {
+                match.setScoreLeftBis( tournamentRules.getByeScoreBis( )
+                                                      .orElse( tournament.getHeader( ).getScoreMaxBis( ) ) );
+            }
         } );
         matches.removeAll( byeMatches );
         matches.addAll( byeMatches );
@@ -237,9 +244,15 @@ public final class SwissPairingSystem implements PairingSystem {
             match.setPosition( position.incrementAndGet( ) );
             match.setLeftTeamId( availableTeams.remove( 0 ).getId( ) );
             match.setRightTeamId( Teams.BYE_TEAM.getId( ) );
-            match.setScoreLeft( tournament.getHeader( ).getScoreMax( ) );
+
+            final TournamentRules tournamentRules = _rulesProvider.forGame( tournament.getHeader( ).getGame( ) );
+            match.setScoreLeft( tournamentRules.getByeScore( ).orElse( tournament.getHeader( ).getScoreMax( ) ) );
             match.setScoreDraw( 0 );
             match.setScoreRight( 0 );
+            if ( tournament.getHeader( ).isDoubleScore( ) ) {
+                match.setScoreLeftBis( tournamentRules.getByeScoreBis( )
+                                                      .orElse( tournament.getHeader( ).getScoreMaxBis( ) ) );
+            }
             round.getMatches( ).add( match );
         }
 
@@ -256,4 +269,5 @@ public final class SwissPairingSystem implements PairingSystem {
     }
 
     private final Random _random = new Random( );
+    private final ITournamentRulesProvider _rulesProvider;
 }

@@ -32,7 +32,9 @@ final class TournamentRulesProvider implements ITournamentRulesProvider {
         _default = TournamentRules.builder( )
                                   .scoringMode( Optional.empty( ) )
                                   .scoreMax( Optional.empty( ) )
+                                  .byeScore( Optional.empty( ) )
                                   .scoreMaxBis( Optional.empty( ) )
+                                  .byeScoreBis( Optional.empty( ) )
                                   .pairingRules( defaultRules )
                                   .teamExtraInfo( Collections.emptyMap( ) )
                                   .build( );

@@ -31,7 +31,9 @@ public final class TournamentRules {
 
     private final Optional<TournamentScoringMode> scoringMode;
     private final Optional<Integer> scoreMax;
+    private final Optional<Integer> byeScore;
     private final Optional<Integer> scoreMaxBis;
+    private final Optional<Integer> byeScoreBis;
 
     private final Map<PairingMode, PairingRule> pairingRules;
 

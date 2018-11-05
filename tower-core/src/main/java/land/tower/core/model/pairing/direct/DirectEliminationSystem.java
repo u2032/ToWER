@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import land.tower.core.model.pairing.PairingSystem;
+import land.tower.core.model.rules.ITournamentRulesProvider;
+import land.tower.core.model.rules.TournamentRules;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
@@ -39,7 +41,8 @@ import land.tower.data.TimerInfo;
 public final class DirectEliminationSystem implements PairingSystem {
 
     @Inject
-    public DirectEliminationSystem( ) {
+    public DirectEliminationSystem( final ITournamentRulesProvider rulesProvider ) {
+        _rulesProvider = rulesProvider;
     }
 
     @Override
@@ -106,9 +109,22 @@ public final class DirectEliminationSystem implements PairingSystem {
         final boolean byeLeft = match.getLeftTeamId( ) == Teams.BYE_TEAM.getId( );
         final boolean byeRight = match.getRightTeamId( ) == Teams.BYE_TEAM.getId( );
         if ( byeLeft || byeRight ) {
-            match.setScoreLeft( byeRight ? tournament.getHeader( ).getScoreMax( ) : 0 );
+            final TournamentRules tournamentRules = _rulesProvider.forGame( tournament.getHeader( ).getGame( ) );
+
+            final int byeScore = tournamentRules.getByeScore( ).orElse( tournament.getHeader( ).getScoreMax( ) );
+            match.setScoreLeft( byeRight ? byeScore : 0 );
             match.setScoreDraw( 0 );
-            match.setScoreRight( byeLeft ? tournament.getHeader( ).getScoreMax( ) : 0 );
+            match.setScoreRight( byeLeft ? byeScore : 0 );
+
+            if ( tournament.getHeader( ).getDoubleScore( ) && byeRight ) {
+                match.setScoreLeftBis( tournamentRules.getByeScoreBis( )
+                                                      .orElse( tournament.getHeader( ).getScoreMaxBis( ) ) );
+            }
+
+            if ( tournament.getHeader( ).getDoubleScore( ) && byeLeft ) {
+                match.setScoreRightBis( tournamentRules.getByeScoreBis( )
+                                                       .orElse( tournament.getHeader( ).getScoreMaxBis( ) ) );
+            }
         }
     }
 
@@ -287,4 +303,5 @@ public final class DirectEliminationSystem implements PairingSystem {
     }
 
     private final Random _random = new Random( );
+    private final ITournamentRulesProvider _rulesProvider;
 }
