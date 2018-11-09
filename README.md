@@ -30,4 +30,15 @@ But the simplest way is to directly test the app! It's free.
 ## Want to talk about the project?
 Feel free to join us on slack: https://tower-app-slack-invite.herokuapp.com
  
+## Pro version
 
+Some international companies start to use a pro version of ToWER which let them follow players progression. For these companies, ToWER is the cornerstone of their organized play structure to declare, manage and control tournaments around the world.   
+
+For example, we can mention these companies:
+<p align="center"> 
+<a href="//www.asmodee.com"><img src="https://github.com/u2032/ToWER/blob/master/docs/partners/asmodee.png"></a>
+&nbsp;&nbsp;&nbsp;
+<a href="//www.ankama.com"><img src="https://github.com/u2032/ToWER/blob/master/docs/partners/ankama.png"></a>
+</p>
+
+If you're a company which is interesting by having same support to help you organize tournaments, please contact us at [contact@tower.land](mailto:contact@tower.land)
