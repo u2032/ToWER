@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.model.rules.ITournamentRulesProvider;
 import land.tower.core.model.rules.PairingRule;
+import land.tower.core.model.rules.TournamentRules;
 import land.tower.core.model.tournament.ObservableMatch;
 import land.tower.core.model.tournament.ObservableRound;
 import land.tower.core.model.tournament.ObservableTeam;
@@ -160,6 +161,8 @@ public final class ManualPairingDialogModel {
     }
 
     public synchronized void firePairByeTeams( final ObservableList<ObservableTeam> obsTeams ) {
+        final TournamentRules tournamentRules = _tournamentRules.forGame( _tournament.getHeader( ).getGame( ) );
+
         final List<ObservableTeam> teams = new ArrayList<>( obsTeams );
         teams.removeIf( Objects::isNull );
         while ( !teams.isEmpty( ) ) {
@@ -174,9 +177,14 @@ public final class ManualPairingDialogModel {
                                                                 .mapToInt( ObservableMatch::getPosition )
                                                                 .max( )
                                                                 .orElse( 0 ) + 1 );
-            match.setScoreLeft( _tournament.getHeader( ).getScoreMax( ) );
+            match.setScoreLeft( tournamentRules.getByeScore( ).orElse( _tournament.getHeader( ).getScoreMax( ) ) );
             match.setScoreDraw( 0 );
             match.setScoreRight( 0 );
+
+            if ( _tournament.getHeader( ).getDoubleScore( ) ) {
+                match.setScoreLeftBis( tournamentRules.getByeScoreBis( )
+                                                      .orElse( _tournament.getHeader( ).getScoreMaxBis( ) ) );
+            }
 
             _matches.add( new ObservableMatch( match ) );
             _teams.remove( left );
