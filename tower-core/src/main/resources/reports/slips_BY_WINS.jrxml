@@ -250,12 +250,16 @@
     <pageFooter>
         <band height="20" splitType="Stretch">
             <textField>
-                <reportElement x="0" y="0" width="529" height="20" uuid="e5249154-f9b4-4c90-a0a0-083adf7498eb"/>
+                <reportElement x="0" y="0" width="480" height="20" uuid="e5249154-f9b4-4c90-a0a0-083adf7498eb"/>
                 <textElement textAlignment="Right">
                     <font fontName="Noto Sans" isItalic="true"/>
                 </textElement>
                 <textFieldExpression>
                     <![CDATA[$P{app.name} + " v" + $P{app.version} + "  –  " +  $P{page} + " " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement x="480" y="0" width="48" height="20" uuid="7ae1c8f9-0828-438c-898c-19309591a351"/>
+                <textFieldExpression><![CDATA[" / " + $V{PAGE_NUMBER}]]></textFieldExpression>
             </textField>
         </band>
     </pageFooter>
