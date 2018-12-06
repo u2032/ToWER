@@ -68,6 +68,8 @@ public final class TournamentLadderView extends Tab {
         main.setTop( buildActionBox( ) );
         main.setCenter( buildTeamList( ) );
 
+        disableProperty( ).bind( _model.getTournament( ).getHeader( ).gameProperty( ).isEmpty( ) );
+
         setContent( main );
     }
 

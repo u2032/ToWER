@@ -91,6 +91,11 @@
     -fx-text-fill: black;
 }
 
+.required-field {
+    -fx-background-color: rgba(255, 149, 154, 0.53);
+    -fx-border-color: red;
+}
+
 .clock {
     -fx-font-size: 4em;
     -fx-font-family: "Baloo";

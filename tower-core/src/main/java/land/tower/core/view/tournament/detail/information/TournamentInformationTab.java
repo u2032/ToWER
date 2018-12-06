@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -99,13 +100,13 @@ public final class TournamentInformationTab extends Tab {
         hBox.setPadding( new Insets( 10 ) );
         hBox.setAlignment( Pos.CENTER_RIGHT );
 
-        final FaButton startTournamentButton = new FaButton( FontAwesome.SAVE, "white" );
-        startTournamentButton.textProperty( ).bind(
+        final FaButton saveTournamentButton = new FaButton( FontAwesome.SAVE, "white" );
+        saveTournamentButton.textProperty( ).bind(
             toUpperCase( _model.getI18n( ).get( "tournament.info.save.as.preference" ) ) );
-        startTournamentButton.getStyleClass( ).add( "rich-button" );
-        startTournamentButton.getStyleClass( ).add( "action-button" );
-        startTournamentButton.setOnAction( event -> _model.fireSaveAsPreference( ) );
-        hBox.getChildren( ).add( startTournamentButton );
+        saveTournamentButton.getStyleClass( ).add( "rich-button" );
+        saveTournamentButton.getStyleClass( ).add( "action-button" );
+        saveTournamentButton.setOnAction( event -> _model.fireSaveAsPreference( ) );
+        hBox.getChildren( ).add( saveTournamentButton );
 
         hBox.visibleProperty( )
             .bind( createBooleanBinding(
@@ -165,9 +166,21 @@ public final class TournamentInformationTab extends Tab {
 
         line++;
         final List<String> gameList = _model.getConfiguration( ).gameList( );
+        final BiConsumer<Node, String> updateField = ( field, value ) -> {
+            if ( value == null || value.trim( ).isEmpty( ) ) {
+                field.getStyleClass( ).add( "required-field" );
+            } else {
+                field.getStyleClass( ).remove( "required-field" );
+            }
+        };
         if ( gameList.isEmpty( ) ) {
             final TextField gameField = new TextField( );
             gameField.textProperty( ).bindBidirectional( _model.getTournament( ).getHeader( ).gameProperty( ) );
+            gameField.textProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+                updateField.accept( gameField, newValue );
+            } );
+            updateField.accept( gameField, gameField.getText( ) );
+
             final Label gameLabel = new Label( );
             gameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.game" ) );
             gameLabel.setLabelFor( gameField );
@@ -201,6 +214,11 @@ public final class TournamentInformationTab extends Tab {
                         return true;
                 }
             }, _model.getTournament( ).getHeader( ).statusProperty( ) ) );
+
+            gameField.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {
+                updateField.accept( gameField, newValue );
+            } );
+            updateField.accept( gameField, gameField.getValue( ) );
 
             final Label gameLabel = new Label( );
             gameLabel.textProperty( ).bind( _model.getI18n( ).get( "tournament.game" ) );
