@@ -254,7 +254,7 @@ public final class TournamentInformationTab extends Tab {
         final JFXTimePicker timePicker = new JFXTimePicker( );
         timePicker.setDialogParent( stackPane );
         timePicker.setOverLay( true );
-        timePicker.setIs24HourView( true );
+        timePicker.set24HourView( true );
         timePicker.setEditable( false );
         timePicker.setValue( _model.getTournament( ).getHeader( ).getDate( ).toLocalTime( ) );
         timePicker.valueProperty( ).addListener( ( observable, oldValue, newValue ) -> {

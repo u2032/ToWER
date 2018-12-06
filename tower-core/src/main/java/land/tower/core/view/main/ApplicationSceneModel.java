@@ -17,6 +17,8 @@ package land.tower.core.view.main;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
+import com.jfoenix.controls.JFXSnackbarLayout;
 
 import java.util.Map;
 import javafx.application.Platform;
@@ -28,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 import javax.inject.Inject;
 import land.tower.core.ext.singleton.SingletonAppEvent;
 import land.tower.core.view.component.Displayable;
@@ -87,7 +90,8 @@ final class ApplicationSceneModel {
             return;
         }
         Platform.runLater( ( ) -> {
-            _snackbar.show( event.getText( ), 2500 );
+            _snackbar.enqueue( new SnackbarEvent( new JFXSnackbarLayout( event.getText( ) ),
+                                                  Duration.millis( 2500 ), null ) );
         } );
     }
 
