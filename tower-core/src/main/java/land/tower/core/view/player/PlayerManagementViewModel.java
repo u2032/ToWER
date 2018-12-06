@@ -25,6 +25,7 @@ import javax.inject.Provider;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.model.player.PlayerRepository;
+import land.tower.core.model.player.suggestion.IPlayerSuggestionProvider;
 import land.tower.core.view.event.InformationEvent;
 import land.tower.core.view.event.SceneRequestedEvent;
 import land.tower.core.view.home.HomepageView;
@@ -41,7 +42,8 @@ final class PlayerManagementViewModel {
                                       final Provider<HomepageView> homepageViewProvider,
                                       final Provider<AddPlayerDialogModel> addPlayerDialogModelProvider,
                                       final PlayerRepository playerRepository,
-                                      final Preferences preferences, final Stage owner ) {
+                                      final Preferences preferences, final Stage owner,
+                                      final IPlayerSuggestionProvider playerSuggestionProvider ) {
         _eventBus = eventBus;
         _homepageViewProvider = homepageViewProvider;
         _addPlayerDialogModelProvider = addPlayerDialogModelProvider;
@@ -49,6 +51,7 @@ final class PlayerManagementViewModel {
         _i18n = i18n;
         _preferences = preferences;
         _owner = owner;
+        _playerSuggestionProvider = playerSuggestionProvider;
         eventBus.register( this );
     }
 
@@ -69,6 +72,15 @@ final class PlayerManagementViewModel {
     }
 
     public void firePlayerCreated( final Player player ) {
+        _playerSuggestionProvider.getSuggestionsForNumero( player.getNumero( ) )
+                                 .forEach( p -> {
+                                     if ( p.getNumero( ) == player.getNumero( ) ) {
+                                         player.setLastname( p.getLastname( ) );
+                                         player.setFirstname( p.getFirstname( ) );
+                                         player.setBirthday( p.getBirthday( ) );
+                                         player.setNationality( p.getNationality( ) );
+                                     }
+                                 } );
         _playerRepository.registerPlayer( player );
         _eventBus.post( new InformationEvent( _i18n.get( "player.created" ) ) );
         _preferences.save( "player.nationality", player.getNationality( ).name( ) );
@@ -91,4 +103,6 @@ final class PlayerManagementViewModel {
     private final I18nTranslator _i18n;
     private final Preferences _preferences;
     private final Stage _owner;
+
+    private final IPlayerSuggestionProvider _playerSuggestionProvider;
 }

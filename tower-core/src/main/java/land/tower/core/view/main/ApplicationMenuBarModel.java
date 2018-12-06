@@ -39,6 +39,7 @@ import land.tower.core.ext.i18n.I18nService;
 import land.tower.core.ext.i18n.I18nTranslator;
 import land.tower.core.ext.preference.Preferences;
 import land.tower.core.model.player.PlayerRepository;
+import land.tower.core.model.player.suggestion.IPlayerSuggestionProvider;
 import land.tower.core.model.tournament.ITournamentStorage;
 import land.tower.core.model.tournament.ObservableTournament;
 import land.tower.core.model.tournament.TournamentRepository;
@@ -83,7 +84,8 @@ final class ApplicationMenuBarModel {
                              final PlayerRepository playerRepository,
                              final Provider<Stage> owner,
                              final ITournamentStorage tournamentStorage,
-                             final Set<Menu> extraMenus ) {
+                             final Set<Menu> extraMenus,
+                             final IPlayerSuggestionProvider playerSuggestionProvider ) {
         _eventBus = eventBus;
         _tournamentManagementViewProvider = tournamentManagementViewProvider;
         _playerManagementViewProvider = playerManagementViewProvider;
@@ -99,6 +101,7 @@ final class ApplicationMenuBarModel {
         _owner = owner;
         _tournamentStorage = tournamentStorage;
         _extraMenus = extraMenus;
+        _playerSuggestionProvider = playerSuggestionProvider;
         _eventBus.register( this );
         _i18n = i18n;
         _homepageViewProvider = homepageViewProvider;
@@ -178,6 +181,15 @@ final class ApplicationMenuBarModel {
     }
 
     public void firePlayerCreated( final Player player ) {
+        _playerSuggestionProvider.getSuggestionsForNumero( player.getNumero( ) )
+                                 .forEach( p -> {
+                                     if ( p.getNumero( ) == player.getNumero( ) ) {
+                                         player.setLastname( p.getLastname( ) );
+                                         player.setFirstname( p.getFirstname( ) );
+                                         player.setBirthday( p.getBirthday( ) );
+                                         player.setNationality( p.getNationality( ) );
+                                     }
+                                 } );
         _playerRepository.registerPlayer( player );
         _eventBus.post( new InformationEvent( _i18n.get( "player.created" ) ) );
         _preferences.save( "player.nationality", player.getNationality( ).name( ) );
@@ -290,6 +302,7 @@ final class ApplicationMenuBarModel {
 
     private final ITournamentStorage _tournamentStorage;
     private final Set<Menu> _extraMenus;
+    private final IPlayerSuggestionProvider _playerSuggestionProvider;
 }
 
 
