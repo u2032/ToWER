@@ -160,10 +160,12 @@ public final class ObservableMatch {
         final boolean isLeft = ( _leftTeamId.get( ) == teamId );
         final boolean isRight = ( _rightTeamId.get( ) == teamId );
         if ( isLeft ) {
-            return _scoreLeft.get( ) > _scoreRight.get( ) || _scoreLeftBis.get( ) > _scoreRightBis.get( );
+            return _scoreLeft.get( ) > _scoreRight.get( )
+                   || ( _scoreLeft.get( ) == _scoreRight.get( ) && _scoreLeftBis.get( ) > _scoreRightBis.get( ) );
         }
         if ( isRight ) {
-            return _scoreRight.get( ) > _scoreLeft.get( ) || _scoreRightBis.get( ) > _scoreLeftBis.get( );
+            return _scoreRight.get( ) > _scoreLeft.get( )
+                   || ( _scoreLeft.get( ) == _scoreRight.get( ) && _scoreRightBis.get( ) > _scoreLeftBis.get( ) );
         }
         throw new IllegalArgumentException( "The team " + teamId + " has not played in this match" );
 
@@ -178,13 +180,11 @@ public final class ObservableMatch {
         final boolean isRight = ( _rightTeamId.get( ) == team.getId( ) );
         if ( isLeft ) {
             return _scoreLeft.get( ) < _scoreRight.get( )
-                   || ( _scoreLeft.get( ) == _scoreRight.get( )
-                        && _scoreLeftBis.get( ) < _scoreRightBis.get( ) );
+                   || ( _scoreLeft.get( ) == _scoreRight.get( ) && _scoreLeftBis.get( ) < _scoreRightBis.get( ) );
         }
         if ( isRight ) {
             return _scoreRight.get( ) < _scoreLeft.get( )
-                   || ( _scoreLeft.get( ) == _scoreRight.get( )
-                        && _scoreRightBis.get( ) < _scoreLeftBis.get( ) );
+                   || ( _scoreLeft.get( ) == _scoreRight.get( ) && _scoreRightBis.get( ) < _scoreLeftBis.get( ) );
         }
         throw new IllegalArgumentException( "The team " + team.getId( ) + " has not played in this match" );
     }
