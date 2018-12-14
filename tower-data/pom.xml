@@ -7,7 +7,7 @@
     <parent>
         <groupId>land.tower</groupId>
         <artifactId>tower-parent</artifactId>
-        <version>2018.8-SNAPSHOT</version>
+        <version>2019.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>tower-data</artifactId>
