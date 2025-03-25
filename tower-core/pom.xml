@@ -66,7 +66,7 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>8.40.14</version>
+            <version>11.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.jfoenix</groupId>
@@ -143,12 +143,10 @@
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>uber</shadedClassifierName>
                             <transformers>
-                                <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${app.main.class}</mainClass>
                                 </transformer>
-                                <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>jasperreports_extension.properties</resource>
                                 </transformer>
                             </transformers>
